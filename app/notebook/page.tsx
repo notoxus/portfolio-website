@@ -39,7 +39,9 @@ function FileNode({ item }: { item: any }) {
       }
     }
   }
-
+  const extension = item.type === 'file' 
+  ? item.name.split('.').pop()?.toUpperCase() 
+  : '';
   // Link tải file raw
   const rawUrl = `https://raw.githubusercontent.com/CSerVN/my-note-book/main/${item.path}`
 
@@ -59,17 +61,25 @@ function FileNode({ item }: { item: any }) {
         </div>
 
         {item.type === 'file' && (
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+          {/* Cột Extension - Nhìn như một cái nhãn kỹ thuật */}
+          <span className="hidden md:block text-[9px] bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-200 dark:border-neutral-700 font-bold tracking-wider">
+            {extension}
+          </span>
+
+          {/* Nút Download chính */}
           <a 
-            href={rawUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="opacity-0 group-hover:opacity-100 bg-neutral-200 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white px-2 py-1 rounded text-[10px] font-bold uppercase transition-all"
+          href={rawUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="bg-neutral-200 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded text-[10px] font-bold uppercase transition-all flex items-center gap-1 shadow-sm"
           >
-            Raw ⬇
-          </a>
-        )}
-      </div>
+          DOWNLOAD RAW ⬇
+        </a>
+        </div>
+          )}
+        </div>
 
       {/* Hiển thị nội dung con */}
       {isOpen && (
