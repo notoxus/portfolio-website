@@ -1,0 +1,254 @@
+---
+title: "Strategy Pattern - Mô Hình Chiến Lược. Liệu bạn đã hiểu rõ nó chưa?"
+publishedAt: "2026-05-17"
+summary: "Blog này sẽ giải thích cho bạn một cách tường minh để hiểu được các khái niệm khô khan về Design Pattern một cách dễ hiểu. Với các ví dụ minh họa và sơ đồ lớp kèm theo!"
+category: "Object-Oriented Analysis Design"
+---
+
+Mô hình chiến lược:
+
+- Chỉ những đối tượng có hành vi đó thì mới implements interface chứa hành vi đó.
+- Tuy nhiên cách dùng interface kết hợp abstract class lại mang lại một điểm nghẽn đó là duplicate code. Tức là, mỗi lần thêm một đối tượng mới, chúng ta sẽ phải hiện thực lại hành vi mà nó implements từ interface. Đồng nghĩa với việc mỗi lần chỉnh sửa code chúng ta sẽ phải đi đến từng đối tượng và chỉnh sửa từng phương thức một. Càng có nhiều đối tượng cần chỉnh sửa thì càng mất thời gian và khó bảo trì code hơn. Đặc biệt, là với những sự thay đổi nhỏ. Nó vi phạm một quy tắc trong lập trình hướng đối tượng đó là OCP (Open/Closed Principle - Nguyên tắc đóng mở) hay mở cho sự mở rộng, đóng cho sự thay đổi.
+- Tuy nhiên, đôi lúc chúng ta phải chấp nhận sự đánh đổi này và chỉ dùng Strategy Pattern cho những thuộc tính hành vi thật sự cần thay đổi, còn lại thì có để nó ở trạng thái constant là được.
+  => Vậy để làm được điều đó chúng ta sẽ làm thế nào? Dùng composition với mối quan hệ has-a thay vì inheritance với mối quan hệ is-a.
+- Tức là, Abstract Class sẽ bao chứa tất cả thuộc tính hành vi có trong các interface hành vi có thể có của đối tượng đó. Và chúng ta sẽ phải tạo thêm các lớp hành vi có thể có của hành vi đó. Giống như việc biến cái chung nhất thành cái cụ thể vậy. Nó chỉ việc implement cái interface hành vi đó và thay đổi lại cách thức hành vi đó thực hiện 1 cách cụ thể hơn. Khi đó các lớp con chỉ việc `*gán thuộc tính biến hành vi chung nhất bằng 1 hành vi cụ thể trong constructor của nó*`.
+
+![Class Diagram](/images/strategy1.png)
+Source code
+
+```java
+// Interface hành vi **kêu** của Vịt
+public interface QuackBehavior {
+    void quack();
+}
+// Interface hành vi **bay**
+public interface FlyBehavior {
+    void fly();
+}
+// Lớp cha - Abstract Class
+public abstract class Duck {
+    protected FlyBehavior flyBehavior;
+    protected QuackBehavior quackBehavior;
+    ...
+    public performQuack() {
+    quackBehavior.quack();
+ }
+ public performFly() {
+    flyBehavior.fly();
+ }
+}
+// Các lớp implements interface để làm cụ thể hành vi đó
+// Kêu tiếng quack quack trong hành vi kêu
+public class Quack implements QuackBehavior {
+    public void quack() {
+        System.out.println("Quack");
+    }
+}
+// Hay bay bằng cánh trong hành vi bay
+public class FlyWithWings implements FlyBehavior {
+    public void fly() {
+        System.out.println("I'm flying!!");
+    }
+}
+```
+
+```java
+Khi đó, các lớp con chỉ việc:
+// Lớp con (subclass) - Vịt trời
+public class MallardDuck extends Duck {
+    public MallardDuck() {
+    quackBehavior = new Quack();
+    flyBehavior = new FlyWithWings();
+    }
+}
+```
+
+Và lớp để chạy chương trình
+
+```java
+public class Program {
+    public static void main(String[] args) {
+        Duck mallard = new MallardDuck();
+        mallard.performQuack();
+        mallard.performFly();
+    }
+}
+```
+
+- Để linh động hơn, chúng ta có thể dùng thêm Setter để dễ quản lý. Bức tranh tổng thể sẽ như sau:
+  Class Diagram:
+  ![Class Diagram](/images/strategy2.png)
+
+```java
+// Duck class
+public abstract class Duck {
+	protected FlyBehavior flyBehavior;
+	protected QuackBehavior quackBehavior;
+
+	public Duck() {
+	}
+
+	public void setFlyBehavior(FlyBehavior fb) {
+		this.flyBehavior = fb;
+	}
+
+	public void setQuackBehavior(QuackBehavior qb) {
+		this.quackBehavior = qb;
+	}
+
+	abstract void display();
+
+	public void performFly() {
+		flyBehavior.fly();
+	}
+
+	public void performQuack() {
+		quackBehavior.quack();
+	}
+
+	public void swim() {
+		System.out.println("All ducks float, even decoys!");
+	}
+}
+// Interface Fly Behavior
+public interface FlyBehavior {
+	public void fly();
+}
+// Interface Quack Behavior
+public interface QuackBehavior {
+	public void quack();
+}
+// Các lớp hành vi cụ thể
+// Hành vi kêu cụ thể
+public class Quack implements QuackBehavior {
+	public void quack() {
+	 System.out.println("Quack");
+	}
+}
+public class Squeak implements QuackBehavior {
+	public void quack() {
+		System.out.println("Squeak");
+	}
+}
+public class Squick implements QuackBehavior {
+	public void quack() {
+		System.out.println("Quick quick");
+	}
+}
+public class FakeQuack implements QuackBehavior {
+	public void quack() {
+		System.out.println("Qwak");
+	}
+}
+public class MuteQuack implements QuackBehavior {
+	public void quack() {
+		System.out.println("<< Silence >>");
+	}
+}
+// Hành vi bay cụ thể
+public class FlyWithWings implements FlyBehavior {
+	public void fly() {
+		System.out.println("I'm flying!!");
+	}
+}
+public class FlyNoWay implements FlyBehavior {
+	public void fly() {
+		System.out.println("I can't fly");
+	}
+}
+public class FlyRocketPowered implements FlyBehavior {
+	public void fly() {
+		System.out.println("I'm flying with a rocket");
+	}
+}
+// Các lớp con - subclasses
+public class MarllardDuck extends Duck {
+	public MarllardDuck() {
+		 quackBehavior = new Quack();
+		 flyBehavior = new FlyWithWings();
+	}
+
+	public void display() {
+		System.out.println("I'm a real Mallard duck");
+	}
+}
+public class RedHeadDuck extends Duck {
+	public RedHeadDuck() {
+		quackBehavior = new Quack();
+		flyBehavior = new FlyWithWings();
+	}
+
+	public void display() {
+		System.out.println("I'm a real Red Headed duck");
+	}
+}
+public class DecoyDuck extends Duck {
+	public DecoyDuck() {
+		quackBehavior = new MuteQuack();
+		flyBehavior = new FlyNoWay();
+	}
+
+	public void display() {
+		System.out.println("I'm a duck Decoy");
+	}
+}
+public class ModelDuck extends Duck {
+	public ModelDuck() {
+		flyBehavior = new FlyNoWay();
+		quackBehavior = new Quack();
+	}
+
+	public void display() {
+		System.out.println("I'm a model duck");
+	}
+}
+public class RubberDuck extends Duck {
+	public RubberDuck() {
+		quackBehavior = new Squick();
+		flyBehavior = new FlyNoWay();
+	}
+
+	public void display() {
+		System.out.println("I'm a rubber duckie");
+	}
+}
+// Lớp chứa hàm main để chạy chương trình
+public class Program {
+	public static void main(String[] args) {
+		MarllardDuck marllard = new MarllardDuck();
+		RedHeadDuck redhead = new RedHeadDuck();
+		RubberDuck rubberDuckie = new RubberDuck();
+		DecoyDuck decoy = new DecoyDuck();
+		System.out.println("Marllard Duck Test: ");
+		marllard.display();
+		marllard.performQuack();
+		marllard.performFly();
+		marllard.swim();
+
+		System.out.println("Red Head Duck Test: ");
+		redhead.display();
+		redhead.performQuack();
+		redhead.performFly();
+		redhead.swim();
+
+		System.out.println("Rubber Duck Test: ");
+		rubberDuckie.display();
+		rubberDuckie.performQuack();
+		rubberDuckie.performFly();
+		rubberDuckie.swim();
+
+		System.out.println("Decoy Duck Test: ");
+		decoy.display();
+		decoy.performQuack();
+		decoy.performFly();
+		decoy.swim();
+
+		System.out.println("Mini Duck Simulator Test: ");
+		ModelDuck model = new ModelDuck();
+		model.display();
+		model.performFly();
+		model.setFlyBehavior(new FlyRocketPowered());
+		model.performFly();
+	}
+}
+```
