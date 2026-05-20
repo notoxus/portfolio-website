@@ -11,36 +11,28 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 1. CHẾ ĐỘ ANH - ANH (Free Dictionary API)
     if (mode === 'en-en') {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-      if (!res.ok) throw new Error("Not found");
-      
-      const data = await res.json();
-      return NextResponse.json({
-        word: data[0].word,
-        phonetic: data[0].phonetic || '',
-        definition: data[0].meanings[0].definitions[0].definition
+      const res = await fetch(`http://tratu.soha.vn/dict/en_vn/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
+        }
       });
     } 
-    
-    // 2. CHẾ ĐỘ ANH - VIỆT (Cào dữ liệu từ Soha)
+
     if (mode === 'en-vi') {
       const res = await fetch(`http://tratu.soha.vn/dict/en_vn/${word}`);
       const html = await res.text();
-      
-      // Khởi tạo cheerio để đọc HTML của Soha
+
       const $ = cheerio.load(html);
       
-      // Soha thường giấu nghĩa chính trong thẻ <h5> thuộc khu vực nội dung
       let definition = $('#content-5 h5').first().text().trim();
-      
-      // Nếu cấu trúc HTML thay đổi, thử tìm ở class khác
+
       if (!definition) {
         definition = $('.section-h5').first().text().trim();
       }
 
-      // Phương án dự phòng (Fallback): Nếu từ này Soha không có, dùng Google Translate API ngầm
       if (!definition) {
         const gtRes = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${word}`);
         const gtData = await gtRes.json();
@@ -49,7 +41,7 @@ export async function GET(request: Request) {
 
       return NextResponse.json({
         word: word,
-        phonetic: '', // Soha khó bóc tách phiên âm chuẩn, tạm để trống
+        phonetic: '',
         definition: definition || 'Không tìm thấy nghĩa của từ này.'
       });
     }

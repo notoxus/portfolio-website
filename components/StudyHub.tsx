@@ -197,7 +197,6 @@ export default function StudyHub() {
             <YouTube
               videoId={currentVideoId}
               className="w-full h-full"
-              containerClassName="w-full h-full"
               opts={{
                 width: '100%',
                 height: '100%',
