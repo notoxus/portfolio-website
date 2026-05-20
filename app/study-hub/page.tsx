@@ -9,7 +9,7 @@ export default function StudyHubPage() {
   return (
     <section>
       <h1 className="font-semibold text-2xl mb-8 tracking-tighter">Study Hub</h1>
-      <StudyHub videoId="dQw4w9WgXcQ" /> 
+      <StudyHub /> 
     </section>
   );
 }
