@@ -1,60 +1,108 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react';
+import YouTube from 'react-youtube';
 import { translateSentence, checkGeminiNanoAvailability } from '@/lib/gemini';
 
-// Dữ liệu giả lập Transcript (Sau này bạn fetch từ API)
-const mockTranscript = [
-  { id: 1, start: 0, end: 4, text: "Welcome back to another exciting tutorial." },
-  { id: 2, start: 4, end: 8, text: "Today we are going to build an amazing application." },
-  { id: 3, start: 8, end: 12, text: "Let's dive right into the code." }
-];
+// Khai báo kiểu dữ liệu Transcript
+interface TranscriptItem {
+  id: number;
+  start: number;
+  end: number;
+  text: string;
+}
 
-export default function StudyHub({ videoId = "dQw4w9WgXcQ" }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+export default function StudyHub() {
   const activeSubRef = useRef<HTMLDivElement>(null);
-  
-  // States quản lý Layout & Video
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const playerRef = useRef<any>(null);
+
+  // States quản lý Trạng thái Khởi tạo
+  const [inputUrl, setInputUrl] = useState('');
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  // States quản lý Layout & Đồng bộ
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  
-  // States quản lý Subtitle & Dịch thuật
   const [activeSubIndex, setActiveSubIndex] = useState(0);
-  const [vietSub, setVietSub] = useState("Đang tải phụ đề tiếng Việt...");
-  
+  const [vietSub, setVietSub] = useState("Waiting for video...");
+  const [transcript, setTranscript] = useState<TranscriptItem[]>([]);
+
   // States quản lý Từ điển
+  const [dictionaryMode, setDictionaryMode] = useState<'en-vi' | 'en-en'>('en-vi');
   const [dictResult, setDictResult] = useState<{ word: string, phonetic: string, definition: string } | null>(null);
   const [isDictLoading, setIsDictLoading] = useState(false);
-  
-  // Caches
+
+  // Caches tối ưu tài nguyên
   const translationCache = useRef(new Map<string, string>());
   const dictCache = useRef(new Map<string, any>());
 
-  // Logic: Theo dõi thời gian video giả lập (Nếu dùng react-youtube, thay bằng sự kiện onStateChange)
+  // Hàm trích xuất Video ID từ URL YouTube bất kỳ
+  const extractVideoId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const handleLoadVideo = () => {
+    const id = extractVideoId(inputUrl);
+    if (id) {
+      setCurrentVideoId(id);
+      setHasStarted(false); // Reset lại cho đến khi nhấn Play thực sự
+      setTranscript([]);    // Xóa transcript cũ
+      
+      // Giả lập nạp dữ liệu Transcript mới tương ứng với Video (Sau này thay bằng gọi API fetch)
+      setTranscript([
+        { id: 1, start: 0, end: 4, text: "Welcome back to another exciting tutorial." },
+        { id: 2, start: 4, end: 8, text: "Today we are going to build an amazing application." },
+        { id: 3, start: 8, end: 12, text: "Let's dive right into the code." }
+      ]);
+    } else {
+      alert('URL YouTube không hợp lệ, vui lòng thử lại!');
+    }
+  };
+
+  // Tự động lắng nghe chế độ Toàn màn hình từ hệ thống của trình duyệt/YouTube
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(prev => (prev >= 12 ? 0 : prev + 1)); // Lặp lại sau 12s cho demo
-    }, 1000);
-    return () => clearInterval(interval);
+    const handleFullscreenChange = () => {
+      const isFull = !!document.fullscreenElement;
+      setIsTheaterMode(isFull); // Khi full màn hình, kích hoạt giao diện mở rộng layout chữ xuống dưới
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Logic: Đồng bộ sub và gọi Gemini dịch câu
+  // Theo dõi tiến trình thời gian thực của Video YouTube khi đang chạy
   useEffect(() => {
-    const currentSubIndex = mockTranscript.findIndex(
+    let interval: NodeJS.Timeout;
+    if (hasStarted && playerRef.current) {
+      interval = setInterval(() => {
+        const time = playerRef.current.getCurrentTime();
+        setCurrentTime(time);
+      }, 500); // Cập nhật mỗi 0.5s để phụ đề mượt mà
+    }
+    return () => clearInterval(interval);
+  }, [hasStarted]);
+
+  // Đồng bộ Subtitle Overlay và kích hoạt Gemini Nano dịch tự động
+  useEffect(() => {
+    if (transcript.length === 0) return;
+
+    const currentSubIndex = transcript.findIndex(
       sub => currentTime >= sub.start && currentTime < sub.end
     );
 
     if (currentSubIndex !== -1 && currentSubIndex !== activeSubIndex) {
       setActiveSubIndex(currentSubIndex);
-      const engText = mockTranscript[currentSubIndex].text;
-      
-      // Auto scroll transcript trong chế độ Theater
-      if (activeSubRef.current && isTheaterMode) {
+      const engText = transcript[currentSubIndex].text;
+
+      // Auto scroll đoạn Text phụ đề vào giữa vùng nhìn thấy khi học
+      if (activeSubRef.current) {
         activeSubRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
-      // Xử lý dịch câu
+      // Xử lý bộ nhớ đệm Cache + Gemini Nano dịch thuật
       if (translationCache.current.has(engText)) {
         setVietSub(translationCache.current.get(engText)!);
       } else {
@@ -65,43 +113,33 @@ export default function StudyHub({ videoId = "dQw4w9WgXcQ" }) {
               setVietSub(translated);
             });
           } else {
-            setVietSub("(Gemini Nano chưa sẵn sàng)");
+            setVietSub("(Gemini Nano local AI is offline)");
           }
         });
       }
     }
-  }, [currentTime, activeSubIndex, isTheaterMode]);
+  }, [currentTime, activeSubIndex, transcript]);
 
-  // Logic: Toàn màn hình
-  const toggleFullscreen = async () => {
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      await containerRef.current.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      await document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
-
-  // Logic: Tra từ điển khi click vào từ
+  // Gọi API Tra từ điển (Đọc động theo chế độ Anh-Anh hoặc Anh-Việt)
   const handleWordClick = async (word: string) => {
-    const cleanWord = word.replace(/[.,!?]/g, '').toLowerCase();
-    
-    if (dictCache.current.has(cleanWord)) {
-      setDictResult(dictCache.current.get(cleanWord));
+    const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, "").toLowerCase();
+    const cacheKey = `${dictionaryMode}-${cleanWord}`;
+
+    if (dictCache.current.has(cacheKey)) {
+      setDictResult(dictCache.current.get(cacheKey));
       return;
     }
 
     setIsDictLoading(true);
     try {
-      const res = await fetch(`/api/dictionary?word=${cleanWord}`);
+      // Endpoint xử lý định tuyến nguồn từ điển của bạn
+      const res = await fetch(`/api/dictionary?word=${cleanWord}&mode=${dictionaryMode}`);
       if (res.ok) {
         const data = await res.json();
-        dictCache.current.set(cleanWord, data);
+        dictCache.current.set(cacheKey, data);
         setDictResult(data);
       } else {
-        setDictResult({ word: cleanWord, phonetic: "", definition: "Không tìm thấy nghĩa." });
+        setDictResult({ word: cleanWord, phonetic: "", definition: "Không tìm thấy dữ liệu từ điển." });
       }
     } catch (error) {
       console.error(error);
@@ -112,102 +150,129 @@ export default function StudyHub({ videoId = "dQw4w9WgXcQ" }) {
   return (
     <div className="w-full max-w-7xl mx-auto p-4 flex flex-col gap-4 text-neutral-900 dark:text-neutral-100">
       
-      {/* Thanh điều khiển */}
-      <div className="flex justify-between items-center bg-neutral-100 dark:bg-neutral-800 p-3 rounded-lg">
-        <h2 className="font-bold text-xl uppercase tracking-tighter">Study Hub</h2>
-        <div className="flex gap-2">
-          <button 
-            onClick={() => setIsTheaterMode(!isTheaterMode)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+      {/* 1. THANH ĐIỀU KHIỂN & NHẬP URL */}
+      <div className="flex flex-col md:flex-row gap-2 justify-between items-stretch md:items-center bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg shadow-sm">
+        <div className="flex-1 flex gap-2">
+          <input
+            type="text"
+            placeholder="Dán link video YouTube vào đây (e.g., https://www.youtube.com/watch?v=...)"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+            className="flex-1 px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleLoadVideo}
+            className="px-5 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition text-sm whitespace-nowrap"
           >
-            {isTheaterMode ? 'Chế độ Chuẩn' : 'Chế độ Rạp Chiếu'}
-          </button>
-        </div>
-      </div>
-
-      {/* Vùng Layout Chính */}
-      <div className={`grid gap-4 ${isTheaterMode ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-12'}`}>
-        
-        {/* 1. CỘT VIDEO (Chiếm 7 cột chuẩn / Chiếm Full ở Theater) */}
-        <div 
-          ref={containerRef}
-          className={`relative bg-black rounded-lg overflow-hidden flex flex-col items-center justify-center
-            ${isTheaterMode ? 'w-full aspect-video' : 'lg:col-span-7 aspect-video'}
-            ${isFullscreen ? 'h-screen w-screen rounded-none' : ''}
-          `}
-        >
-          <iframe
-            className="w-full h-full pointer-events-auto"
-            src={`https://www.youtube.com/embed/${videoId}?rel=0&controls=1`}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          ></iframe>
-          
-          {/* Subtitle Overlay */}
-          <div className="absolute bottom-[15%] w-[90%] text-center pointer-events-none">
-            <span className="bg-black/70 text-yellow-400 font-bold text-lg md:text-2xl px-4 py-1 rounded shadow-lg backdrop-blur-sm">
-              {vietSub}
-            </span>
-          </div>
-
-          <button 
-            onClick={toggleFullscreen}
-            className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white p-2 rounded z-10 transition pointer-events-auto"
-          >
-            {isFullscreen ? 'Thoát Toàn Màn' : 'Toàn Màn Hình'}
+            Phát Video
           </button>
         </div>
 
-        {/* 2. CỘT TRANSCRIPT (Chiếm 3 cột chuẩn / Nằm dưới ở Theater) */}
-        <div className={`bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg overflow-y-auto custom-scrollbar
-          ${isTheaterMode ? 'max-h-32 flex flex-col gap-2' : 'lg:col-span-3 max-h-[500px]'}
-        `}>
-          <h3 className="font-semibold mb-2 sticky top-0 bg-neutral-100 dark:bg-neutral-800 z-10 py-1">Transcript</h3>
-          <div className="flex flex-col gap-3">
-            {mockTranscript.map((sub, index) => {
-              const isActive = index === activeSubIndex;
-              return (
-                <div 
-                  key={sub.id} 
-                  ref={isActive ? activeSubRef : null}
-                  className={`p-2 rounded transition-colors ${isActive ? 'bg-blue-100 dark:bg-blue-900/40 border-l-4 border-blue-500' : 'hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
-                >
-                  <p className="leading-relaxed">
-                    {sub.text.split(' ').map((word, wIdx) => (
-                      <span 
-                        key={wIdx} 
-                        onClick={() => handleWordClick(word)}
-                        className="cursor-pointer hover:bg-yellow-300 dark:hover:bg-yellow-600 hover:text-black rounded px-[2px] transition-colors"
-                      >
-                        {word}{' '}
-                      </span>
-                    ))}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 3. CỘT TỪ ĐIỂN (Chiếm 2 cột chuẩn / Ẩn hoặc Modal ở Theater) */}
-        {!isTheaterMode && (
-          <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg lg:col-span-2">
-            <h3 className="font-semibold mb-4 border-b border-neutral-300 dark:border-neutral-600 pb-2">Dictionary</h3>
-            
-            {isDictLoading ? (
-              <p className="text-sm text-neutral-500 animate-pulse">Đang tra từ...</p>
-            ) : dictResult ? (
-              <div>
-                <h4 className="text-xl font-bold text-blue-600 dark:text-blue-400 capitalize">{dictResult.word}</h4>
-                <p className="text-sm text-neutral-500 mb-3">{dictResult.phonetic}</p>
-                <p className="text-sm">{dictResult.definition}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-neutral-500 italic">Click vào một từ trong transcript để tra nghĩa.</p>
-            )}
+        {/* Nút chuyển đổi Từ điển thay thế nút Chọn chế độ cũ */}
+        {hasStarted && (
+          <div className="flex items-center gap-2 mt-2 md:mt-0">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-60">Từ điển:</span>
+            <button
+              onClick={() => setDictionaryMode(prev => prev === 'en-vi' ? 'en-en' : 'en-vi')}
+              className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 font-bold rounded hover:bg-neutral-300 dark:hover:bg-neutral-600 transition text-xs uppercase"
+            >
+              {dictionaryMode === 'en-vi' ? '🇬🇧🇺🇸 Anh - Việt (Soha)' : '🌐 Anh - Anh (Oxford)'}
+            </button>
           </div>
         )}
       </div>
+
+      {/* 2. KHÔNG GIAN PHÁT VIDEO VÀ HỌC TẬP */}
+      {!currentVideoId ? (
+        <div className="w-full h-64 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg flex flex-col items-center justify-center text-center p-6 bg-neutral-50/50 dark:bg-neutral-900/20">
+          <p className="text-neutral-500 text-sm">Chưa có dữ liệu. Vui lòng nhập link YouTube bên trên để bắt đầu không gian học tập.</p>
+        </div>
+      ) : (
+        <div className={`grid gap-4 ${isTheaterMode || !hasStarted ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-12'}`}>
+          
+          {/* CỘT VIDEO */}
+          <div className={`relative bg-black rounded-lg overflow-hidden flex flex-col items-center justify-center
+            ${isTheaterMode || !hasStarted ? 'w-full aspect-video' : 'lg:col-span-7 aspect-video'}
+          `}>
+            <YouTube
+              videoId={currentVideoId}
+              className="w-full h-full"
+              containerClassName="w-full h-full"
+              opts={{
+                width: '100%',
+                height: '100%',
+                playerVars: { rel: 0, controls: 1, modestbranding: 1 }
+              }}
+              onReady={(e) => { playerRef.current = e.target; }}
+              onPlay={() => setHasStarted(true)} // CHỈ BẬT TRANSCRIPT KHI ẤN PHÁT VIDEO
+            />
+            
+            {/* Dòng chữ Sub phụ đề Việt nhỏ đè trên Video */}
+            {hasStarted && (
+              <div className="absolute bottom-[14%] w-[85%] text-center pointer-events-none z-10">
+                <span className="bg-black/75 text-yellow-400 font-bold text-sm md:text-xl px-3 py-1 rounded shadow-md backdrop-blur-xs select-none">
+                  {vietSub}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* HIỂN THỊ TRANSCRIPT & DICTIONARY (CHỈ HIỆN KHI ẤN PHÁT VIDEO) */}
+          {hasStarted && (
+            <>
+              {/* CỘT TRANSCRIPT */}
+              <div className={`bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg overflow-y-auto custom-scrollbar transition-all
+                ${isTheaterMode ? 'max-h-28 flex flex-col gap-1' : 'lg:col-span-3 max-h-[480px]'}
+              `}>
+                <h3 className="font-bold text-xs uppercase tracking-wider mb-2 sticky top-0 bg-neutral-100 dark:bg-neutral-800 z-10 py-1 opacity-70">Transcript</h3>
+                <div className="flex flex-col gap-2">
+                  {transcript.map((sub, index) => {
+                    const isActive = index === activeSubIndex;
+                    return (
+                      <div
+                        key={sub.id}
+                        ref={isActive ? activeSubRef : null}
+                        className={`p-2 rounded text-sm transition-colors ${isActive ? 'bg-blue-500/10 border-l-4 border-blue-500 font-medium' : 'hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
+                      >
+                        <p className="leading-relaxed">
+                          {sub.text.split(' ').map((word, wIdx) => (
+                            <span
+                              key={wIdx}
+                              onClick={() => handleWordClick(word)}
+                              className="cursor-pointer hover:bg-yellow-300 dark:hover:bg-yellow-500/80 hover:text-black rounded px-[2px]"
+                            >
+                              {word}{' '}
+                            </span>
+                          ))}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* CỘT TỪ ĐIỂN */}
+              {!isTheaterMode && (
+                <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg lg:col-span-2 max-h-[480px] overflow-y-auto">
+                  <h3 className="font-bold text-xs uppercase tracking-wider mb-3 border-b border-neutral-300 dark:border-neutral-700 pb-2 opacity-70">Dictionary</h3>
+                  {isDictLoading ? (
+                    <p className="text-xs text-neutral-500 animate-pulse">Đang tra từ...</p>
+                  ) : dictResult ? (
+                    <div className="flex flex-col gap-1">
+                      <h4 className="text-lg font-bold text-blue-600 dark:text-blue-400 capitalize break-all">{dictResult.word}</h4>
+                      {dictResult.phonetic && <p className="text-xs text-neutral-500 font-mono">{dictResult.phonetic}</p>}
+                      <p className="text-xs leading-relaxed mt-2 text-neutral-700 dark:text-neutral-300">{dictResult.definition}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-neutral-400 italic">Nhấp vào từ bất kỳ ở phụ đề để tra cứu nghĩa nhanh.</p>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
