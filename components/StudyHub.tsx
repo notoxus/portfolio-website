@@ -10,11 +10,18 @@ interface TranscriptItem {
   text: string;
 }
 
+interface CacheEntry {
+  videoId: string;
+  url: string;
+  transcript: TranscriptItem[];
+  translations: Map<string, string>;
+  timestamp: number;
+}
+
 async function batchTranslateWithGroq(texts: string[]): Promise<Map<string, string>> {
   const result = new Map<string, string>();
   if (texts.length === 0) return result;
-
-  // Đánh số thứ tự các câu để Groq trả về đúng cấu trúc
+  
   const numbered = texts.map((t, idx) => `${idx + 1}. ${t}`).join('\n');
 
   try {
@@ -23,9 +30,9 @@ async function batchTranslateWithGroq(texts: string[]): Promise<Map<string, stri
       headers: {
         'Content-Type': 'application/json',
       },
-      // Chú ý: Gửi biến numbered vào mảng để API nội bộ đọc được
       body: JSON.stringify({
-        texts: [numbered], 
+        texts: [numbered],
+        type: 'batch'
       }),
     });
 
@@ -35,7 +42,6 @@ async function batchTranslateWithGroq(texts: string[]): Promise<Map<string, stri
     const rawText: string = data.choices?.[0]?.message?.content || '';
     const lines = rawText.split('\n').filter((l: string) => l.trim());
 
-    // Bóc tách kết quả từ AI (dựa theo số thứ tự)
     lines.forEach((line: string) => {
       const match = line.match(/^(\d+)\.\s+(.+)$/);
       if (match) {
@@ -46,7 +52,7 @@ async function batchTranslateWithGroq(texts: string[]): Promise<Map<string, stri
       }
     });
   } catch (error) {
-    console.error("Lỗi khi dịch lô:", error);
+    console.error("Something went wrong with batch trans:", error);
   }
 
   return result;
@@ -61,6 +67,7 @@ async function translateSingleWithGroq(text: string): Promise<string> {
       },
       body: JSON.stringify({
         texts: [text],
+        type: 'instant'
       }),
     });
     if (!res.ok) return text;
@@ -85,14 +92,20 @@ export default function StudyHub() {
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [activeSubIndex, setActiveSubIndex] = useState(-1);
   const [vietSub, setVietSub] = useState('');
+  const [syncOffset, setSyncOffset] = useState(0);
+  
   const [transcript, setTranscript] = useState<TranscriptItem[]>([]);
   const [isTranscriptLoading, setIsTranscriptLoading] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translateProgress, setTranslateProgress] = useState(0);
+  
   const [dictionaryMode, setDictionaryMode] = useState<'en-vi' | 'en-en'>('en-vi');
   const [dictResult, setDictResult] = useState<{ word: string; phonetic: string; definition: string } | null>(null);
   const [isDictLoading, setIsDictLoading] = useState(false);
 
+  // Cache Systems
+  const historyCache = useRef<Map<string, CacheEntry>>(new Map());
+  const [historyList, setHistoryList] = useState<{videoId: string, url: string, time: number}[]>([]);
   const translationCache = useRef(new Map<string, string>());
   const dictCache = useRef(new Map<string, any>());
 
@@ -102,22 +115,35 @@ export default function StudyHub() {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  const handleLoadVideo = async () => {
-    const id = extractVideoId(inputUrl);
-    if (!id) return alert('URL YouTube không hợp lệ!');
+  const handleLoadVideo = async (forceUrl?: string) => {
+    const targetUrl = forceUrl || inputUrl;
+    const id = extractVideoId(targetUrl);
+    if (!id) return alert('YouTube URL is unvalid!');
 
+    if (forceUrl) setInputUrl(forceUrl);
     setCurrentVideoId(id);
     setHasStarted(false);
-    setIsTranscriptLoading(true);
-    setTranscript([]);
     setActiveSubIndex(-1);
     setVietSub('');
+
+    // KIỂM TRA CACHE (30 Phút)
+    const cached = historyCache.current.get(id);
+    if (cached && (Date.now() - cached.timestamp < 1800000)) {
+      setTranscript(cached.transcript);
+      translationCache.current = cached.translations; 
+      setIsTranscriptLoading(false);
+      setIsTranslating(false);
+      return; 
+    }
+
+    setIsTranscriptLoading(true);
+    setTranscript([]);
     translationCache.current.clear();
 
     try {
       const res = await fetch(`/api/transcript?videoId=${id}`);
       if (!res.ok) {
-        alert('Video này không có phụ đề (CC) để hiển thị.');
+        alert("That video didn't have subtitles (CC) to show.");
         setIsTranscriptLoading(false);
         return;
       }
@@ -125,9 +151,20 @@ export default function StudyHub() {
       setTranscript(data);
       setIsTranscriptLoading(false);
 
-      const textsToTranslate = data
-        .map(item => item.text)
-        .filter(t => !translationCache.current.has(t));
+      // Lưu Cache mới
+      historyCache.current.set(id, {
+        videoId: id,
+        url: targetUrl,
+        transcript: data,
+        translations: translationCache.current,
+        timestamp: Date.now()
+      });
+      
+      setHistoryList(Array.from(historyCache.current.values()).map(c => ({
+        videoId: c.videoId, url: c.url, time: c.timestamp
+      })).sort((a,b) => b.time - a.time));
+
+      const textsToTranslate = data.map(item => item.text);
 
       if (textsToTranslate.length > 0) {
         setIsTranslating(true);
@@ -155,15 +192,16 @@ export default function StudyHub() {
     }
   };
 
-  // 1. VÒNG LẶP SYNC VIDEO (Quét bằng requestAnimationFrame siêu mượt)
+  // 1. VÒNG LẶP SYNC VIDEO (Kết hợp thời gian thực & Bộ bù trễ động)
   useEffect(() => {
     let animationFrameId: number;
-    const TIME_OFFSET = 0.3; // Bù trễ để chữ khớp sát với tiếng
 
     const updateTime = () => {
       if (hasStarted && playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
         const time = playerRef.current.getCurrentTime();
-        const adjustedTime = time + TIME_OFFSET;
+        
+        // Cộng thêm độ trễ do người dùng tự chỉnh trên giao diện
+        const adjustedTime = time + syncOffset;
 
         if (transcript.length > 0) {
           const currentSubIndex = transcript.findIndex((sub, index) => {
@@ -171,7 +209,7 @@ export default function StudyHub() {
             if (nextSub) {
               return adjustedTime >= sub.start && adjustedTime < nextSub.start;
             }
-            return adjustedTime >= sub.start && adjustedTime <= sub.end + 1.0;
+            return adjustedTime >= sub.start && adjustedTime <= sub.end + 0.5;
           });
 
           setActiveSubIndex(prev => prev !== currentSubIndex ? currentSubIndex : prev);
@@ -183,10 +221,9 @@ export default function StudyHub() {
     if (hasStarted) {
       animationFrameId = requestAnimationFrame(updateTime);
     }
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [hasStarted, transcript]);
+  }, [hasStarted, transcript, syncOffset]);
 
-  // 2. CẬP NHẬT SUB TIẾNG VIỆT (Fix dứt điểm lỗi Race Condition)
+  // 2. CẬP NHẬT SUB TIẾNG VIỆT (Tốc độ tức thì, không hiện tiếng Anh)
   useEffect(() => {
     if (activeSubIndex === -1) { 
       setVietSub(''); 
@@ -199,7 +236,8 @@ export default function StudyHub() {
     if (translationCache.current.has(engText)) {
       setVietSub(translationCache.current.get(engText)!);
     } else {
-      setVietSub(engText); 
+      // Để trống trong chớp mắt thay vì hiện tiếng Anh gây nhiễu
+      setVietSub(''); 
 
       let isCurrent = true;
 
@@ -209,7 +247,7 @@ export default function StudyHub() {
           setVietSub(translated);
         }
       }).catch(() => {
-         if (isCurrent) setVietSub(engText);
+         if (isCurrent) setVietSub("Traslation error!");
       });
       return () => {
         isCurrent = false;
@@ -217,6 +255,7 @@ export default function StudyHub() {
     }
   }, [activeSubIndex, transcript]);
 
+  // 3. AUTO-SCROLL
   useEffect(() => {
     if (activeSubRef.current && transcriptContainerRef.current) {
       const container = transcriptContainerRef.current;
@@ -234,17 +273,30 @@ export default function StudyHub() {
     const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '').toLowerCase();
     if (!cleanWord) return;
     const cacheKey = `${dictionaryMode}-${cleanWord}`;
+    
     if (dictCache.current.has(cacheKey)) {
       setDictResult(dictCache.current.get(cacheKey));
       return;
     }
+    
     setIsDictLoading(true);
     try {
       const res = await fetch(`/api/dictionary?word=${cleanWord}&mode=${dictionaryMode}`);
       if (res.ok) {
         const data = await res.json();
-        dictCache.current.set(cacheKey, data);
-        setDictResult(data);
+        
+        // --- BỘ LỌC DỌN RÁC TỪ ĐIỂN ---
+        let finalDef = data.definition;
+        // Xóa lặp tiếng Anh (noun noun -> noun)
+        finalDef = finalDef.replace(/\b(noun|verb|adjective|adverb|pronoun|preposition|conjunction)\s+\1\b/gi, '$1');
+        // Xóa lặp tiếng Việt (danh từ danh từ -> danh từ)
+        finalDef = finalDef.replace(/(danh từ|động từ|tính từ|trạng từ|phó từ|đại từ)\s+\1/gi, '$1');
+        
+        const cleanedData = { ...data, definition: finalDef };
+        // ------------------------------
+
+        dictCache.current.set(cacheKey, cleanedData);
+        setDictResult(cleanedData);
       }
     } catch {}
     setIsDictLoading(false);
@@ -275,7 +327,7 @@ export default function StudyHub() {
             "
           />
           <button
-            onClick={handleLoadVideo}
+            onClick={() => handleLoadVideo()}
             disabled={isTranscriptLoading}
             className="
               px-5 py-2.5 rounded-lg text-sm font-semibold
@@ -318,9 +370,50 @@ export default function StudyHub() {
             >
               {dictionaryMode === 'en-vi' ? 'Eng → Vie' : 'Eng → Eng'}
             </button>
+            <div className="flex items-center bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden transition">
+              <span className="px-2 text-[10px] font-semibold uppercase text-neutral-500 dark:text-neutral-400">
+                Sync:
+              </span>
+              <button 
+                onClick={() => setSyncOffset(p => Number((p - 0.1).toFixed(1)))}
+                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition"
+              >
+                -
+              </button>
+              <span className="text-xs font-mono w-7 text-center font-bold text-blue-600 dark:text-blue-400">
+                {syncOffset > 0 ? `+${syncOffset}` : syncOffset}
+              </span>
+              <button 
+                onClick={() => setSyncOffset(p => Number((p + 0.1).toFixed(1)))}
+                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition"
+              >
+                +
+              </button>
+            </div>
           </div>
         )}
       </div>
+
+      {/* THANH LỊCH SỬ XEM GẦN ĐÂY */}
+      {historyList.length > 0 && (
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mr-2">Đã xem:</span>
+          {historyList.map((item, idx) => (
+            <button
+              key={item.videoId}
+              onClick={() => handleLoadVideo(item.url)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition
+                ${currentVideoId === item.videoId 
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800' 
+                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent'
+                }`}
+            >
+              Video {idx + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
       {isTranslating && (
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
@@ -399,7 +492,7 @@ export default function StudyHub() {
             <div
               ref={transcriptContainerRef}
               className={`
-                relative /*
+                relative
                 bg-neutral-50 dark:bg-neutral-800/60
                 border border-neutral-200 dark:border-neutral-700/60
                 rounded-xl overflow-y-auto
@@ -439,7 +532,7 @@ export default function StudyHub() {
                     ))}
                   </div>
                 )) : (
-                  <p className="text-sm text-neutral-500 italic px-3">Không lấy được kịch bản.</p>
+                  <p className="text-sm text-neutral-500 italic px-3">Couldn't get transcript</p>
                 )}
               </div>
             </div>
@@ -454,7 +547,7 @@ export default function StudyHub() {
               ${isTheaterMode ? '' : 'xl:col-span-12'}
             `}>
               <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-4">
-                Từ điển
+                Dictionary
               </h3>
 
               {isDictLoading ? (
@@ -463,7 +556,7 @@ export default function StudyHub() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                   </svg>
-                  Đang tra từ...
+                  Looking up...
                 </div>
               ) : dictResult ? (
                 <div className="flex flex-col sm:flex-row gap-5 sm:items-start">
@@ -485,7 +578,7 @@ export default function StudyHub() {
                 </div>
               ) : (
                 <p className="text-sm italic text-neutral-400 dark:text-neutral-500">
-                  Nhấp vào từ bất kỳ trên transcript để tra nghĩa →
+                  Click to any word in transcript to translate →
                 </p>
               )}
             </div>

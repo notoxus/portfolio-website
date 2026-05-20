@@ -4,12 +4,14 @@ import { processTranslation } from '@/lib/translate';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { texts } = body;
+    const { texts, type } = body;
 
     if (!texts || texts.length === 0) {
-      return NextResponse.json({ error: "No text provided" }, { status: 400 });
+      return NextResponse.json({ error: "Didn't have transcript to translate" }, { status: 400 });
     }
-    const translatedText = await processTranslation(texts[0]);
+
+    // Truyền type xuống hàm xử lý
+    const translatedText = await processTranslation(texts[0], type);
 
     return NextResponse.json({
       choices: [
@@ -17,6 +19,6 @@ export async function POST(request: Request) {
       ]
     });
   } catch (error) {
-    return NextResponse.json({ error: "Translation failed" }, { status: 500 });
+    return NextResponse.json({ error: "Translation error" }, { status: 500 });
   }
 }

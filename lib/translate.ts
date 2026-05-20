@@ -2,12 +2,12 @@ export interface TranslationJob {
   text: string;
 }
 
-export async function processTranslation(text: string) {
+export async function processTranslation(text: string, type: 'batch' | 'instant' = 'instant') {
   const apiKey = process.env.GROQ_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("Missing GROQ_API_KEY");
-  }
+  if (!apiKey) throw new Error("Missing GROQ_API_KEY");
+
+  // ĐỊNH TUYẾN MODEL: 'batch' dùng 70B siêu xịn, 'instant' dùng 8B siêu tốc
+  const modelName = type === 'batch' ? "llama-3.3-70b-versatile" : "llama-3.1-8b-instant";
 
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -16,7 +16,7 @@ export async function processTranslation(text: string) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: "llama-3.3-70b-versatile", 
+      model: modelName, 
       messages: [
         { 
           role: "system", 
@@ -29,9 +29,8 @@ export async function processTranslation(text: string) {
   });
 
   if (!res.ok) {
-    const errorData = await res.text();
-    console.error("❌ LỖI API GROQ TỪ SERVER:", errorData);
-    return `[API call error] ${text}`; 
+    // Nếu lỗi thì âm thầm bỏ qua đối với instant để không làm giật màn hình
+    return type === 'instant' ? "" : text; 
   }
 
   const data = await res.json();
