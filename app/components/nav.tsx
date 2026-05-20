@@ -13,6 +13,9 @@ const navItems = {
   '/notebook': {
     name: 'notebook',
   },
+  '/study-hub': {
+    name: 'study hub',
+  },
 }
 
 export function Navbar() {
