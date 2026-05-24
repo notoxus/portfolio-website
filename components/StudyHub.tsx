@@ -1,7 +1,10 @@
+// components/StudyHub.tsx
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import YouTube from 'react-youtube';
+import Subtitle from './Subtitle';
+import ToggleSwitch from './ToggleSwitch';
 
 interface TranscriptItem {
   id: number;
@@ -18,57 +21,12 @@ interface CacheEntry {
   timestamp: number;
 }
 
-async function batchTranslateWithGroq(texts: string[]): Promise<Map<string, string>> {
-  const result = new Map<string, string>();
-  if (texts.length === 0) return result;
-  
-  const numbered = texts.map((t, idx) => `${idx + 1}. ${t}`).join('\n');
-
-  try {
-    const res = await fetch('/api/groq-translate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        texts: [numbered],
-        type: 'batch'
-      }),
-    });
-
-    if (!res.ok) return result;
-
-    const data = await res.json();
-    const rawText: string = data.choices?.[0]?.message?.content || '';
-    const lines = rawText.split('\n').filter((l: string) => l.trim());
-
-    lines.forEach((line: string) => {
-      const match = line.match(/^(\d+)\.\s+(.+)$/);
-      if (match) {
-        const idx = parseInt(match[1]) - 1;
-        if (idx >= 0 && idx < texts.length) {
-          result.set(texts[idx], match[2].trim());
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Something went wrong with batch trans:", error);
-  }
-
-  return result;
-}
-
 async function translateSingleWithGroq(text: string): Promise<string> {
   try {
     const res = await fetch('/api/groq-translate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        texts: [text],
-        type: 'instant'
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts: [text], type: 'instant' }),
     });
     if (!res.ok) return text;
     const data = await res.json();
@@ -80,7 +38,6 @@ async function translateSingleWithGroq(text: string): Promise<string> {
   }
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function StudyHub() {
   const activeSubRef = useRef<HTMLDivElement>(null);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
@@ -92,20 +49,21 @@ export default function StudyHub() {
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [activeSubIndex, setActiveSubIndex] = useState(-1);
   const [vietSub, setVietSub] = useState('');
+  const [showEngSub, setShowEngSub] = useState(true);
+  const [showVietSub, setShowVietSub] = useState(true);
+  const [showSubtitle, setShowSubtitle] = useState(true);
+  const [showTranscript, setShowTranscript] = useState(true);
   const [syncOffset, setSyncOffset] = useState(0);
-  
+
   const [transcript, setTranscript] = useState<TranscriptItem[]>([]);
   const [isTranscriptLoading, setIsTranscriptLoading] = useState(false);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [translateProgress, setTranslateProgress] = useState(0);
-  
+
   const [dictionaryMode, setDictionaryMode] = useState<'en-vi' | 'en-en'>('en-vi');
   const [dictResult, setDictResult] = useState<{ word: string; phonetic: string; definition: string } | null>(null);
   const [isDictLoading, setIsDictLoading] = useState(false);
 
-  // Cache Systems
   const historyCache = useRef<Map<string, CacheEntry>>(new Map());
-  const [historyList, setHistoryList] = useState<{videoId: string, url: string, time: number}[]>([]);
+  const [historyList, setHistoryList] = useState<{ videoId: string; url: string; time: number }[]>([]);
   const translationCache = useRef(new Map<string, string>());
   const dictCache = useRef(new Map<string, any>());
 
@@ -118,22 +76,22 @@ export default function StudyHub() {
   const handleLoadVideo = async (forceUrl?: string) => {
     const targetUrl = forceUrl || inputUrl;
     const id = extractVideoId(targetUrl);
-    if (!id) return alert('YouTube URL is unvalid!');
+    if (!id) return alert('YouTube URL is invalid!');
 
     if (forceUrl) setInputUrl(forceUrl);
     setCurrentVideoId(id);
     setHasStarted(false);
     setActiveSubIndex(-1);
     setVietSub('');
+    setShowSubtitle(true);
+    setShowTranscript(true);
 
-    // KIỂM TRA CACHE (30 Phút)
     const cached = historyCache.current.get(id);
-    if (cached && (Date.now() - cached.timestamp < 1800000)) {
+    if (cached && Date.now() - cached.timestamp < 1800000) {
       setTranscript(cached.transcript);
-      translationCache.current = cached.translations; 
+      translationCache.current = cached.translations;
       setIsTranscriptLoading(false);
-      setIsTranslating(false);
-      return; 
+      return;
     }
 
     setIsTranscriptLoading(true);
@@ -151,119 +109,94 @@ export default function StudyHub() {
       setTranscript(data);
       setIsTranscriptLoading(false);
 
-      // Lưu Cache mới
       historyCache.current.set(id, {
         videoId: id,
         url: targetUrl,
         transcript: data,
         translations: translationCache.current,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
-      setHistoryList(Array.from(historyCache.current.values()).map(c => ({
-        videoId: c.videoId, url: c.url, time: c.timestamp
-      })).sort((a,b) => b.time - a.time));
 
-      const textsToTranslate = data.map(item => item.text);
-
-      if (textsToTranslate.length > 0) {
-        setIsTranslating(true);
-        setTranslateProgress(0);
-
-        const BATCH = 40;
-        let done = 0;
-        for (let i = 0; i < textsToTranslate.length; i += BATCH) {
-          const batch = textsToTranslate.slice(i, i + BATCH);
-          const batchResult = await batchTranslateWithGroq(batch);
-          batchResult.forEach((v, k) => translationCache.current.set(k, v));
-          done += batch.length;
-          setTranslateProgress(Math.round((done / textsToTranslate.length) * 100));
-          if (i + BATCH < textsToTranslate.length) {
-            await new Promise(r => setTimeout(r, 200));
-          }
-        }
-        setIsTranslating(false);
-        setTranslateProgress(100);
-      }
+      setHistoryList(
+        Array.from(historyCache.current.values())
+          .map(c => ({ videoId: c.videoId, url: c.url, time: c.timestamp }))
+          .sort((a, b) => b.time - a.time)
+      );
     } catch (err) {
       console.error(err);
       setIsTranscriptLoading(false);
-      setIsTranslating(false);
     }
   };
 
-  // 1. VÒNG LẶP SYNC VIDEO (Kết hợp thời gian thực & Bộ bù trễ động)
+  // Sync loop
   useEffect(() => {
+    if (!hasStarted) return;
     let animationFrameId: number;
+    let cancelled = false;
 
     const updateTime = () => {
-      if (hasStarted && playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
+      if (cancelled) return;
+      if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
         const time = playerRef.current.getCurrentTime();
-        
-        // Cộng thêm độ trễ do người dùng tự chỉnh trên giao diện
         const adjustedTime = time + syncOffset;
-
         if (transcript.length > 0) {
           const currentSubIndex = transcript.findIndex((sub, index) => {
             const nextSub = transcript[index + 1];
-            if (nextSub) {
-              return adjustedTime >= sub.start && adjustedTime < nextSub.start;
-            }
+            if (nextSub) return adjustedTime >= sub.start && adjustedTime < nextSub.start;
             return adjustedTime >= sub.start && adjustedTime <= sub.end + 0.5;
           });
-
           setActiveSubIndex(prev => prev !== currentSubIndex ? currentSubIndex : prev);
         }
       }
       animationFrameId = requestAnimationFrame(updateTime);
     };
 
-    if (hasStarted) {
-      animationFrameId = requestAnimationFrame(updateTime);
-    }
+    animationFrameId = requestAnimationFrame(updateTime);
+    return () => { cancelled = true; cancelAnimationFrame(animationFrameId); };
   }, [hasStarted, transcript, syncOffset]);
 
-  // 2. CẬP NHẬT SUB TIẾNG VIỆT (Tốc độ tức thì, không hiện tiếng Anh)
+  // Lazy translation + prefetch
   useEffect(() => {
-    if (activeSubIndex === -1) { 
-      setVietSub(''); 
-      return; 
-    }
-    
+    if (activeSubIndex === -1) { setVietSub(''); return; }
     const engText = transcript[activeSubIndex]?.text;
     if (!engText) return;
 
-    if (translationCache.current.has(engText)) {
-      setVietSub(translationCache.current.get(engText)!);
-    } else {
-      // Để trống trong chớp mắt thay vì hiện tiếng Anh gây nhiễu
-      setVietSub(''); 
-
-      let isCurrent = true;
-
-      translateSingleWithGroq(engText).then(translated => {
-        translationCache.current.set(engText, translated);
-        if (isCurrent) {
-          setVietSub(translated);
-        }
-      }).catch(() => {
-         if (isCurrent) setVietSub("Traslation error!");
-      });
-      return () => {
-        isCurrent = false;
-      };
+    // Prefetch ±5 dòng
+    const start = Math.max(0, activeSubIndex - 2);
+    const end = Math.min(transcript.length - 1, activeSubIndex + 5);
+    for (let i = start; i <= end; i++) {
+      const t = transcript[i]?.text;
+      if (t && !translationCache.current.has(t)) {
+        translationCache.current.set(t, '__pending__');
+        translateSingleWithGroq(t).then(translated => {
+          translationCache.current.set(t, translated);
+        });
+      }
     }
+
+    // Hiển thị sub hiện tại
+    if (translationCache.current.has(engText)) {
+      const cached = translationCache.current.get(engText)!;
+      if (cached !== '__pending__') { setVietSub(cached); return; }
+    }
+
+    setVietSub('');
+    let isCurrent = true;
+    translateSingleWithGroq(engText).then(translated => {
+      translationCache.current.set(engText, translated);
+      if (isCurrent) setVietSub(translated);
+    }).catch(() => { if (isCurrent) setVietSub(''); });
+    return () => { isCurrent = false; };
   }, [activeSubIndex, transcript]);
 
-  // 3. AUTO-SCROLL
+  // Auto-scroll transcript
   useEffect(() => {
     if (activeSubRef.current && transcriptContainerRef.current) {
       const container = transcriptContainerRef.current;
       const activeItem = activeSubRef.current;
-      
       container.scrollTo({
         top: activeItem.offsetTop - container.clientHeight / 2 + activeItem.clientHeight / 2,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }, [activeSubIndex]);
@@ -273,28 +206,19 @@ export default function StudyHub() {
     const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '').toLowerCase();
     if (!cleanWord) return;
     const cacheKey = `${dictionaryMode}-${cleanWord}`;
-    
     if (dictCache.current.has(cacheKey)) {
       setDictResult(dictCache.current.get(cacheKey));
       return;
     }
-    
     setIsDictLoading(true);
     try {
       const res = await fetch(`/api/dictionary?word=${cleanWord}&mode=${dictionaryMode}`);
       if (res.ok) {
         const data = await res.json();
-        
-        // --- BỘ LỌC DỌN RÁC TỪ ĐIỂN ---
         let finalDef = data.definition;
-        // Xóa lặp tiếng Anh (noun noun -> noun)
         finalDef = finalDef.replace(/\b(noun|verb|adjective|adverb|pronoun|preposition|conjunction)\s+\1\b/gi, '$1');
-        // Xóa lặp tiếng Việt (danh từ danh từ -> danh từ)
         finalDef = finalDef.replace(/(danh từ|động từ|tính từ|trạng từ|phó từ|đại từ)\s+\1/gi, '$1');
-        
         const cleanedData = { ...data, definition: finalDef };
-        // ------------------------------
-
         dictCache.current.set(cacheKey, cleanedData);
         setDictResult(cleanedData);
       }
@@ -308,6 +232,18 @@ export default function StudyHub() {
 
   return (
     <div className="w-full flex flex-col gap-5 font-sans">
+
+      {/* Sub rời */}
+      <Subtitle
+        engText={transcript[activeSubIndex]?.text || ''}
+        vietText={vietSub}
+        showEng={showEngSub}
+        showViet={showVietSub}
+        visible={hasStarted && showSubtitle}
+        onClose={() => setShowSubtitle(false)}
+      />
+
+      {/* Thanh controls */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         <div className="flex flex-1 gap-2">
           <input
@@ -322,8 +258,7 @@ export default function StudyHub() {
               border border-neutral-200 dark:border-neutral-700
               text-neutral-900 dark:text-neutral-100
               placeholder-neutral-400 dark:placeholder-neutral-500
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-              transition
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition
             "
           />
           <button
@@ -349,52 +284,53 @@ export default function StudyHub() {
         </div>
 
         {hasStarted && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setIsTheaterMode(v => !v)}
-              className="
-                px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide
-                bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600
-                text-neutral-700 dark:text-neutral-200 transition
-              "
+              className="px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 transition"
             >
               {isTheaterMode ? 'Standard' : 'Movie Theatre'}
             </button>
             <button
               onClick={() => setDictionaryMode(prev => prev === 'en-vi' ? 'en-en' : 'en-vi')}
-              className="
-                px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide
-                bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600
-                text-neutral-700 dark:text-neutral-200 transition
-              "
+              className="px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 transition"
             >
               {dictionaryMode === 'en-vi' ? 'Eng → Vie' : 'Eng → Eng'}
             </button>
-            <div className="flex items-center bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden transition">
-              <span className="px-2 text-[10px] font-semibold uppercase text-neutral-500 dark:text-neutral-400">
-                Sync:
-              </span>
-              <button 
-                onClick={() => setSyncOffset(p => Number((p - 0.1).toFixed(1)))}
-                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition"
-              >
-                -
-              </button>
+
+            {/* Sync */}
+            <div className="flex items-center bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden">
+              <span className="px-2 text-[10px] font-semibold uppercase text-neutral-500 dark:text-neutral-400">Sync:</span>
+              <button onClick={() => setSyncOffset(p => Number((p - 0.1).toFixed(1)))}
+                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition">−</button>
               <span className="text-xs font-mono w-7 text-center font-bold text-blue-600 dark:text-blue-400">
                 {syncOffset > 0 ? `+${syncOffset}` : syncOffset}
               </span>
-              <button 
-                onClick={() => setSyncOffset(p => Number((p + 0.1).toFixed(1)))}
-                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition"
-              >
-                +
-              </button>
+              <button onClick={() => setSyncOffset(p => Number((p + 0.1).toFixed(1)))}
+                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition">+</button>
             </div>
+
+            {/* Sub toggles */}
+            <div className="flex items-center gap-3 bg-neutral-200 dark:bg-neutral-700 rounded-lg px-3 py-2">
+              <ToggleSwitch label="EN" checked={showEngSub} onChange={setShowEngSub} activeColor="#3b82f6" />
+              <div className="w-px h-4 bg-neutral-300 dark:bg-neutral-600" />
+              <ToggleSwitch label="VI" checked={showVietSub} onChange={setShowVietSub} activeColor="#22c55e" />
+            </div>
+
+            {/* Nút mở lại sub rời nếu đã đóng */}
+            {!showSubtitle && (
+              <button
+                onClick={() => setShowSubtitle(true)}
+                className="px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 transition"
+              >
+                + Sub
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      {/* THANH LỊCH SỬ XEM GẦN ĐÂY */}
+      {/* Lịch sử */}
       {historyList.length > 0 && (
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mr-2">Đã xem:</span>
@@ -403,8 +339,8 @@ export default function StudyHub() {
               key={item.videoId}
               onClick={() => handleLoadVideo(item.url)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition
-                ${currentVideoId === item.videoId 
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800' 
+                ${currentVideoId === item.videoId
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent'
                 }`}
             >
@@ -414,44 +350,22 @@ export default function StudyHub() {
         </div>
       )}
 
-      {isTranslating && (
-        <div className="flex flex-col gap-1.5">
-          <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"/>
-              Waiting for seconds...
-            </span>
-            <span className="font-mono font-semibold text-green-600 dark:text-green-400">{translateProgress}%</span>
-          </div>
-          <div className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500"
-              style={{ width: `${translateProgress}%` }}
-            />
-          </div>
-        </div>
-      )}
-
+      {/* Placeholder */}
       {!currentVideoId && (
-        <div className="
-          w-full h-64 rounded-xl
-          border-2 border-dashed border-neutral-200 dark:border-neutral-700
-          flex flex-col items-center justify-center gap-3
-          text-neutral-400 dark:text-neutral-500
-        ">
+        <div className="w-full h-64 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center gap-3 text-neutral-400 dark:text-neutral-500">
           <svg className="w-10 h-10 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <p className="text-sm">Click "Play video" button or <kbd className="px-1.5 py-0.5 bg-neutral-200 dark:bg-neutral-700 rounded text-xs font-mono">Enter</kbd> to start!</p>
+          <p className="text-sm">Click "Play video" or press <kbd className="px-1.5 py-0.5 bg-neutral-200 dark:bg-neutral-700 rounded text-xs font-mono">Enter</kbd></p>
         </div>
       )}
 
-      {/* MAIN LAYOUT */}
+      {/* Main layout */}
       {currentVideoId && (
         <div className={`grid gap-4 ${isTheaterMode ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-12'}`}>
 
-          {/* VIDEO */}
+          {/* Video */}
           <div className={`relative bg-black rounded-xl overflow-hidden ${isTheaterMode ? 'w-full aspect-video max-h-[80vh]' : 'xl:col-span-8 aspect-video'}`}>
             <YouTube
               videoId={currentVideoId}
@@ -460,51 +374,31 @@ export default function StudyHub() {
               onReady={e => { playerRef.current = e.target; }}
               onPlay={() => setHasStarted(true)}
             />
-
-            {hasStarted && vietSub && (
-              <div className="absolute bottom-[12%] left-0 right-0 flex justify-center pointer-events-none px-6 z-10">
-                <span className="
-                  bg-black/80 backdrop-blur-sm text-white font-semibold
-                  text-base md:text-lg lg:text-xl
-                  px-5 py-2 rounded-lg shadow-xl leading-snug text-center
-                  max-w-[90%] inline-block
-                ">
-                  {vietSub}
-                </span>
-              </div>
-            )}
-
-            {isTranslating && hasStarted && (
-              <div className="absolute top-3 right-3 z-10">
-                <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1.5 rounded-full">
-                  <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                  </svg>
-                  Đang dịch {translateProgress}%
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* TRANSCRIPT */}
-          {hasStarted && (
+          {/* Transcript */}
+          {hasStarted && showTranscript && (
             <div
               ref={transcriptContainerRef}
               className={`
-                relative
-                bg-neutral-50 dark:bg-neutral-800/60
+                relative bg-neutral-50 dark:bg-neutral-800/60
                 border border-neutral-200 dark:border-neutral-700/60
                 rounded-xl overflow-y-auto
                 ${isTheaterMode ? 'max-h-52 p-4' : 'xl:col-span-4 h-[calc(100vh-280px)] max-h-[640px] p-4'}
               `}
             >
-              <div className="sticky top-0 z-10 bg-neutral-50 dark:bg-neutral-800/60 backdrop-blur-sm pb-3 mb-3 border-b border-neutral-200 dark:border-neutral-700/60">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">
-                  Transcript
-                </h3>
-              </div>
-
+              {!isTheaterMode && (
+                <div className="sticky top-0 z-10 bg-neutral-50/80 dark:bg-neutral-800/80 backdrop-blur-md rounded-lg px-3 py-2 mb-3 border-b border-neutral-200 dark:border-neutral-700/60 flex items-center justify-between">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">
+                    Transcript
+                  </h3>
+                  <button
+                    onClick={() => setShowTranscript(false)}
+                    className="text-neutral-400 hover:text-red-500 transition text-sm font-bold leading-none"
+                    title="Close transcript"
+                  >✕</button>
+                </div>
+              )}
               <div className="flex flex-col gap-1">
                 {transcript.length > 0 ? transcript.map((sub, index) => (
                   <div
@@ -538,7 +432,17 @@ export default function StudyHub() {
             </div>
           )}
 
-          {/* DICTIONARY */}
+          {/* Nút mở lại transcript */}
+          {hasStarted && !showTranscript && !isTheaterMode && (
+            <button
+              onClick={() => setShowTranscript(true)}
+              className="xl:col-span-4 h-16 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:border-neutral-400 transition"
+            >
+              + Show Transcript
+            </button>
+          )}
+
+          {/* Dictionary */}
           {hasStarted && (
             <div className={`
               bg-neutral-50 dark:bg-neutral-800/60
@@ -549,7 +453,6 @@ export default function StudyHub() {
               <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-4">
                 Dictionary
               </h3>
-
               {isDictLoading ? (
                 <div className="flex items-center gap-2 text-sm text-neutral-500">
                   <svg className="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
@@ -578,7 +481,7 @@ export default function StudyHub() {
                 </div>
               ) : (
                 <p className="text-sm italic text-neutral-400 dark:text-neutral-500">
-                  Click to any word in transcript to translate →
+                  Click any word in transcript to look up →
                 </p>
               )}
             </div>
