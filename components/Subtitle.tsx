@@ -57,7 +57,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
     posRef.current = { x, y };
     setPos({ x, y });
     setReady(true);
-  }, []); 
+  }); 
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.settings-panel')) return;
@@ -136,6 +136,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
         position: 'fixed', left: pos.x, top: pos.y, zIndex: 9999,
         cursor: isDragging ? 'grabbing' : 'grab',
         userSelect: 'none', maxWidth: '80vw',
+        opacity: ready ? 1 : 0,
       }}
     >
       {/* 3. Cập nhật Sub text container */}

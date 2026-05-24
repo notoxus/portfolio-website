@@ -194,12 +194,17 @@ export default function StudyHub() {
     if (activeSubRef.current && transcriptContainerRef.current) {
       const container = transcriptContainerRef.current;
       const activeItem = activeSubRef.current;
+
+      const targetTop = isTheaterMode
+        ? activeItem.offsetTop - activeItem.clientHeight - 16
+        : activeItem.offsetTop - container.clientHeight / 2 + activeItem.clientHeight / 2;
+
       container.scrollTo({
-        top: activeItem.offsetTop - container.clientHeight / 2 + activeItem.clientHeight / 2,
+        top: targetTop,
         behavior: 'smooth',
       });
     }
-  }, [activeSubIndex]);
+  }, [activeSubIndex, isTheaterMode]);
 
   // Dictionary
   const handleWordClick = useCallback(async (word: string) => {
@@ -333,7 +338,7 @@ export default function StudyHub() {
       {/* Lịch sử */}
       {historyList.length > 0 && (
         <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mr-2">Đã xem:</span>
+          <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mr-2">History:</span>
           {historyList.map((item, idx) => (
             <button
               key={item.videoId}
