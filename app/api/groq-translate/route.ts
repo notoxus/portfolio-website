@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Didn't have transcript to translate" }, { status: 400 });
     }
 
-    // Truyền type xuống hàm xử lý
+    // Pass the type down to the processing function
     const translatedText = await processTranslation(texts[0], type);
 
     return NextResponse.json({

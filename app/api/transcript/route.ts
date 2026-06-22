@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const videoId = searchParams.get('videoId');
 
-  if (!videoId) return NextResponse.json({ error: "Thiếu Video ID" }, { status: 400 });
+  if (!videoId) return NextResponse.json({ error: "Missing Video ID" }, { status: 400 });
   const langPriority = ['en', 'en-US', 'en-GB', 'vi', ''];
   for (const lang of langPriority) {
     try {

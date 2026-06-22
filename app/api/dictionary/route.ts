@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const word = searchParams.get('word');
   const mode = searchParams.get('mode') || 'en-vi';
 
-  if (!word) return NextResponse.json({ error: "Thiếu từ khóa" }, { status: 400 });
+  if (!word) return NextResponse.json({ error: "Missing keyword" }, { status: 400 });
 
   try {
     if (mode === 'en-en') {
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       
       let definitionArr: string[] = [];
       
-      // Quét tất cả các thẻ chứa nghĩa (thường Soha để ở h5, hoặc trong các thẻ li có class margin25)
+      // Scan all elements holding a definition (Soha usually puts them in h5, or in li tags with class margin25)
       $('#content-5 h5, #content-5 .margin25').each((_, el) => {
         const text = $(el).text().replace(/\s+/g, ' ').trim();
         if (text && !definitionArr.includes(text)) {
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 
       let finalDefinition = definitionArr.join('\n');
 
-      // Nếu Soha vẫn tịt hoặc từ quá hiếm, dùng Google Translate quét toàn bộ
+      // If Soha returns nothing or the word is too rare, fall back to Google Translate
       if (!finalDefinition || finalDefinition.length === 0) {
         const gtRes = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(word)}`);
         const gtData = await gtRes.json();
@@ -49,10 +49,10 @@ export async function GET(request: Request) {
       return NextResponse.json({
         word: word,
         phonetic: '', 
-        definition: finalDefinition || 'Không tìm thấy nghĩa của từ này.'
+        definition: finalDefinition || 'No definition found for this word.'
       });
     }
   } catch (error) {
-    return NextResponse.json({ error: "Lỗi server khi tra từ" }, { status: 500 });
+    return NextResponse.json({ error: "Server error while looking up the word" }, { status: 500 });
   }
 }

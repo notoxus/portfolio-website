@@ -161,7 +161,7 @@ export default function StudyHub() {
     const engText = transcript[activeSubIndex]?.text;
     if (!engText) return;
 
-    // Prefetch ±5 dòng
+    // Prefetch a window of nearby lines
     const start = Math.max(0, activeSubIndex - 2);
     const end = Math.min(transcript.length - 1, activeSubIndex + 5);
     for (let i = start; i <= end; i++) {
@@ -174,7 +174,7 @@ export default function StudyHub() {
       }
     }
 
-    // Hiển thị sub hiện tại
+    // Show the current subtitle
     if (translationCache.current.has(engText)) {
       const cached = translationCache.current.get(engText)!;
       if (cached !== '__pending__') { setVietSub(cached); return; }
@@ -238,7 +238,7 @@ export default function StudyHub() {
   return (
     <div className="w-full flex flex-col gap-5 font-sans">
 
-      {/* Sub rời */}
+      {/* Floating subtitle */}
       <Subtitle
         engText={transcript[activeSubIndex]?.text || ''}
         vietText={vietSub}
@@ -248,7 +248,7 @@ export default function StudyHub() {
         onClose={() => setShowSubtitle(false)}
       />
 
-      {/* Thanh controls */}
+      {/* Controls bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         <div className="flex flex-1 gap-2">
           <input
@@ -300,14 +300,14 @@ export default function StudyHub() {
               onClick={() => setDictionaryMode(prev => prev === 'en-vi' ? 'en-en' : 'en-vi')}
               className="px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wide bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 transition"
             >
-              {dictionaryMode === 'en-vi' ? 'Eng → Vie' : 'Eng → Eng'}
+              {dictionaryMode === 'en-vi' ? 'Eng -> Vie' : 'Eng -> Eng'}
             </button>
 
             {/* Sync */}
             <div className="flex items-center bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden">
               <span className="px-2 text-[10px] font-semibold uppercase text-neutral-500 dark:text-neutral-400">Sync:</span>
               <button onClick={() => setSyncOffset(p => Number((p - 0.1).toFixed(1)))}
-                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition">−</button>
+                className="px-2 py-2.5 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600 font-bold transition">&#8722;</button>
               <span className="text-xs font-mono w-7 text-center font-bold text-blue-600 dark:text-blue-400">
                 {syncOffset > 0 ? `+${syncOffset}` : syncOffset}
               </span>
@@ -322,7 +322,7 @@ export default function StudyHub() {
               <ToggleSwitch label="VI" checked={showVietSub} onChange={setShowVietSub} activeColor="#22c55e" />
             </div>
 
-            {/* Nút mở lại sub rời nếu đã đóng */}
+            {/* Button to reopen the floating subtitle if closed */}
             {!showSubtitle && (
               <button
                 onClick={() => setShowSubtitle(true)}
@@ -335,7 +335,7 @@ export default function StudyHub() {
         )}
       </div>
 
-      {/* Lịch sử */}
+      {/* History */}
       {historyList.length > 0 && (
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mr-2">History:</span>
@@ -401,7 +401,7 @@ export default function StudyHub() {
                     onClick={() => setShowTranscript(false)}
                     className="text-neutral-400 hover:text-red-500 transition text-sm font-bold leading-none"
                     title="Close transcript"
-                  >✕</button>
+                  >&#10005;</button>
                 </div>
               )}
               <div className="flex flex-col gap-1">
@@ -437,7 +437,7 @@ export default function StudyHub() {
             </div>
           )}
 
-          {/* Nút mở lại transcript */}
+          {/* Button to reopen the transcript */}
           {hasStarted && !showTranscript && !isTheaterMode && (
             <button
               onClick={() => setShowTranscript(true)}
@@ -486,7 +486,7 @@ export default function StudyHub() {
                 </div>
               ) : (
                 <p className="text-sm italic text-neutral-400 dark:text-neutral-500">
-                  Click any word in transcript to look up →
+                  Click any word in transcript to look up &#8594;
                 </p>
               )}
             </div>

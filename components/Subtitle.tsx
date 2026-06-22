@@ -7,7 +7,7 @@ interface SubSettings {
   color: string;
 }
 
-// 1. Thêm frameWidth vào interface SubtitleSettings
+// 1. Add frameWidth to the SubtitleSettings interface
 interface SubtitleSettings {
   eng: SubSettings;
   viet: SubSettings;
@@ -28,7 +28,7 @@ interface Props {
 
 const FONTS = ['Inter', 'monospace', 'Georgia', 'Arial'];
 
-// 2. Thêm frameWidth vào DEFAULT_SETTINGS
+// 2. Add frameWidth to DEFAULT_SETTINGS
 const DEFAULT_SETTINGS: SubtitleSettings = {
   eng:  { fontSize: 15, color: '#ffffff' },
   viet: { fontSize: 20, color: '#ffffff' },
@@ -139,7 +139,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
         opacity: ready ? 1 : 0,
       }}
     >
-      {/* 3. Cập nhật Sub text container */}
+      {/* 3. Update the subtitle text container */}
       <div style={{
         background: `rgba(${bgRgb}, ${settings.bgOpacity / 100})`,
         backdropFilter: settings.bgOpacity > 0 ? 'blur(4px)' : 'none',
@@ -183,7 +183,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
         )}
       </div>
 
-      {/* Nút ⚙ settings */}
+      {/* Settings button */}
       <button
         onMouseDown={e => e.stopPropagation()}
         onClick={() => showSettings ? setShowSettings(false) : openSettings()}
@@ -195,9 +195,9 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
         title="Customize"
-      >⚙</button>
+      >&#9881;</button>
 
-      {/* Nút ✕ close */}
+      {/* Close button */}
       <button
         onMouseDown={e => e.stopPropagation()}
         onClick={onClose}
@@ -210,7 +210,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
           fontWeight: 700, lineHeight: 1,
         }}
         title="Close"
-      >✕</button>
+      >&#10005;</button>
 
       {/* Settings panel */}
       {showSettings && (
@@ -280,7 +280,7 @@ export default function Subtitle({ engText, vietText, showEng, showViet, visible
                 onChange={e => setDraft(d => ({ ...d, bgOpacity: +e.target.value }))}
                 style={{ width: '100%', marginTop: 4 }} />
             </label>
-            {/* 4. Thêm thanh trượt cho Frame Width */}
+            {/* 4. Add the Frame Width slider */}
             <label style={{ color: '#d1d5db', fontSize: 12, marginTop: 6, display: 'block' }}>
               Frame width: <strong style={{ color: '#fff' }}>{draft.frameWidth}px</strong>
               <input type="range" min={300} max={1000} step={10} value={draft.frameWidth}

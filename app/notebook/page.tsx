@@ -10,22 +10,22 @@ function FileNode({ item }: { item: any }) {
 
   const toggleFolder = async () => {
     if (item.type !== 'dir') return
-    
+
     const nextState = !isOpen
     setIsOpen(nextState)
 
-    // Chỉ load dữ liệu nếu mở ra và chưa có dữ liệu sẵn
+    // Only fetch data when opening and nothing is cached yet
     if (nextState && children.length === 0) {
       setIsLoading(true)
       setError(false)
       try {
-        const res = await fetch(`https://api.github.com/repos/CSerVN/my-note-book/contents/${item.path}`)
-        
+        const res = await fetch(`https://api.github.com/repos/notoxus/my-note-book/contents/${item.path}`)
+
         if (!res.ok) throw new Error('API Error')
-        
+
         const data = await res.json()
-        
-        // GitHub API trả về mảng nếu là folder, trả về object nếu là file
+
+        // GitHub API returns an array for a folder, an object for a file
         if (Array.isArray(data)) {
           setChildren(data.sort((a: any, b: any) => (a.type === 'dir' ? -1 : 1)))
         } else {
@@ -39,21 +39,21 @@ function FileNode({ item }: { item: any }) {
       }
     }
   }
-  const extension = item.type === 'file' 
-  ? item.name.split('.').pop()?.toUpperCase() 
+  const extension = item.type === 'file'
+  ? item.name.split('.').pop()?.toUpperCase()
   : '';
-  // Link tải file raw
-  const rawUrl = `https://raw.githubusercontent.com/CSerVN/my-note-book/main/${item.path}`
+  // Raw download link
+  const rawUrl = `https://raw.githubusercontent.com/notoxus/my-note-book/main/${item.path}`
 
   return (
     <div className="flex flex-col">
-      <div 
+      <div
         className="flex items-center justify-between px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 transition-colors group cursor-pointer"
         onClick={toggleFolder}
       >
         <div className="flex items-center gap-3">
           <span className="text-lg select-none">
-            {item.type === 'dir' ? (isOpen ? '📂' : '📁') : '📄'}
+            {item.type === 'dir' ? (isOpen ? '\u{1F4C2}' : '\u{1F4C1}') : '\u{1F4C4}'}
           </span>
           <span className="text-neutral-700 dark:text-neutral-300 font-mono text-sm truncate max-w-[200px] md:max-w-xs">
             {item.name}
@@ -62,26 +62,26 @@ function FileNode({ item }: { item: any }) {
 
         {item.type === 'file' && (
           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-          {/* Cột Extension - Nhìn như một cái nhãn kỹ thuật */}
+          {/* Extension column - looks like a technical badge */}
           <span className="hidden md:block text-[9px] bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-200 dark:border-neutral-700 font-bold tracking-wider">
             {extension}
           </span>
 
-          {/* Nút Download chính */}
-          <a 
+          {/* Main download button */}
+          <a
           href={rawUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           className="bg-neutral-200 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded text-[10px] font-bold uppercase transition-all flex items-center gap-1 shadow-sm"
           >
-          DOWNLOAD RAW ⬇
+          DOWNLOAD RAW &#11015;
         </a>
         </div>
           )}
         </div>
 
-      {/* Hiển thị nội dung con */}
+      {/* Render nested content */}
       {isOpen && (
         <div className="ml-6 border-l border-neutral-200 dark:border-neutral-800 bg-neutral-50/30 dark:bg-neutral-900/10">
           {isLoading && <div className="px-4 py-2 text-xs text-neutral-400 animate-pulse">Loading...</div>}
@@ -101,7 +101,7 @@ export default function NotebookPage() {
 
   useEffect(() => {
     setHasMounted(true)
-    fetch('https://api.github.com/repos/CSerVN/my-note-book/contents')
+    fetch('https://api.github.com/repos/notoxus/my-note-book/contents')
       .then(res => res.ok ? res.json() : [])
       .then(data => {
         if (Array.isArray(data)) {
@@ -111,7 +111,7 @@ export default function NotebookPage() {
       .catch(() => setRootFiles([]))
   }, [])
 
-  // Ngăn chặn lỗi Hydration của Next.js
+  // Prevent Next.js hydration mismatch
   if (!hasMounted) return null
 
   return (

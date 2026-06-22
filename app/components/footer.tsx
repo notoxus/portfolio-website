@@ -1,4 +1,4 @@
-function ArrowIcon() {
+﻿function ArrowIcon() {
   return (
     <svg
       width="12"
@@ -35,7 +35,18 @@ export default function Footer() {
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
-            href="https://github.com/CSerVN"
+            href="https://www.linkedin.com/in/b%C3%B9i-v%C3%B5-ph%C6%B0%E1%BB%9Bc-th%E1%BB%8Bnh-7b80b531a/"
+          >
+            <ArrowIcon />
+            <p className="ml-2 h-7">linkedin</p>
+          </a>
+        </li>
+        <li>
+          <a
+            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            rel="noopener noreferrer"
+            target="_blank"
+            href="https://github.com/notoxus"
           >
             <ArrowIcon />
             <p className="ml-2 h-7">github</p>
@@ -54,7 +65,7 @@ export default function Footer() {
         </li>
       </ul>
       <p className="mt-8 text-neutral-600 dark:text-neutral-300">
-        © {new Date().getFullYear()} by Phuoc Thinh. All rights reserved.
+        &copy; {new Date().getFullYear()} by Phuoc Thinh. All rights reserved.
       </p>
     </footer>
   )

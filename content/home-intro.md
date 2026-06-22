@@ -1,0 +1,1 @@
+Welcome to my portfolio. Here, I share my blog and notebook, documenting my educational journey. I'm a firm believer in interdisciplinary wisdom, so you'll also find me sharing fascinating breakthroughs in other fields here. Let's sit back, relax and enjoy the moment together!

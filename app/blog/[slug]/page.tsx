@@ -2,31 +2,20 @@ import { notFound } from 'next/navigation'
 import { CustomMDX } from 'app/components/mdx'
 import { formatDate, getBlogPosts } from 'app/blog/utils'
 import { baseUrl } from 'app/sitemap'
+import Comments from 'app/components/Comments'
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  return posts.map((post) => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
+  const resolvedParams = await params
   let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
-  if (!post) {
-    return
-  }
+  if (!post) return
 
-  let {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata
-  let ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+  let { title, publishedAt: publishedTime, summary: description, image } = post.metadata
+  let ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`
 
   return {
     title,
@@ -37,11 +26,7 @@ export async function generateMetadata({ params }) {
       type: 'article',
       publishedTime,
       url: `${baseUrl}/blog/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
+      images: [{ url: ogImage }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -53,12 +38,10 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Blog({ params }) {
-  const resolvedParams = await params;
+  const resolvedParams = await params
   let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
 
-  if (!post) {
-    notFound()
-  }
+  if (!post) notFound()
 
   return (
     <section>
@@ -77,13 +60,11 @@ export default async function Blog({ params }) {
               ? `${baseUrl}${post.metadata.image}`
               : `/og?title=${encodeURIComponent(post.metadata.title)}`,
             url: `${baseUrl}/blog/${post.slug}`,
-            author: {
-              '@type': 'Person',
-              name: 'My Portfolio',
-            },
+            author: { '@type': 'Person', name: 'Phuoc Thinh' },
           }),
         }}
       />
+
       <h1 className="title font-semibold text-2xl tracking-tighter">
         {post.metadata.title}
       </h1>
@@ -91,10 +72,19 @@ export default async function Blog({ params }) {
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {formatDate(post.metadata.publishedAt)}
         </p>
+        {post.metadata.category && (
+          <span className="text-xs text-neutral-400 dark:text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-full">
+            {post.metadata.category}
+          </span>
+        )}
       </div>
+
       <article className="prose">
         <CustomMDX source={post.content} />
       </article>
+
+      {/* Comments section - Observer pattern connects comments to GitHub Issues */}
+      <Comments slug={post.slug} />
     </section>
   )
 }

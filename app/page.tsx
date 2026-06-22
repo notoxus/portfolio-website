@@ -1,14 +1,20 @@
 import { BlogPosts } from 'app/components/posts'
+import { getHomeIntro } from 'lib/site-content'
+import AdminEditLink from 'app/components/AdminEditLink'
 
 export default function Page() {
+  const intro = getHomeIntro()
+  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
   return (
     <section>
       <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
         Phuoc Thinh Portfolio
       </h1>
-      <p className="mb-4">
-        {`Welcome to my portfolio. Here, I share my blog and notebook, documenting my educational journey. I'm a firm believer in interdisciplinary wisdom, so you'll also find me sharing fascinating breakthroughs in other fields here. Let's sit back, relax and enjoy the moment together!`}
-      </p>
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <p className="whitespace-pre-line">{intro}</p>
+        <AdminEditLink href="/admin/intro" label="edit intro" adminUsername={adminUsername} />
+      </div>
       <div className="my-8">
         <BlogPosts />
       </div>
