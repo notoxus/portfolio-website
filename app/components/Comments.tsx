@@ -8,6 +8,7 @@ interface Comment {
   id: number
   body: string
   created_at: string
+  can_manage: boolean
   user: {
     login: string
     avatar_url: string
@@ -56,6 +57,11 @@ export default function Comments({ slug }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [text, setText] = useState('')
   const [error, setError] = useState('')
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingText, setEditingText] = useState('')
+  const [actionId, setActionId] = useState<number | null>(null)
+  const [actionErrorId, setActionErrorId] = useState<number | null>(null)
+  const [actionError, setActionError] = useState('')
 
   const fetchComments = useCallback(async () => {
     setLoading(true)
@@ -94,6 +100,71 @@ export default function Comments({ slug }: Props) {
     setSubmitting(false)
   }
 
+  const startEdit = (comment: Comment) => {
+    setEditingId(comment.id)
+    setEditingText(comment.body)
+    setActionErrorId(null)
+    setActionError('')
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditingText('')
+    setActionErrorId(null)
+    setActionError('')
+  }
+
+  const saveEdit = async (commentId: number) => {
+    if (!editingText.trim()) return
+    setActionId(commentId)
+    setActionErrorId(null)
+    setActionError('')
+    try {
+      const res = await fetch(`/api/comments/${slug}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentId, body: editingText.trim() }),
+      })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setActionErrorId(commentId)
+        setActionError(d.error ?? 'Failed to edit comment')
+      } else {
+        cancelEdit()
+        await fetchComments()
+      }
+    } catch {
+      setActionErrorId(commentId)
+      setActionError('Network error')
+    }
+    setActionId(null)
+  }
+
+  const deleteComment = async (commentId: number) => {
+    if (!confirm('Delete this comment?')) return
+    setActionId(commentId)
+    setActionErrorId(null)
+    setActionError('')
+    try {
+      const res = await fetch(`/api/comments/${slug}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentId }),
+      })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setActionErrorId(commentId)
+        setActionError(d.error ?? 'Failed to delete comment')
+      } else {
+        await fetchComments()
+      }
+    } catch {
+      setActionErrorId(commentId)
+      setActionError('Network error')
+    }
+    setActionId(null)
+  }
+
   return (
     <section className="mt-16 border-t border-neutral-200 dark:border-neutral-800 pt-10">
       <h2 className="text-lg font-semibold mb-6 tracking-tight">Comments</h2>
@@ -110,25 +181,78 @@ export default function Comments({ slug }: Props) {
               <a href={c.user.html_url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
                 <Avatar src={c.user.avatar_url} name={c.user.login} />
               </a>
-              <div className="flex-1">
-                <div className="flex items-baseline gap-2 mb-1">
-                  <a
-                    href={c.user.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium text-neutral-900 dark:text-neutral-100 hover:underline"
-                  >
-                    {c.user.login}
-                  </a>
-                  <span className="text-xs text-neutral-400">
-                    {new Date(c.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric', month: 'short', day: 'numeric',
-                    })}
-                  </span>
+              <div className="flex-1 min-w-0">
+                <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <div className="flex items-baseline gap-2">
+                    <a
+                      href={c.user.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-neutral-900 hover:underline dark:text-neutral-100"
+                    >
+                      {c.user.login}
+                    </a>
+                    <span className="text-xs text-neutral-400">
+                      {new Date(c.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                  {c.can_manage && editingId !== c.id && (
+                    <div className="flex items-center gap-2 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(c)}
+                        className="text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteComment(c.id)}
+                        disabled={actionId === c.id}
+                        className="text-neutral-500 transition-colors hover:text-red-500 disabled:opacity-50"
+                      >
+                        {actionId === c.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">
-                  {c.body}
-                </p>
+                {editingId === c.id ? (
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      value={editingText}
+                      onChange={e => setEditingText(e.target.value)}
+                      rows={3}
+                      className="w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+                    />
+                    {actionError && actionErrorId === c.id && <p className="text-xs text-red-500">{actionError}</p>}
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        className="rounded-md px-3 py-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => saveEdit(c.id)}
+                        disabled={actionId === c.id || !editingText.trim()}
+                        className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-40 dark:bg-neutral-100 dark:text-black"
+                      >
+                        {actionId === c.id ? 'Saving...' : 'Save'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                      {c.body}
+                    </p>
+                    {actionError && actionErrorId === c.id && <p className="mt-2 text-xs text-red-500">{actionError}</p>}
+                  </>
+                )}
               </div>
             </div>
           ))}
