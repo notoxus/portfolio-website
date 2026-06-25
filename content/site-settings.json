@@ -16,6 +16,7 @@
     "frameworksToolsItems": [
       "Next.js",
       "Maven",
+      "Gradle",
       "Automation"
     ],
     "technicalSkillsLabel": "Technical skills",
