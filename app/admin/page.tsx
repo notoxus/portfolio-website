@@ -8,6 +8,36 @@ export default function AdminDashboard() {
 
   return (
     <div>
+      <div className="mb-8 grid gap-3 sm:grid-cols-2">
+        <Link
+          href="/admin/site-settings"
+          className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
+        >
+          <span className="text-sm font-semibold">Site labels</span>
+          <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+            Edit homepage, blog, projects, and footer text.
+          </p>
+        </Link>
+        <Link
+          href="/admin/blog"
+          className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
+        >
+          <span className="text-sm font-semibold">Blog content</span>
+          <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+            Edit blog labels and MDX posts.
+          </p>
+        </Link>
+        <Link
+          href="/admin/projects"
+          className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
+        >
+          <span className="text-sm font-semibold">Project content</span>
+          <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+            Edit project labels and portfolio entries.
+          </p>
+        </Link>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-base font-semibold">Posts ({posts.length})</h2>
         <Link

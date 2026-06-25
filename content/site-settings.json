@@ -1,0 +1,52 @@
+{
+  "home": {
+    "eyebrow": "Phuoc Thinh's Portfolio",
+    "headline": "Where I share my blog, my work and case study",
+    "primaryCtaLabel": "View projects",
+    "primaryCtaHref": "/projects",
+    "secondaryCtaLabel": "Read my blog",
+    "secondaryCtaHref": "/blog",
+    "programmingLanguagesLabel": "Programming Language",
+    "programmingLanguagesItems": [
+      "Java",
+      "C++",
+      "Bash/Script"
+    ],
+    "frameworksToolsLabel": "Frameworks & Tools",
+    "frameworksToolsItems": [
+      "Next.js",
+      "Maven",
+      "Automation"
+    ],
+    "technicalSkillsLabel": "Technical skills",
+    "technicalSkillsItems": [
+      "System Design",
+      "Write-up Report"
+    ],
+    "languageLabel": "Language",
+    "languageItems": [
+      "Vietnamese",
+      "English"
+    ],
+    "contactLabel": "Contact",
+    "contactDescription": "Open to thoughtful collaboration, tool ideas, and practical software problems.",
+    "featuredTitle": "Featured work",
+    "featuredDescription": "Project entries as compact case studies, with enough context to scan.",
+    "latestTitle": "Latest blog",
+    "latestDescription": "Writing about some technical skills and my practical experience."
+  },
+  "projectsPage": {
+    "eyebrow": "Selected build log",
+    "title": "Projects",
+    "description": "Compact notes on the tools, experiments, and applications I keep shaping."
+  },
+  "blogPage": {
+    "eyebrow": "Notes and essays",
+    "title": "Blog",
+    "description": "Small writeups about programming, systems or something else."
+  },
+  "footer": {
+    "title": "Contact",
+    "description": "There are some social media account which you can contact me via."
+  }
+}

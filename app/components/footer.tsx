@@ -1,70 +1,26 @@
-﻿function ArrowIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M2.07102 11.3494L0.963068 10.2415L9.2017 1.98864H2.83807L2.85227 0.454545H11.8438V9.46023H10.2955L10.3097 3.09659L2.07102 11.3494Z"
-        fill="currentColor"
-      />
-    </svg>
-  )
-}
+import { SocialLinks } from './social-links'
+import { getSiteSettings } from 'lib/site-settings'
 
 export default function Footer() {
+  const settings = getSiteSettings()
+
   return (
-    <footer className="mb-16">
-      <ul className="font-sm mt-8 flex flex-col space-x-0 space-y-2 text-neutral-600 md:flex-row md:space-x-4 md:space-y-0 dark:text-neutral-300">
-        <li>
-          <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.instagram.com/notoxus._morales"
-          >
-            <ArrowIcon />
-            <p className="ml-2 h-7">instagram</p>
-          </a>
-        </li>
-        <li>
-          <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.linkedin.com/in/b%C3%B9i-v%C3%B5-ph%C6%B0%E1%BB%9Bc-th%E1%BB%8Bnh-7b80b531a/"
-          >
-            <ArrowIcon />
-            <p className="ml-2 h-7">linkedin</p>
-          </a>
-        </li>
-        <li>
-          <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://github.com/notoxus"
-          >
-            <ArrowIcon />
-            <p className="ml-2 h-7">github</p>
-          </a>
-        </li>
-        <li>
-          <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.youtube.com/@juosterben"
-          >
-            <ArrowIcon />
-            <p className="ml-2 h-7">youtube</p>
-          </a>
-        </li>
-      </ul>
-      <p className="mt-8 text-neutral-600 dark:text-neutral-300">
+    <footer
+      id="contact"
+      className="mt-20 mb-10 border-t border-neutral-200/80 pt-8 dark:border-neutral-800/80"
+    >
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+            {settings.footer.title}
+          </p>
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-500">
+            {settings.footer.description}
+          </p>
+        </div>
+        <SocialLinks />
+      </div>
+      <p className="mt-8 text-sm text-neutral-500 dark:text-neutral-500">
         &copy; {new Date().getFullYear()} by Phuoc Thinh. All rights reserved.
       </p>
     </footer>

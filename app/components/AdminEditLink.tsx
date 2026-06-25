@@ -7,10 +7,12 @@ import { useSession } from 'next-auth/react'
 export default function AdminEditLink({
   href,
   label = 'edit',
+  icon = 'edit',
   adminUsername,
 }: {
   href: string
   label?: string
+  icon?: 'edit' | 'plus'
   adminUsername?: string
 }) {
   const { data: session } = useSession()
@@ -25,7 +27,7 @@ export default function AdminEditLink({
       title={label}
       aria-label={label}
     >
-      &#9998;
+      {icon === 'plus' ? '+' : <>&#9998;</>}
     </Link>
   )
 }

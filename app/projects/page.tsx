@@ -1,71 +1,38 @@
-import Link from 'next/link'
+import { ProjectList } from 'app/components/project-list'
+import AdminEditLink from 'app/components/AdminEditLink'
+import { getSiteSettings } from 'lib/site-settings'
 
 export const metadata = {
   title: 'My Projects',
   description: 'My project check list.',
 }
 
-const PROJECTS = [
-  {
-    title: 'Video Downloader - Desktop App',
-    tech: 'Java (Maven), XML, bash and shell script\nAPIs: Gson, HTTP',
-    description: 'A desktop app can get video/playlist URLs from most websites. Using mini Burp Suite to avoid system monitoring',
-    link: 'https://github.com/notoxus/video-downloader',
-  },
-  {
-    title: 'Gym Tracking - Android App',
-    tech: 'Java (Gradle with Groovy), APIs: ',
-    description: 'Tracking Fitness in Android platform, that is more comfortable and more convenient for most people, especially busy people. Applying design pattern effectively!',
-    link: 'https://github.com/notoxus/oop-design-project',
-  },
-  {
-    title: 'Yoshi PDF - Desktop App',
-    tech: 'Java (Maven), XML\nAPIs: tesseract',
-    description: 'Handling your PDFs',
-    link: 'https://github.com/notoxus/yoshiPDF',
-  },
-  {
-    title: 'Useful Script',
-    tech: 'bash/batch and shell script',
-    description: 'Automation scripts to streamline your daily workflow!',
-    link: 'https://github.com/notoxus/UsefulScript',
-  },
-]
-
 export default function ProjectsPage() {
+  const settings = getSiteSettings()
+  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
   return (
     <section>
-      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Projects</h1>
-
-      <div className="flex flex-col gap-4">
-        {PROJECTS.map((project, index) => (
-          <a
-            key={index}
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex flex-col space-y-1 p-4 border border-neutral-200 dark:border-neutral-800 rounded-lg transition-all hover:bg-neutral-50 dark:hover:bg-neutral-900"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="font-medium text-lg text-neutral-900 dark:text-neutral-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {project.title}
-              </h2>
-              <span className="text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                &#8599;
-              </span>
-            </div>
-
-            {/* Tech stack row */}
-            <p className="text-xs font-mono text-neutral-500 dark:text-neutral-500 uppercase tracking-wider">
-              {project.tech}
-            </p>
-
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed pt-1">
-              {project.description}
-            </p>
-          </a>
-        ))}
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">
+            {settings.projectsPage.eyebrow}
+          </p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-4xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+              {settings.projectsPage.title}
+            </h1>
+            <AdminEditLink href="/admin/projects" label="edit projects" adminUsername={adminUsername} />
+          </div>
+        </div>
+        <div className="max-w-md sm:text-right">
+          <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+            {settings.projectsPage.description}
+          </p>
+        </div>
       </div>
+
+      <ProjectList />
     </section>
   )
 }

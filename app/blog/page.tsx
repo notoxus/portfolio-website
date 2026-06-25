@@ -1,5 +1,6 @@
 import { BlogPosts } from 'app/components/posts'
-import Link from 'next/link'
+import AdminEditLink from 'app/components/AdminEditLink'
+import { getSiteSettings } from 'lib/site-settings'
 
 export const metadata = {
   title: 'Blog',
@@ -7,12 +8,27 @@ export const metadata = {
 }
 
 export default function Page() {
+  const settings = getSiteSettings()
+  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
   return (
     <section>
-      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Blog</h1>
-      <nav className="mb-4">
-        
-      </nav>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">
+            {settings.blogPage.eyebrow}
+          </p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-4xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+              {settings.blogPage.title}
+            </h1>
+            <AdminEditLink href="/admin/blog" label="edit blog" adminUsername={adminUsername} />
+          </div>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right">
+          {settings.blogPage.description}
+        </p>
+      </div>
       <BlogPosts />
     </section>
   )
