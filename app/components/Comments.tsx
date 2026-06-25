@@ -19,6 +19,36 @@ interface Props {
   slug: string
 }
 
+function Avatar({ src, name, size = 32 }: { src?: string | null; name?: string | null; size?: number }) {
+  const [errored, setErrored] = useState(false)
+  const initial = (name ?? '?').charAt(0).toUpperCase()
+  const dimension = `${size}px`
+
+  if (!src || errored) {
+    return (
+      <span
+        className="flex shrink-0 items-center justify-center rounded-full bg-neutral-300 text-xs font-semibold text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+        style={{ width: dimension, height: dimension }}
+      >
+        {initial}
+      </span>
+    )
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={name ?? 'avatar'}
+      width={size}
+      height={size}
+      className="shrink-0 rounded-full object-cover"
+      style={{ width: dimension, height: dimension }}
+      unoptimized
+      onError={() => setErrored(true)}
+    />
+  )
+}
+
 export default function Comments({ slug }: Props) {
   const { data: session } = useSession()
   const [comments, setComments] = useState<Comment[]>([])
@@ -52,7 +82,7 @@ export default function Comments({ slug }: Props) {
         body: JSON.stringify({ body: text.trim() }),
       })
       if (!res.ok) {
-        const d = await res.json()
+        const d = await res.json().catch(() => ({}))
         setError(d.error ?? 'Failed to post comment')
       } else {
         setText('')
@@ -78,14 +108,7 @@ export default function Comments({ slug }: Props) {
           {comments.map(c => (
             <div key={c.id} className="flex gap-3">
               <a href={c.user.html_url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
-                <Image
-                  src={c.user.avatar_url}
-                  alt={c.user.login}
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                  unoptimized
-                />
+                <Avatar src={c.user.avatar_url} name={c.user.login} />
               </a>
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 mb-1">
@@ -115,16 +138,7 @@ export default function Comments({ slug }: Props) {
       {/* Comment form */}
       {session ? (
         <div className="flex gap-3">
-          {session.user?.image && (
-            <Image
-              src={session.user.image}
-              alt={session.user.name ?? 'you'}
-              width={32}
-              height={32}
-              className="rounded-full flex-shrink-0"
-              unoptimized
-            />
-          )}
+          <Avatar src={(session as any).avatar ?? session.user?.image} name={(session as any).login ?? session.user?.name ?? 'you'} />
           <div className="flex-1 flex flex-col gap-2">
             <textarea
               value={text}

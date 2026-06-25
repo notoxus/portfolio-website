@@ -26,6 +26,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = token.sub!
       ;(session as any).accessToken = token.accessToken
       ;(session as any).login = token.login
+      ;(session as any).avatar = token.avatar
+      session.user.image = session.user.image ?? (token.avatar as string | undefined)
       return session
     },
   },
