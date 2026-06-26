@@ -15,6 +15,7 @@
     "frameworksToolsLabel": "Frameworks & Tools",
     "frameworksToolsItems": [
       "Next.js",
+      "Maven",
       "Gradle",
       "Automation"
     ],
