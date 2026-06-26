@@ -1,13 +1,6 @@
 import Link from 'next/link'
 import AuthButton from './AuthButton'
-
-const navItems = {
-  '/': { name: 'home' },
-  '/blog': { name: 'blog' },
-  '/projects': { name: 'projects' },
-  '/notebook': { name: 'notebook' },
-  '/essential-tools': { name: 'tools' },
-}
+import NavLinks from './NavLinks'
 
 export function Navbar() {
   return (
@@ -25,17 +18,7 @@ export function Navbar() {
               <span className="text-neutral-900 dark:text-neutral-100">Phuoc Thinh</span>
             </Link>
             <div className="hidden h-5 w-px bg-neutral-200 dark:bg-neutral-800 sm:block" />
-            <div className="flex flex-row flex-wrap gap-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {Object.entries(navItems).map(([path, { name }]) => (
-              <Link
-                key={path}
-                href={path}
-                className="rounded-lg px-2.5 py-1.5 transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100"
-              >
-                {name}
-              </Link>
-            ))}
-            </div>
+            <NavLinks />
           </div>
 
           <AuthButton

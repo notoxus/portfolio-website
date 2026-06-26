@@ -4,7 +4,6 @@ type SocialLink = {
   name: string
   href: string
   iconSrc: string
-  iconClassName: string
 }
 
 const SOCIAL_LINKS: SocialLink[] = [
@@ -12,37 +11,35 @@ const SOCIAL_LINKS: SocialLink[] = [
     name: 'Instagram',
     href: 'https://www.instagram.com/notoxus._morales',
     iconSrc: '/images/social/instagram-clean.png',
-    iconClassName: 'h-6 w-6',
   },
   {
     name: 'LinkedIn',
     href: 'https://www.linkedin.com/in/b%C3%B9i-v%C3%B5-ph%C6%B0%E1%BB%9Bc-th%E1%BB%8Bnh-7b80b531a/',
     iconSrc: '/images/social/linkedin-clean.png',
-    iconClassName: 'h-6 w-6',
   },
   {
     name: 'GitHub',
     href: 'https://github.com/notoxus',
     iconSrc: '/images/social/github.png',
-    iconClassName: 'h-6 w-6',
   },
   {
     name: 'YouTube',
     href: 'https://www.youtube.com/@juosterben',
     iconSrc: '/images/social/youtube.png',
-    iconClassName: 'h-5 w-7',
   },
 ]
 
 function SocialIcon({ link }: { link: SocialLink }) {
   return (
-    <Image
-      src={link.iconSrc}
-      alt=""
-      width={32}
-      height={32}
-      className={`${link.iconClassName} object-contain`}
-    />
+    <span className="flex h-6 w-6 items-center justify-center">
+      <Image
+        src={link.iconSrc}
+        alt=""
+        width={24}
+        height={24}
+        className="h-full w-full object-contain"
+      />
+    </span>
   )
 }
 

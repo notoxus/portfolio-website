@@ -4,7 +4,19 @@ import { getSiteSettings } from 'lib/site-settings'
 
 export const metadata = {
   title: 'Blog',
-  description: 'Read my blog.',
+  description:
+    'Articles and notes by Phuoc Thinh on web development, programming, and technology.',
+  openGraph: {
+    title: 'Blog — Phuoc Thinh',
+    description:
+      'Articles and notes by Phuoc Thinh on web development, programming, and technology.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog — Phuoc Thinh',
+    description:
+      'Articles and notes by Phuoc Thinh on web development, programming, and technology.',
+  },
 }
 
 export default function Page() {

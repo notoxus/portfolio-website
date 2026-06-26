@@ -12,17 +12,33 @@ import SessionProviderWrapper from './components/SessionProviderWrapper'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Phuoc Thinh Portfolio',
-    template: '%s | Phuoc Thinh Portfolio',
+    default: 'Phuoc Thinh — Software Developer',
+    template: '%s | Phuoc Thinh',
   },
-  description: 'This is my portfolio.',
+  description:
+    'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
+  keywords: ['software developer', 'web development', 'Next.js', 'React', 'portfolio', 'blog'],
+  authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
+  creator: 'Phuoc Thinh',
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'Phuoc Thinh — Software Developer',
+    description:
+      'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
     url: baseUrl,
-    siteName: 'My Portfolio',
+    siteName: 'Phuoc Thinh',
     locale: 'en_US',
     type: 'website',
+    images: [{ url: `${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Software+Developer`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Phuoc Thinh — Software Developer',
+    description:
+      'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
+    images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Software+Developer`],
+  },
+  alternates: {
+    canonical: baseUrl,
   },
   robots: {
     index: true,

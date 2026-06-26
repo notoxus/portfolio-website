@@ -23,9 +23,11 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "app/*": ["./app/*"],
+      "lib/*": ["./lib/*"],
+      "public/*": ["./public/*"]
     },
     "strictNullChecks": true
   },

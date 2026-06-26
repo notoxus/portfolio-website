@@ -3,8 +3,20 @@ import AdminEditLink from 'app/components/AdminEditLink'
 import { getSiteSettings } from 'lib/site-settings'
 
 export const metadata = {
-  title: 'My Projects',
-  description: 'My project check list.',
+  title: 'Projects',
+  description:
+    'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+  openGraph: {
+    title: 'Projects — Phuoc Thinh',
+    description:
+      'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Projects — Phuoc Thinh',
+    description:
+      'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+  },
 }
 
 export default function ProjectsPage() {

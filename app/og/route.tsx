@@ -2,16 +2,21 @@ import { ImageResponse } from 'next/og'
 
 export function GET(request: Request) {
   let url = new URL(request.url)
-  let title = url.searchParams.get('title') || 'Next.js Portfolio Starter'
+  let title = url.searchParams.get('title') || 'Phuoc Thinh — Software Developer'
 
   return new ImageResponse(
     (
-      <div tw="flex flex-col w-full h-full items-center justify-center bg-white">
-        <div tw="flex flex-col md:flex-row w-full py-12 px-4 md:items-center justify-between p-8">
-          <h2 tw="flex flex-col text-4xl font-bold tracking-tight text-left">
-            {title}
-          </h2>
+      <div tw="flex flex-col w-full h-full justify-between bg-white p-16">
+        <div tw="flex items-center gap-3">
+          <div tw="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-200 bg-white text-sm font-bold text-neutral-900">
+            PT
+          </div>
+          <span tw="text-base font-semibold text-neutral-500">phuocthinh.is-a.dev</span>
         </div>
+        <h2 tw="text-6xl font-bold tracking-tight text-neutral-900 leading-tight max-w-3xl">
+          {title}
+        </h2>
+        <p tw="text-xl text-neutral-500">Phuoc Thinh — Software Developer</p>
       </div>
     ),
     {
