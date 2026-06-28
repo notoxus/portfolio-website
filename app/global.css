@@ -183,6 +183,80 @@ body {
   @apply m-0;
 }
 
+.prose .embedded-media {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  margin-block: 1.5rem;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 6px;
+  background: var(--portfolio-surface-soft);
+  object-fit: contain;
+}
+
+.prose [data-media-node] {
+  margin-block: 1.5rem;
+  border-radius: 6px;
+  outline: 2px solid transparent;
+}
+
+.prose [data-media-node].is-selected {
+  outline-color: var(--portfolio-accent);
+}
+
+.prose [data-media-node] .embedded-media {
+  margin-block: 0;
+}
+
+.prose .math-block,
+.prose .tiptap-mathematics-render[data-type='block-math'] {
+  width: 100%;
+  margin-block: 1.5rem;
+  overflow-x: auto;
+  padding: 0.75rem 0.25rem;
+  text-align: center;
+}
+
+.prose .tiptap-mathematics-render[data-type='inline-math'] {
+  display: inline-block;
+  margin-inline: 0.12rem;
+  vertical-align: middle;
+}
+
+.prose .tiptap-mathematics-render--editable {
+  cursor: pointer;
+  border-radius: 4px;
+  outline: 1px solid transparent;
+  transition: background-color 150ms ease, outline-color 150ms ease;
+}
+
+.prose .tiptap-mathematics-render--editable:hover {
+  background: color-mix(in srgb, var(--portfolio-accent), transparent 90%);
+  outline-color: color-mix(in srgb, var(--portfolio-accent), transparent 55%);
+}
+
+.prose .mermaid-diagram {
+  width: 100%;
+  margin-block: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 6px;
+  background: var(--portfolio-surface);
+}
+
+.prose .mermaid-diagram svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.prose .mermaid-error {
+  border-color: #dc2626;
+}
+
 .prose p {
   @apply my-4 text-neutral-800 dark:text-neutral-200;
 }
@@ -208,11 +282,41 @@ body {
 }
 
 .prose ul {
-  @apply list-disc pl-6;
+  padding-inline-start: 1.15rem;
 }
 
 .prose ol {
-  @apply list-decimal pl-6;
+  @apply list-decimal;
+  padding-inline-start: 1.5rem;
+}
+
+.prose ul > li::marker {
+  content: '\2022\00a0';
+}
+
+.prose ul ul > li::marker {
+  content: '\002b\00a0';
+}
+
+.prose ul ul ul > li::marker {
+  content: '\2192\00a0';
+}
+
+.prose ul ul ul ul > li::marker {
+  content: '\2013\00a0';
+}
+
+.prose li {
+  padding-inline-start: 0.1rem;
+}
+
+.prose li > p {
+  margin-block: 0.25rem;
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin-block: 0.25rem;
 }
 
 .prose > :first-child {

@@ -1,4 +1,5 @@
 import './global.css'
+import 'katex/dist/katex.min.css'
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
@@ -53,8 +54,10 @@ export const metadata: Metadata = {
   },
 }
 
+/** Joins optional CSS class names into one string. */
 const cx = (...classes) => classes.filter(Boolean).join(' ')
 
+/** Renders the shared page shell for every route. */
 export default function RootLayout({
   children,
 }: {
