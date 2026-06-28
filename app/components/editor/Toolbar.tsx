@@ -24,6 +24,123 @@ function Sep() {
   return <span className="w-px h-5 bg-neutral-200 dark:bg-neutral-700 mx-0.5 self-center" />
 }
 
+const LIST_LEVELS = [
+  { level: 1, marker: '\u2022', label: 'Bullet' },
+  { level: 2, marker: '-', label: 'Dash' },
+  { level: 3, marker: '+', label: 'Plus' },
+  { level: 4, marker: '*', label: 'Star' },
+] as const
+
+/** Counts the bullet lists around the current selection. */
+function getBulletListLevel(editor: Editor) {
+  const { $from } = editor.state.selection
+  let level = 0
+
+  for (let depth = 0; depth <= $from.depth; depth += 1) {
+    if ($from.node(depth).type.name === 'bulletList') level += 1
+  }
+
+  return level
+}
+
+/** Moves selected list items toward the requested nesting level. */
+function setBulletListLevel(editor: Editor, targetLevel: number) {
+  editor.commands.focus()
+  if (!editor.isActive('bulletList')) editor.commands.toggleBulletList()
+
+  let currentLevel = getBulletListLevel(editor)
+
+  while (currentLevel < targetLevel) {
+    if (!editor.commands.sinkListItem('listItem')) break
+    currentLevel = getBulletListLevel(editor)
+  }
+
+  while (currentLevel > targetLevel) {
+    if (!editor.commands.liftListItem('listItem')) break
+    currentLevel = getBulletListLevel(editor)
+  }
+}
+
+/** Lets the user choose a bullet marker by nesting level. */
+function ListLevelMenu({ editor }: { editor: Editor }) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const currentLevel = getBulletListLevel(editor)
+
+  useEffect(() => {
+    if (!open) return
+
+    const close = (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [open])
+
+  return (
+    <div ref={containerRef} className="relative flex items-center">
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        active={editor.isActive('bulletList')}
+        title="Toggle bullet list"
+      >
+        <span aria-hidden="true">&#8226;&#8801;</span>
+      </ToolbarButton>
+      <button
+        type="button"
+        aria-label="Choose list level"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onMouseDown={event => {
+          event.preventDefault()
+          setOpen(value => !value)
+        }}
+        className={`grid h-8 w-5 place-items-center rounded text-xs transition-colors ${
+          open
+            ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-black'
+            : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
+        }`}
+        title="Choose list level"
+      >
+        <span aria-hidden="true">&#9662;</span>
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-0 top-full z-30 mt-2 w-40 rounded-md border border-neutral-200 bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+        >
+          {LIST_LEVELS.map(option => (
+            <button
+              key={option.level}
+              type="button"
+              role="menuitemradio"
+              aria-checked={currentLevel === option.level}
+              onMouseDown={event => {
+                event.preventDefault()
+                setBulletListLevel(editor, option.level)
+                setOpen(false)
+              }}
+              className={`grid h-9 w-full grid-cols-[1.5rem_1fr_auto] items-center gap-2 rounded px-2 text-left text-xs ${
+                currentLevel === option.level
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-black'
+                  : 'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800'
+              }`}
+            >
+              <span className="text-center font-mono text-sm" aria-hidden="true">
+                {option.marker}
+              </span>
+              <span>{option.label}</span>
+              <span className="font-mono opacity-60">L{option.level}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /** Lets the user record custom shortcuts for list indentation. */
 function ShortcutSettings({
   shortcuts,
@@ -351,9 +468,7 @@ export default function Toolbar({ editor, shortcuts, onShortcutsChange }: Props)
       <Sep />
 
       {/* Lists + structure */}
-      <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} title="Bullet list (-, +, or *)">
-        &#8226;&#8801;
-      </ToolbarButton>
+      <ListLevelMenu editor={editor} />
       <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} title="Ordered list">
         1&#8801;
       </ToolbarButton>
