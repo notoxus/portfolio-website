@@ -4,11 +4,11 @@ export type EditorShortcuts = {
 }
 
 export const DEFAULT_EDITOR_SHORTCUTS: EditorShortcuts = {
-  increaseListLevel: 'Ctrl+]',
-  decreaseListLevel: 'Ctrl+[',
+  increaseListLevel: 'Ctrl+Tab',
+  decreaseListLevel: 'Ctrl+Shift+Tab',
 }
 
-export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts'
+export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts-v2'
 
 type ShortcutEvent = Pick<
   KeyboardEvent,

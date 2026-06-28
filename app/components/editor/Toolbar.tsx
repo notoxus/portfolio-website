@@ -10,6 +10,7 @@ import {
 } from './shortcuts'
 import DiagramInsert from './DiagramInsert'
 import MathInsert from './MathInsert'
+import { uploadMediaFile } from './mediaUpload'
 import ToolbarButton from './ToolbarButton'
 
 interface Props {
@@ -164,14 +165,7 @@ function MediaInsert({ editor }: { editor: Editor }) {
 
       if (sourceMode === 'upload') {
         if (!file) throw new Error('Choose a media file first')
-        if (file.size > 4 * 1024 * 1024) throw new Error('File must be 4 MB or smaller')
-
-        const body = new FormData()
-        body.append('file', file)
-
-        const response = await fetch('/api/upload', { method: 'POST', body })
-        const result = await response.json()
-        if (!response.ok) throw new Error(result.error ?? 'Upload failed')
+        const result = await uploadMediaFile(file)
 
         src = result.url
         previewSrc = result.previewUrl
@@ -366,14 +360,14 @@ export default function Toolbar({ editor, shortcuts, onShortcutsChange }: Props)
       <ToolbarButton
         onClick={() => editor.chain().focus().liftListItem('listItem').run()}
         disabled={!canDecreaseListLevel}
-        title="Decrease list level (Shift+Tab)"
+        title="Decrease list level (Ctrl+Shift+Tab)"
       >
         <span aria-hidden="true">&#8226;&#8592;</span>
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
         disabled={!canIncreaseListLevel}
-        title="Increase list level (Tab)"
+        title="Increase list level (Ctrl+Tab)"
       >
         <span aria-hidden="true">&#8594;&#8226;</span>
       </ToolbarButton>

@@ -295,15 +295,15 @@ body {
 }
 
 .prose ul ul > li::marker {
-  content: '\002b\00a0';
+  content: '\002d\00a0';
 }
 
 .prose ul ul ul > li::marker {
-  content: '\2192\00a0';
+  content: '\002b\00a0';
 }
 
 .prose ul ul ul ul > li::marker {
-  content: '\2013\00a0';
+  content: '\002a\00a0';
 }
 
 .prose li {

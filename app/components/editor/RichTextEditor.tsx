@@ -22,6 +22,7 @@ import { common, createLowlight } from 'lowlight'
 import Toolbar from './Toolbar'
 import EmbeddedMedia from '../EmbeddedMedia'
 import { MarkdownBlockMath, MarkdownInlineMath } from './mathExtensions'
+import { uploadMediaFile } from './mediaUpload'
 import {
   DEFAULT_EDITOR_SHORTCUTS,
   EDITOR_SHORTCUTS_STORAGE_KEY,
@@ -70,6 +71,29 @@ interface Props {
   placeholder?: string
 }
 
+/** Checks whether a list shortcut can change the current nesting level. */
+function canUseListShortcut(editor: Editor) {
+  const { selection } = editor.state
+  return !selection.empty || selection.$from.parentOffset === 0
+}
+
+/** Returns the first image file copied into the clipboard. */
+function getClipboardImage(event: ClipboardEvent) {
+  const imageItem = Array.from(event.clipboardData?.items ?? []).find(
+    item => item.kind === 'file' && item.type.startsWith('image/'),
+  )
+  const imageFile = Array.from(event.clipboardData?.files ?? []).find(file =>
+    file.type.startsWith('image/'),
+  )
+
+  return imageItem?.getAsFile() ?? imageFile ?? null
+}
+
+type PasteStatus = {
+  kind: 'uploading' | 'error'
+  message: string
+}
+
 /** Creates the Markdown editor and keeps its output synchronized. */
 export default function RichTextEditor({
   initialContent = '',
@@ -79,6 +103,7 @@ export default function RichTextEditor({
   const editorRef = useRef<Editor | null>(null)
   const shortcutsRef = useRef<EditorShortcuts>(DEFAULT_EDITOR_SHORTCUTS)
   const [shortcuts, setShortcuts] = useState<EditorShortcuts>(DEFAULT_EDITOR_SHORTCUTS)
+  const [pasteStatus, setPasteStatus] = useState<PasteStatus | null>(null)
 
   const editor = useEditor({
     extensions: [
@@ -130,29 +155,61 @@ export default function RichTextEditor({
         const currentEditor = editorRef.current
         if (!currentEditor?.isActive('listItem')) return false
 
-        if (matchesShortcut(event, shortcutsRef.current.increaseListLevel)) {
+        if (
+          matchesShortcut(event, shortcutsRef.current.increaseListLevel) &&
+          canUseListShortcut(currentEditor)
+        ) {
           event.preventDefault()
           currentEditor.commands.sinkListItem('listItem')
           return true
         }
 
-        if (matchesShortcut(event, shortcutsRef.current.decreaseListLevel)) {
+        if (
+          matchesShortcut(event, shortcutsRef.current.decreaseListLevel) &&
+          canUseListShortcut(currentEditor)
+        ) {
           event.preventDefault()
           currentEditor.commands.liftListItem('listItem')
           return true
         }
 
-        if (event.key === 'Tab') {
-          event.preventDefault()
-          if (event.shiftKey) {
-            currentEditor.commands.liftListItem('listItem')
-          } else {
-            currentEditor.commands.sinkListItem('listItem')
-          }
-          return true
-        }
-
         return false
+      },
+      handlePaste: (view, event) => {
+        const file = getClipboardImage(event)
+        if (!file) return false
+
+        event.preventDefault()
+        const insertAt = view.state.selection.from
+        setPasteStatus({ kind: 'uploading', message: 'Uploading pasted image...' })
+
+        void uploadMediaFile(file)
+          .then(result => {
+            const currentEditor = editorRef.current
+            if (!currentEditor || currentEditor.isDestroyed) return
+
+            currentEditor
+              .chain()
+              .focus()
+              .insertContentAt(insertAt, {
+                type: 'image',
+                attrs: {
+                  src: result.url,
+                  alt: '',
+                  previewSrc: result.previewUrl,
+                },
+              })
+              .run()
+            setPasteStatus(null)
+          })
+          .catch((error: any) => {
+            setPasteStatus({
+              kind: 'error',
+              message: error?.message ?? 'Could not paste this image',
+            })
+          })
+
+        return true
       },
     },
     onCreate({ editor }) {
@@ -214,6 +271,18 @@ export default function RichTextEditor({
     <div className="relative rounded-lg border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-950">
       <Toolbar editor={editor} shortcuts={shortcuts} onShortcutsChange={updateShortcuts} />
       <EditorContent editor={editor} />
+      {pasteStatus && (
+        <p
+          role={pasteStatus.kind === 'error' ? 'alert' : 'status'}
+          className={`border-t px-4 py-2 text-xs ${
+            pasteStatus.kind === 'error'
+              ? 'border-red-200 text-red-600 dark:border-red-900 dark:text-red-400'
+              : 'border-neutral-200 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400'
+          }`}
+        >
+          {pasteStatus.message}
+        </p>
+      )}
     </div>
   )
 }
