@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { formatDate, getBlogPosts } from 'app/blog/utils'
 
-export function BlogPosts({
+export async function BlogPosts({
   limit,
   showSummaries = true,
 }: {
   limit?: number
   showSummaries?: boolean
 }) {
-  let allBlogs = getBlogPosts()
+  let allBlogs = await getBlogPosts()
   const posts = allBlogs
     .sort((a, b) => {
       if (

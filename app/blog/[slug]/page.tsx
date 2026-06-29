@@ -5,13 +5,13 @@ import { baseUrl } from 'app/sitemap'
 import Comments from 'app/components/Comments'
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts()
+  let posts = await getBlogPosts()
   return posts.map((post) => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params
-  let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
+  let post = (await getBlogPosts()).find((post) => post.slug === resolvedParams.slug)
   if (!post) return
 
   let { title, publishedAt: publishedTime, summary: description, image } = post.metadata
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
 
 export default async function Blog({ params }) {
   const resolvedParams = await params
-  let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
+  let post = (await getBlogPosts()).find((post) => post.slug === resolvedParams.slug)
 
   if (!post) notFound()
 

@@ -1,7 +1,9 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { blogPublisher } from 'lib/observers'
 import type { BlogPostData, BlogEvent } from 'lib/observers'
+import { BLOG_CACHE_TAG } from 'lib/github-posts'
 import fs from 'fs'
 import path from 'path'
 
@@ -58,9 +60,14 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Trigger Observer chain
+  // Trigger Observer chain (commits MDX to GitHub)
   const postData: BlogPostData = { slug: safeSlug, content, metadata }
   const results = await blogPublisher.notify(event, postData)
+
+  // Bust the blog data cache so the next request fetches fresh content from GitHub API
+  revalidateTag(BLOG_CACHE_TAG, {})
+  revalidatePath('/blog', 'layout')
+  revalidatePath(`/blog/${safeSlug}`)
 
   return NextResponse.json({ ok: true, slug: safeSlug, observers: results })
 }

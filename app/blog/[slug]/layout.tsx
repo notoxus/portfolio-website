@@ -2,8 +2,8 @@ import { getBlogPosts } from 'app/blog/utils'
 import { BlogMenuBuilder } from 'lib/composite/menu-node'
 import CompositeMenu from 'app/components/CompositeMenu'
 
-export default function BlogPostLayout({ children }: { children: React.ReactNode }) {
-  const allPosts = getBlogPosts()
+export default async function BlogPostLayout({ children }: { children: React.ReactNode }) {
+  const allPosts = await getBlogPosts()
   // Composite pattern: builds a category tree from flat post list
   const menuTree = BlogMenuBuilder.fromPosts(allPosts)
 

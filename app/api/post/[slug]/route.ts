@@ -10,7 +10,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ slu
   }
 
   const { slug } = await params
-  const post = getBlogPosts().find(p => p.slug === slug)
+  const post = (await getBlogPosts()).find(p => p.slug === slug)
   if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   return NextResponse.json({ metadata: post.metadata, content: post.content })
