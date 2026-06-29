@@ -4,11 +4,12 @@ export type EditorShortcuts = {
 }
 
 export const DEFAULT_EDITOR_SHORTCUTS: EditorShortcuts = {
-  increaseListLevel: 'Ctrl+Tab',
-  decreaseListLevel: 'Ctrl+Shift+Tab',
+  increaseListLevel: 'Tab',
+  decreaseListLevel: 'Shift+Tab',
 }
 
-export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts-v2'
+// Bumped to v3 — invalidates old Ctrl+Tab/Ctrl+Shift+Tab shortcuts that browsers intercept.
+export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts-v3'
 
 type ShortcutEvent = Pick<
   KeyboardEvent,

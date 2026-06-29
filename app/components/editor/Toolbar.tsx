@@ -25,10 +25,10 @@ function Sep() {
 }
 
 const LIST_LEVELS = [
-  { level: 1, marker: '\u2022', label: 'Bullet' },
-  { level: 2, marker: '-', label: 'Dash' },
-  { level: 3, marker: '+', label: 'Plus' },
-  { level: 4, marker: '*', label: 'Star' },
+  { level: 1, indent: 0, label: 'Level 1' },
+  { level: 2, indent: 1, label: 'Level 2' },
+  { level: 3, indent: 2, label: 'Level 3' },
+  { level: 4, indent: 3, label: 'Level 4' },
 ] as const
 
 /** Counts the bullet lists around the current selection. */
@@ -122,17 +122,20 @@ function ListLevelMenu({ editor }: { editor: Editor }) {
                 setBulletListLevel(editor, option.level)
                 setOpen(false)
               }}
-              className={`grid h-9 w-full grid-cols-[1.5rem_1fr_auto] items-center gap-2 rounded px-2 text-left text-xs ${
+              className={`flex h-9 w-full items-center gap-2 rounded px-2 text-left text-xs ${
                 currentLevel === option.level
                   ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-black'
                   : 'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800'
               }`}
             >
-              <span className="text-center font-mono text-sm" aria-hidden="true">
-                {option.marker}
+              <span
+                aria-hidden="true"
+                style={{ paddingLeft: `${option.indent * 10}px` }}
+                className="font-mono text-sm leading-none"
+              >
+                &#8226;
               </span>
               <span>{option.label}</span>
-              <span className="font-mono opacity-60">L{option.level}</span>
             </button>
           ))}
         </div>
@@ -475,14 +478,14 @@ export default function Toolbar({ editor, shortcuts, onShortcutsChange }: Props)
       <ToolbarButton
         onClick={() => editor.chain().focus().liftListItem('listItem').run()}
         disabled={!canDecreaseListLevel}
-        title="Decrease list level (Ctrl+Shift+Tab)"
+        title="Decrease list level (Shift+Tab)"
       >
         <span aria-hidden="true">&#8226;&#8592;</span>
       </ToolbarButton>
       <ToolbarButton
         onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
         disabled={!canIncreaseListLevel}
-        title="Increase list level (Ctrl+Tab)"
+        title="Increase list level (Tab)"
       >
         <span aria-hidden="true">&#8594;&#8226;</span>
       </ToolbarButton>
