@@ -44,8 +44,8 @@ const SETTINGS_FILE = path.join(process.cwd(), 'content', 'site-settings.json')
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   home: {
-    eyebrow: 'Building practical tools and learning systems',
-    headline: 'Software, notes, and useful experiments.',
+    eyebrow: 'Cybersecurity & Ethical Hacking · SysAdmin / DevSecOps',
+    headline: 'Where I share my blog, my work and case study',
     primaryCtaLabel: 'View projects',
     primaryCtaHref: '/projects',
     secondaryCtaLabel: 'Read notes',

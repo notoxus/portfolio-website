@@ -1,6 +1,6 @@
 {
   "home": {
-    "eyebrow": "Phuoc Thinh's Portfolio",
+    "eyebrow": "Cybersecurity &amp; Ethical Hacking · SysAdmin / DevSecOps",
     "headline": "Where I share my blog, my work and case study",
     "primaryCtaLabel": "View projects",
     "primaryCtaHref": "/projects",
@@ -30,7 +30,7 @@
       "English"
     ],
     "contactLabel": "Contact",
-    "contactDescription": "Open to thoughtful collaboration, tool ideas, and practical software problems.",
+    "contactDescription": "Open to collaboration on security projects, automation scripts, and knowledge-sharing initiatives.",
     "featuredTitle": "Featured work",
     "featuredDescription": "Project entries as compact case studies, with enough context to scan.",
     "latestTitle": "Latest blog",
