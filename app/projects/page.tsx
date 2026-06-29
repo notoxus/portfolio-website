@@ -5,17 +5,17 @@ import { getSiteSettings } from 'lib/site-settings'
 export const metadata = {
   title: 'Projects',
   description:
-    'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+    'Tools and applications by Phuoc Thinh, built to practice systems thinking, automation, and software design.',
   openGraph: {
     title: 'Projects — Phuoc Thinh',
     description:
-      'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+      'Tools and applications by Phuoc Thinh, built to practice systems thinking, automation, and software design.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Projects — Phuoc Thinh',
     description:
-      'A collection of projects built by Phuoc Thinh — from web apps to tools and experiments.',
+      'Tools and applications by Phuoc Thinh, built to practice systems thinking, automation, and software design.',
   },
 }
 

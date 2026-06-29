@@ -44,45 +44,45 @@ const SETTINGS_FILE = path.join(process.cwd(), 'content', 'site-settings.json')
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   home: {
-    eyebrow: 'Cybersecurity & Ethical Hacking · SysAdmin / DevSecOps',
-    headline: 'Where I share my blog, my work and case study',
-    primaryCtaLabel: 'View projects',
+    eyebrow: 'Cybersecurity learner · SysAdmin / DevSecOps',
+    headline: 'I build practical tools, study how systems break, and document what I learn.',
+    primaryCtaLabel: 'Explore my work',
     primaryCtaHref: '/projects',
-    secondaryCtaLabel: 'Read notes',
+    secondaryCtaLabel: 'Read my blog',
     secondaryCtaHref: '/blog',
-    programmingLanguagesLabel: 'Programming Language',
-    programmingLanguagesItems: ['Java', 'TypeScript', 'C++'],
-    frameworksToolsLabel: 'Frameworks & Tools',
-    frameworksToolsItems: ['Next.js', 'Maven', 'GitHub Actions'],
-    technicalSkillsLabel: 'Technical skills',
-    technicalSkillsItems: ['System Design', 'Automation', 'Technical Writing'],
+    programmingLanguagesLabel: 'Languages & Scripting',
+    programmingLanguagesItems: ['Java', 'Python', 'Bash', 'TypeScript'],
+    frameworksToolsLabel: 'Systems & Security',
+    frameworksToolsItems: ['Linux', 'Kali Linux', 'Network fundamentals', 'Web security labs'],
+    technicalSkillsLabel: 'Build & Deliver',
+    technicalSkillsItems: ['Automation', 'Git', 'Maven / Gradle', 'Technical writing'],
     languageLabel: 'Language',
-    languageItems: ['English'],
-    contactLabel: 'Contact',
+    languageItems: ['Vietnamese', 'English'],
+    contactLabel: 'Open to',
     contactDescription:
-      'Open to thoughtful collaboration, tool ideas, and practical software problems.',
+      'Security projects, automation ideas, and knowledge-sharing collaborations.',
     featuredTitle: 'Featured work',
     featuredDescription:
-      'Project entries as compact case studies, with enough context to scan.',
-    latestTitle: 'Latest notes',
+      'Selected projects with the problem, implementation, and skills they helped me practice.',
+    latestTitle: 'Latest blog posts',
     latestDescription:
-      'Writing about software patterns, systems, and things worth remembering.',
+      'Vietnamese and English blog posts on networking, Linux, security fundamentals, and software design.',
   },
   projectsPage: {
-    eyebrow: 'Selected build log',
+    eyebrow: 'Selected work',
     title: 'Projects',
     description:
-      'Compact notes on the tools, experiments, and applications I keep shaping.',
+      'Tools and applications I use to practice systems thinking, automation, and software design.',
   },
   blogPage: {
-    eyebrow: 'Notes and essays',
+    eyebrow: 'Learning in public',
     title: 'Blog',
     description:
-      'Small writeups about programming, systems, learning, and design patterns.',
+      'Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design.',
   },
   footer: {
-    title: 'Contact',
-    description: 'Social links and places I keep active.',
+    title: "Let's connect",
+    description: 'The easiest way to reach me is through LinkedIn or the platforms below.',
   },
 }
 

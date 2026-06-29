@@ -21,6 +21,7 @@ export default function NewPostPage() {
   const [slug, setSlug] = useState('')
   const [summary, setSummary] = useState('')
   const [category, setCategory] = useState('')
+  const [language, setLanguage] = useState<'vi' | 'en'>('vi')
   const [publishedAt, setPublishedAt] = useState(today)
   const [content, setContent] = useState('')
   const [saving, setSaving] = useState(false)
@@ -49,7 +50,7 @@ export default function NewPostPage() {
           slug,
           content,
           event: 'POST_CREATED',
-          metadata: { title, publishedAt, summary, category },
+          metadata: { title, publishedAt, summary, category, language },
         }),
       })
       const data = await res.json()
@@ -134,6 +135,18 @@ export default function NewPostPage() {
               className="mt-1 w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">Language *</label>
+          <select
+            value={language}
+            onChange={e => setLanguage(e.target.value as 'vi' | 'en')}
+            className="mt-1 w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+          </select>
         </div>
       </div>
 

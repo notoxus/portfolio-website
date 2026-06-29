@@ -1,4 +1,10 @@
-export { getBlogPosts, type BlogPost, type PostMetadata, BLOG_CACHE_TAG } from 'lib/github-posts'
+export {
+  getBlogPosts,
+  type BlogLanguage,
+  type BlogPost,
+  type PostMetadata,
+  BLOG_CACHE_TAG,
+} from 'lib/github-posts'
 
 export function formatDate(date: string, includeRelative = false) {
   let currentDate = new Date()

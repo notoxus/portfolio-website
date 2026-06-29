@@ -1,42 +1,79 @@
-# Portfolio Blog Starter
+# Phuoc Thinh — Portfolio
 
-This is a porfolio site template complete with a blog. Includes:
+Personal portfolio and technical blog for documenting projects, practical labs, and lessons on cybersecurity, Linux, automation, and software design.
 
-- MDX and Markdown support
-- Optimized for SEO (sitemap, robots, JSON-LD schema)
-- RSS Feed
-- Dynamic OG images
-- Syntax highlighting
-- Tailwind v4
-- Vercel Speed Insights / Web Analytics
-- Geist font
+**Live site:** [phuocthinh.is-a.dev](https://phuocthinh.is-a.dev)
 
-## Demo
+## What is included
 
-https://portfolio-blog-starter.vercel.app
+- A focused homepage with featured work and recent technical blog posts.
+- Project entries managed from `content/projects.json`.
+- MDX blog posts with syntax highlighting, math, diagrams, and embedded media.
+- A GitHub-backed notebook explorer.
+- Study Hub for video transcripts, translation, and dictionary lookup.
+- Dynamic Open Graph images, RSS, sitemap, robots metadata, and analytics.
+- A private GitHub-authenticated admin workflow for editing and publishing content.
 
-## How to Use
+## Tech stack
 
-You can choose from one of the following two methods to use this repository:
+- Next.js 16 and React 19
+- TypeScript
+- Tailwind CSS 4
+- NextAuth with GitHub OAuth
+- MDX, KaTeX, Mermaid, and Sugar High
+- Vercel Analytics and Speed Insights
 
-### One-Click Deploy
+## Run locally
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/blog&project-name=blog&repository-name=blog)
-
-### Clone and Deploy
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [pnpm](https://pnpm.io/installation) to bootstrap the example:
+Install dependencies and start the development server:
 
 ```bash
-pnpm create next-app --example https://github.com/vercel/examples/tree/main/solutions/blog blog
+npm install
+npm run dev
 ```
 
-Then, run Next.js in development mode:
+Open [http://localhost:3000](http://localhost:3000).
+
+Create `.env.local` only for the integrations you need:
+
+```dotenv
+AUTH_SECRET=
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+ADMIN_GITHUB_USERNAME=
+
+GITHUB_TOKEN=
+GITHUB_OWNER=
+GITHUB_REPO=
+
+GROQ_API_KEY=
+```
+
+Never commit real credentials. The public portfolio can still render without the optional admin and translation integrations.
+
+## Content workflow
+
+- Homepage copy: `content/home-intro.md` and `content/site-settings.json`
+- Projects: `content/projects.json`
+- Blog posts: `app/blog/posts/*.mdx`
+- Social links: `app/components/social-links.tsx`
+- SEO metadata: `app/layout.tsx`, `app/sitemap.ts`, and `app/robots.ts`
+
+Authenticated admin pages can update the same content and sync it back to the configured GitHub repository.
+The public navigation intentionally hides authentication; open `/api/auth/signin` directly when you need to start an admin session.
+
+## Scripts
 
 ```bash
-pnpm dev
+npm run dev    # start the development server
+npm run build  # create a production build
+npm run start  # serve the production build
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/templates) ([Documentation](https://nextjs.org/docs/app/building-your-application/deploying)).
+## Deployment
+
+The site is designed for Vercel. Configure the required environment variables in the deployment project, connect the intended GitHub repository, and deploy the `main` branch.
+
+## License
+
+This repository contains a personal portfolio and its content. Please ask before reusing the written content, branding, or personal assets.

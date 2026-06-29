@@ -5,6 +5,30 @@ import { ProjectList } from './components/project-list'
 import { SocialLinks } from './components/social-links'
 import { getSiteSettings } from 'lib/site-settings'
 
+const practiceItems = [
+  {
+    label: 'Hands-on security',
+    description:
+      'Practicing enumeration, web security, and defensive thinking through guided labs and write-ups.',
+    href: 'https://tryhackme.com/p/summerthinh3',
+    linkLabel: 'View TryHackMe profile',
+  },
+  {
+    label: 'Systems & automation',
+    description:
+      'Using Linux, Bash, and small utilities to reduce repetitive work and make workflows easier to inspect.',
+    href: 'https://github.com/notoxus',
+    linkLabel: 'Explore my GitHub',
+  },
+  {
+    label: 'Learning in public',
+    description:
+      'Turning networking, Linux, and software-design lessons into practical blog posts in Vietnamese and English.',
+    href: '/blog',
+    linkLabel: 'Read the blog',
+  },
+]
+
 export default function Page() {
   const intro = getHomeIntro()
   const settings = getSiteSettings()
@@ -134,6 +158,43 @@ export default function Page() {
         </aside>
       </section>
 
+      <section aria-labelledby="practice-title">
+        <div className="mb-6 max-w-2xl">
+          <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">How I learn</p>
+          <h2
+            id="practice-title"
+            className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50"
+          >
+            Focus, practice, and proof of work
+          </h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {practiceItems.map((item) => {
+            const external = item.href.startsWith('http')
+
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                className="surface-panel group flex min-h-52 flex-col rounded-2xl p-5 transition hover:-translate-y-1 hover:border-blue-500"
+              >
+                <h3 className="text-lg font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+                  {item.label}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+                  {item.description}
+                </p>
+                <span className="mt-auto pt-6 text-sm font-semibold text-blue-600 dark:text-blue-400">
+                  {item.linkLabel} <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            )
+          })}
+        </div>
+      </section>
+
       <section>
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-center gap-2">
@@ -157,7 +218,7 @@ export default function Page() {
             <h2 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
               {home.latestTitle}
             </h2>
-            <AdminEditLink href="/admin/blog" label="edit latest notes" adminUsername={adminUsername} />
+            <AdminEditLink href="/admin/blog" label="edit latest blog posts" adminUsername={adminUsername} />
           </div>
           <p className="max-w-md text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right">
             {home.latestDescription}

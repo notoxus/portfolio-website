@@ -20,6 +20,7 @@ export default function EditPostPage() {
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
   const [category, setCategory] = useState('')
+  const [language, setLanguage] = useState<'vi' | 'en'>('vi')
   const [publishedAt, setPublishedAt] = useState('')
   const [content, setContent] = useState('')
   const [initialContent, setInitialContent] = useState('')
@@ -34,6 +35,7 @@ export default function EditPostPage() {
         setTitle(data.metadata.title ?? '')
         setSummary(data.metadata.summary ?? '')
         setCategory(data.metadata.category ?? '')
+        setLanguage(data.metadata.language === 'en' ? 'en' : 'vi')
         setPublishedAt(data.metadata.publishedAt ?? '')
         setInitialContent(data.content ?? '')
         setContent(data.content ?? '')
@@ -57,7 +59,7 @@ export default function EditPostPage() {
           slug,
           content,
           event: 'POST_UPDATED',
-          metadata: { title, publishedAt, summary, category },
+          metadata: { title, publishedAt, summary, category, language },
         }),
       })
       const data = await res.json()
@@ -128,6 +130,17 @@ export default function EditPostPage() {
               className="mt-1 w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">Language *</label>
+          <select
+            value={language}
+            onChange={e => setLanguage(e.target.value as 'vi' | 'en')}
+            className="mt-1 w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+          </select>
         </div>
         <div>
           <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">Summary *</label>

@@ -1,1 +1,1 @@
-Welcome to my portfolio. Here, I share my blog and notebook, documenting my educational journey. I'm a firm believer in interdisciplinary wisdom, so you'll also find me sharing fascinating breakthroughs in other fields here. Let's sit back, relax and enjoy the moment together!
+I'm Phuoc Thinh, a security-focused builder developing hands-on skills in cybersecurity, Linux administration, and DevSecOps. I learn by building small tools, working through practical labs, and turning the lessons into blog posts that other learners can use.

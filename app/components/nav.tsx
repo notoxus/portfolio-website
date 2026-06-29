@@ -23,7 +23,6 @@ export function Navbar() {
 
           <AuthButton
             adminUsername={process.env.ADMIN_GITHUB_USERNAME}
-            authConfigured={!!(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET)}
           />
         </nav>
       </div>

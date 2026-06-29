@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
     `publishedAt: '${metadata.publishedAt}'`,
     `summary: '${metadata.summary.replace(/'/g, "\\'")}'`,
   ]
+  if (metadata.language === 'vi' || metadata.language === 'en') {
+    mdxLines.push(`language: '${metadata.language}'`)
+  }
   if (metadata.category) mdxLines.push(`category: '${metadata.category}'`)
   if (metadata.image) mdxLines.push(`image: '${metadata.image}'`)
   mdxLines.push('---', '', content)

@@ -1,53 +1,56 @@
 {
   "home": {
-    "eyebrow": "Phuoc Thinh's Portfolio",
-    "headline": "Where I share my blog, my work and case study",
-    "primaryCtaLabel": "View projects",
+    "eyebrow": "Cybersecurity learner · SysAdmin / DevSecOps",
+    "headline": "I build practical tools, study how systems break, and document what I learn.",
+    "primaryCtaLabel": "Explore my work",
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
     "secondaryCtaHref": "/blog",
-    "programmingLanguagesLabel": "Programming Language",
+    "programmingLanguagesLabel": "Languages & Scripting",
     "programmingLanguagesItems": [
       "Java",
-      "C++",
-      "Bash/Script"
+      "Python",
+      "Bash",
+      "TypeScript"
     ],
-    "frameworksToolsLabel": "Frameworks & Tools",
+    "frameworksToolsLabel": "Systems & Security",
     "frameworksToolsItems": [
-      "Next.js",
-      "Maven",
-      "Gradle",
-      "Automation"
+      "Linux",
+      "Kali Linux",
+      "Network fundamentals",
+      "Web security labs"
     ],
-    "technicalSkillsLabel": "Technical skills",
+    "technicalSkillsLabel": "Build & Deliver",
     "technicalSkillsItems": [
-      "System Design",
-      "Write-up Report"
+      "Automation",
+      "Git",
+      "Maven / Gradle",
+      "Technical writing"
     ],
     "languageLabel": "Language",
     "languageItems": [
       "Vietnamese",
       "English"
     ],
-    "contactLabel": "Contact",
-    "contactDescription": "Open to collaboration on security projects, automation scripts, and knowledge-sharing initiatives.",
+    "contactLabel": "Open to",
+    "contactDescription": "Security projects, automation ideas, and knowledge-sharing collaborations.",
     "featuredTitle": "Featured work",
-    "featuredDescription": "Project entries as compact case studies, with enough context to scan.",
-    "latestTitle": "Latest blog",
-    "latestDescription": "Writing about some technical skills and my practical experience."
+    "featuredDescription": "Selected projects with the problem, implementation, and skills they helped me practice.",
+    "latestTitle": "Latest blog posts",
+    "latestDescription": "Vietnamese and English blog posts on networking, Linux, security fundamentals, and software design."
   },
   "projectsPage": {
-    "eyebrow": "Selected build log",
+    "eyebrow": "Selected work",
     "title": "Projects",
-    "description": "Compact notes on the tools, experiments, and applications I keep shaping."
+    "description": "Tools and applications I use to practice systems thinking, automation, and software design."
   },
   "blogPage": {
-    "eyebrow": "Notes and essays",
+    "eyebrow": "Learning in public",
     "title": "Blog",
-    "description": "Small writeups about programming, systems or something else."
+    "description": "Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design."
   },
   "footer": {
-    "title": "Contact",
-    "description": "There are some social media account which you can contact me via."
+    "title": "Let's connect",
+    "description": "The easiest way to reach me is through LinkedIn or the platforms below."
   }
 }

@@ -3,12 +3,15 @@ import { unstable_cache } from 'next/cache'
 import fs from 'fs'
 import path from 'path'
 
+export type BlogLanguage = 'vi' | 'en'
+
 export type PostMetadata = {
   title: string
   publishedAt: string
   summary: string
   image?: string
   category?: string
+  language?: BlogLanguage
 }
 
 export type BlogPost = {
@@ -28,7 +31,7 @@ function parseFrontmatter(raw: string): { metadata: PostMetadata; content: strin
   block.trim().split('\n').forEach(line => {
     const [key, ...rest] = line.split(': ')
     const value = rest.join(': ').trim().replace(/^['"](.*)['"]$/, '$1')
-    metadata[key.trim() as keyof PostMetadata] = value
+    ;(metadata as Record<string, string>)[key.trim()] = value
   })
 
   return { metadata: metadata as PostMetadata, content }

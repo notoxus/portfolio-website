@@ -98,7 +98,7 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
         <div>
           <h2 className="text-base font-semibold">Blog labels</h2>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Edit the public blog heading and the homepage latest-notes block.
+            Edit the public blog heading and the homepage latest-blog block.
           </p>
         </div>
         <button
@@ -124,7 +124,7 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
       <div className="grid gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="Latest notes title"
+            label="Latest blog title"
             value={settings.home.latestTitle}
             onChange={(value) => updateHome('latestTitle', value)}
           />
@@ -135,7 +135,7 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
           />
         </div>
         <Field
-          label="Latest notes description"
+          label="Latest blog description"
           value={settings.home.latestDescription}
           onChange={(value) => updateHome('latestDescription', value)}
           multiline

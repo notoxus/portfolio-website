@@ -61,7 +61,7 @@ function FileNode({ item }: { item: any }) {
         </div>
 
         {item.type === 'file' && (
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+          <div className="flex items-center gap-2 opacity-100 transition-all sm:opacity-0 sm:group-hover:opacity-100">
           {/* Extension column - looks like a technical badge */}
           <span className="hidden md:block text-[9px] bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-1.5 py-0.5 rounded border border-neutral-200 dark:border-neutral-700 font-bold tracking-wider">
             {extension}
@@ -98,17 +98,26 @@ function FileNode({ item }: { item: any }) {
 export default function NotebookPage() {
   const [rootFiles, setRootFiles] = useState<any[]>([])
   const [hasMounted, setHasMounted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     setHasMounted(true)
     fetch('https://api.github.com/repos/notoxus/my-note-book/contents')
-      .then(res => res.ok ? res.json() : [])
+      .then(res => {
+        if (!res.ok) throw new Error(`GitHub API returned ${res.status}`)
+        return res.json()
+      })
       .then(data => {
         if (Array.isArray(data)) {
           setRootFiles(data.sort((a: any, b: any) => (a.type === 'dir' ? -1 : 1)))
         }
       })
-      .catch(() => setRootFiles([]))
+      .catch(() => {
+        setRootFiles([])
+        setLoadError(true)
+      })
+      .finally(() => setIsLoading(false))
   }, [])
 
   // Prevent Next.js hydration mismatch
@@ -122,9 +131,26 @@ export default function NotebookPage() {
       </p>
 
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
-        {rootFiles.length === 0 ? (
+        {isLoading ? (
           <div className="p-8 text-center text-neutral-500 font-mono text-sm animate-pulse">
             Connecting to GitHub API...
+          </div>
+        ) : loadError ? (
+          <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+            The notebook could not be loaded from GitHub right now. You can still browse the source directly on{' '}
+            <a
+              href="https://github.com/notoxus/my-note-book"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+            >
+              GitHub
+            </a>
+            .
+          </div>
+        ) : rootFiles.length === 0 ? (
+          <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+            No public notebook files are available yet.
           </div>
         ) : (
           rootFiles.map((file: any) => (

@@ -13,18 +13,18 @@ import SessionProviderWrapper from './components/SessionProviderWrapper'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
+    default: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
     template: '%s | Phuoc Thinh',
   },
   description:
-    'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
+    'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
   keywords: ['cybersecurity', 'ethical hacking', 'sysadmin', 'devsecops', 'portfolio', 'blog', 'TryHackMe'],
   authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
   creator: 'Phuoc Thinh',
   openGraph: {
-    title: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
+    title: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
     description:
-      'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
+      'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
     url: baseUrl,
     siteName: 'Phuoc Thinh',
     locale: 'en_US',
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
+    title: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
     description:
-      'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
+      'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
     images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevSecOps`],
   },
   alternates: {

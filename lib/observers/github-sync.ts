@@ -68,13 +68,14 @@ export class GitHubSyncObserver implements BlogObserver {
   }
 
   private buildMDX(post: BlogPostData): string {
-    const { title, publishedAt, summary, category, image } = post.metadata
+    const { title, publishedAt, summary, category, image, language } = post.metadata
     const lines = [
       '---',
       `title: '${title.replace(/'/g, "\\'")}'`,
       `publishedAt: '${publishedAt}'`,
       `summary: '${summary.replace(/'/g, "\\'")}'`,
     ]
+    if (language === 'vi' || language === 'en') lines.push(`language: '${language}'`)
     if (category) lines.push(`category: '${category}'`)
     if (image) lines.push(`image: '${image}'`)
     lines.push('---', '', post.content)

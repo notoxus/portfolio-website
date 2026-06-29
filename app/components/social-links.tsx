@@ -3,7 +3,8 @@ import Image from 'next/image'
 type SocialLink = {
   name: string
   href: string
-  iconSrc: string
+  iconSrc?: string
+  shortLabel?: string
 }
 
 const SOCIAL_LINKS: SocialLink[] = [
@@ -14,13 +15,18 @@ const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     name: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/b%C3%B9i-v%C3%B5-ph%C6%B0%E1%BB%9Bc-th%E1%BB%8Bnh-7b80b531a/',
+    href: 'https://www.linkedin.com/in/notoxus/',
     iconSrc: '/images/social/linkedin-clean.png',
   },
   {
     name: 'GitHub',
     href: 'https://github.com/notoxus',
     iconSrc: '/images/social/github.png',
+  },
+  {
+    name: 'TryHackMe',
+    href: 'https://tryhackme.com/p/summerthinh3',
+    shortLabel: 'THM',
   },
   {
     name: 'YouTube',
@@ -30,6 +36,14 @@ const SOCIAL_LINKS: SocialLink[] = [
 ]
 
 function SocialIcon({ link }: { link: SocialLink }) {
+  if (!link.iconSrc) {
+    return (
+      <span className="flex h-6 w-6 items-center justify-center rounded bg-red-500/15 font-mono text-[8px] font-black text-red-600 dark:text-red-400">
+        {link.shortLabel ?? link.name.slice(0, 2).toUpperCase()}
+      </span>
+    )
+  }
+
   return (
     <span className="flex h-6 w-6 items-center justify-center">
       <Image

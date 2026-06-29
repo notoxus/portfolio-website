@@ -9,6 +9,7 @@ export interface BlogPostData {
     summary: string
     category?: string
     image?: string
+    language?: 'vi' | 'en'
   }
 }
 
