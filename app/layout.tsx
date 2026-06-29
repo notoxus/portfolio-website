@@ -13,30 +13,30 @@ import SessionProviderWrapper from './components/SessionProviderWrapper'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Phuoc Thinh — Software Developer',
+    default: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
     template: '%s | Phuoc Thinh',
   },
   description:
-    'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
-  keywords: ['software developer', 'web development', 'Next.js', 'React', 'portfolio', 'blog'],
+    'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
+  keywords: ['cybersecurity', 'ethical hacking', 'sysadmin', 'devsecops', 'portfolio', 'blog', 'TryHackMe'],
   authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
   creator: 'Phuoc Thinh',
   openGraph: {
-    title: 'Phuoc Thinh — Software Developer',
+    title: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
     description:
-      'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
+      'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
     url: baseUrl,
     siteName: 'Phuoc Thinh',
     locale: 'en_US',
     type: 'website',
-    images: [{ url: `${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Software+Developer`, width: 1200, height: 630 }],
+    images: [{ url: `${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevSecOps`, width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Phuoc Thinh — Software Developer',
+    title: 'Phuoc Thinh — Cybersecurity & SysAdmin / DevSecOps',
     description:
-      'Phuoc Thinh is a software developer who writes about web development, programming, and technology.',
-    images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Software+Developer`],
+      'Phuoc Thinh is a cybersecurity enthusiast and SysAdmin / DevSecOps learner who shares write-ups, tools, and technical notes.',
+    images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevSecOps`],
   },
   alternates: {
     canonical: baseUrl,
