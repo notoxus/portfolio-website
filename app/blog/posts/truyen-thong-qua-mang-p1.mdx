@@ -17,19 +17,19 @@ Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ
 
 - Tập hợp các máy tính kết nối với nhau dựa trên một kiến trúc nào đó để trao đổi dữ liệu
 
-     - Máy tính: máy trạm, máy chủ, thiết bị mạng,...
+  - Máy tính: máy trạm, máy chủ, thiết bị mạng,...
 
-     - Kết nối bằng một phương tiện truyền dữ liệu
+  - Kết nối bằng một phương tiện truyền dữ liệu
 
-     - Theo một kiến trúc mạng
+  - Theo một kiến trúc mạng
 
 - Hoặc theo một góc độ khác, mang tính chuyên môn hơn thì mạng máy tính là:
 
-     - Bao gồm các máy tính điện tử, được kết nối với nhau thông qua một phương tiện truyền dẫn tín hiệu để trao đổi       thông tin. Việc kết nối phải tuân thủ theo một kiến trúc nào đó.
+  - Bao gồm các máy tính điện tử, được kết nối với nhau thông qua một phương tiện truyền dẫn tín hiệu để trao đổi thông tin. Việc kết nối phải tuân thủ theo một kiến trúc nào đó.
 
 - Dùng để :
 
-    - Chỉ mạng dữ liệu hoặc mạng thông tin có khả năng truyền nhiều loại truyền thông khác nhau, gồm dữ liệu máy        tính truyền thống, thoại tương tác, video và các sản phẩm giải trí
+  - Chỉ mạng dữ liệu hoặc mạng thông tin có khả năng truyền nhiều loại truyền thông khác nhau, gồm dữ liệu máy tính truyền thống, thoại tương tác, video và các sản phẩm giải trí
 
 ## 2. Truyền Thông Qua Mạng Diễn Ra Như Thế Nào?
 
@@ -37,38 +37,35 @@ Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ
 
 ### 2.1. Mô hình cơ sở của truyền thông qua mạng:
 
-  - Các thành phần chính:
+- Các thành phần chính:
 
-    - Nguồn thông điệp (message source)
+  - Nguồn thông điệp (message source)
 
-    - Kênh truyền/Hệ thống truyền (The channel/The transmission system)
+  - Kênh truyền/Hệ thống truyền (The channel/The transmission system)
 
-    - Đích thông điệp (message destination)
+  - Đích thông điệp (message destination)
 
-  - Sơ đồ mô tả:
+- Sơ đồ mô tả:
 
 ![](/images/transmission-model.png)\- Trong đó:
 
-  + Nguồn thông điệp, thường là bên gửi (sender) - có thể là con người hoặc thiết bị điện tử cần gửi thông điệp đến thiết bị/người khác.
+- Nguồn thông điệp, thường là bên gửi (sender) - có thể là con người hoặc thiết bị điện tử cần gửi thông điệp đến thiết bị/người khác.
 
- + Kênh truyền, bao gồm các môi trường truyền dẫn tạo đường đi để thông điệp di chuyển từ nguồn đến đích.
+- Kênh truyền, bao gồm các môi trường truyền dẫn tạo đường đi để thông điệp di chuyển từ nguồn đến đích.
 
- + Đích thông điệp, thường là bên nhận (receiver) - nó sẽ nhận thông điệp và diễn giải nội dung đó đến receiver.
+- Đích thông điệp, thường là bên nhận (receiver) - nó sẽ nhận thông điệp và diễn giải nội dung đó đến receiver.
+
 
 - Ảnh minh họa về một quy trình truyền thông tin cụ thể hơn:
 
-![](/uploads/blog/1782656319358-image-ccfa76ee.png)
-
-### 2.2. Các cách truyền dữ liệu thường thấy:
+![](/uploads/blog/1782656319358-image-ccfa76ee.png)### 2.2. Các cách truyền dữ liệu thường thấy:
 
 - Phân đoạn dữ liệu (Segmentation): Là dữ liệu được gửi qua mạng dưới dạng các “khối” nhỏ.
 
 ![](/uploads/blog/1782656546585-image-eb2dfac9.png)Hãy tưởng tượng dữ liệu là các blocks. Nó khá giống với cách một chuỗi quy trình đóng gói hàng hóa tại một cơ quan xí nghiệp
 
-![](/uploads/blog/1782656578650-image-4dd22082.png)\+ Đa luồng hay đa hợp luồng (Multiplexing): Là phân đoạn từ cái phân đoạn ban nãy thành nhiều luồng khác nhau. Nhằm tối ưu băng thông cho nhiều người cùng sử dụng một lúc.
+![](/uploads/blog/1782656578650-image-4dd22082.png)\+ Đa luồng hay đa hợp luồng (Multiplexing): Khác với việc chia nhỏ ở trên, đây là kỹ thuật **gom nhiều luồng dữ liệu** (từ các người dùng hoặc ứng dụng khác nhau) để truyền chúng trên cùng một đường truyền duy nhất. Nhờ vậy, chúng ta có thể tối ưu hóa băng thông, cho phép nhiều người cùng sử dụng mạng một lúc mà không sợ bị "kẹt xe" hay gián đoạn.
 
-![](/uploads/blog/1782656835068-image-0f40b5e1.png)
-
-### Tổng kết:
+![](/uploads/blog/1782656835068-image-0f40b5e1.png)### Tổng kết:
 
 Như vậy, chúng ta đã cùng tìm hiểu qua những khái niệm cơ sở nhất về mạng. Biết cách thông tin được luân chuyển từ nơi này sang nơi khác. Phần sau, hãy cùng nhau tìm hiểu về đặc trưng đường truyền, các thành phần có trong mạng, môi trường truyền dẫn, kiến trúc mạng và kiến trúc Internet!!!
