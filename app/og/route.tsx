@@ -16,7 +16,7 @@ export function GET(request: Request) {
         <h2 tw="text-6xl font-bold tracking-tight text-neutral-900 leading-tight max-w-3xl">
           {title}
         </h2>
-        <p tw="text-xl text-neutral-500">Phuoc Thinh — Software Developer</p>
+        <p tw="text-xl text-neutral-500">Phuoc Thinh — SysAdmin - Cyber Security - DevSecOps</p>
       </div>
     ),
     {
