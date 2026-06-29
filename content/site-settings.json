@@ -9,23 +9,43 @@
     "programmingLanguagesLabel": "Languages & Scripting",
     "programmingLanguagesItems": [
       "Java",
+<<<<<<< HEAD
       "Python",
       "Bash",
       "TypeScript"
+=======
+      "C++",
+      "Python",
+      "Bash/Script"
+>>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "frameworksToolsLabel": "Systems & Security",
     "frameworksToolsItems": [
+<<<<<<< HEAD
       "Linux",
       "Kali Linux",
       "Network fundamentals",
       "Web security labs"
+=======
+      "Next.js",
+      "Maven",
+      "Gradle",
+      "Automation",
+      "Kali Linux Tools"
+>>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "technicalSkillsLabel": "Build & Deliver",
     "technicalSkillsItems": [
+<<<<<<< HEAD
       "Automation",
       "Git",
       "Maven / Gradle",
       "Technical writing"
+=======
+      "System Design",
+      "Write-up Report",
+      "Operating System Administration (LPI)"
+>>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "languageLabel": "Language",
     "languageItems": [
