@@ -1,9 +1,9 @@
 ---
-title: 'Truyền Thông Qua Mạng (P1) - Mạng Máy Tính Cơ Bản'
-publishedAt: '2026-06-28'
-summary: 'Ở phần này, tôi và các bạn sẽ cùng tìm hiểu qua các khái niệm cơ sở về mạng máy tính. Mạng máy tính là gì? và tại sao lại có tên gọi đó?'
-language: 'vi'
-category: 'Networking'
+title: "Truyền Thông Qua Mạng (P1) - Mạng Máy Tính Cơ Bản"
+publishedAt: "2026-06-28"
+summary: "Ở phần này, tôi và các bạn sẽ cùng tìm hiểu qua các khái niệm cơ sở về mạng máy tính. Mạng máy tính là gì? và tại sao lại có tên gọi đó?"
+language: "vi"
+category: "Networking"
 ---
 
 # Các Khái Niệm Cơ Bản Về Mạng Máy Tính - Truyền Thông Qua Mạng (Part 1)
@@ -17,7 +17,6 @@ Trong bài viết này, chúng ta sẽ cùng tìm hiểu về các khái niệm 
 Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ đơn giản là:
 
 - Tập hợp các máy tính kết nối với nhau dựa trên một kiến trúc nào đó để trao đổi dữ liệu
-
   - Máy tính: máy trạm, máy chủ, thiết bị mạng,...
 
   - Kết nối bằng một phương tiện truyền dữ liệu
@@ -25,11 +24,9 @@ Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ
   - Theo một kiến trúc mạng
 
 - Hoặc theo một góc độ khác, mang tính chuyên môn hơn thì mạng máy tính là:
-
   - Bao gồm các máy tính điện tử, được kết nối với nhau thông qua một phương tiện truyền dẫn tín hiệu để trao đổi thông tin. Việc kết nối phải tuân thủ theo một kiến trúc nào đó.
 
 - Dùng để :
-
   - Chỉ mạng dữ liệu hoặc mạng thông tin có khả năng truyền nhiều loại truyền thông khác nhau, gồm dữ liệu máy tính truyền thống, thoại tương tác, video và các sản phẩm giải trí
 
 ## 2. Truyền Thông Qua Mạng Diễn Ra Như Thế Nào?
@@ -39,7 +36,6 @@ Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ
 ### 2.1. Mô hình cơ sở của truyền thông qua mạng:
 
 - Các thành phần chính:
-
   - Nguồn thông điệp (message source)
 
   - Kênh truyền/Hệ thống truyền (The channel/The transmission system)
@@ -62,16 +58,16 @@ Theo như từ trước đến nay chúng ta hiểu thì mạng máy tính chỉ
 
 ### 2.2. Các cách truyền dữ liệu thường thấy:
 
-- Phân đoạn dữ liệu (Segmentation): Là dữ liệu được gửi qua mạng dưới dạng các “khối” nhỏ.
+- Phân đoạn dữ liệu (Segmentation): Là dữ liệu được gửi qua mạng dưới dạng các “khối” nhỏ. Hay nói theo cách hàn lâm hơn:
+  Phân đoạn dữ liệu là quá trình chia nhỏ một luồng dữ liệu lớn, liên tục thành các khối dữ liệu nhỏ hơn và dễ quản lý hơn để gửi qua mạng.
 
 ![](/uploads/blog/1782656546585-image-eb2dfac9.png)
 
-Hãy tưởng tượng dữ liệu là các blocks. Nó khá giống với cách một chuỗi quy trình đóng gói hàng hóa tại một cơ quan xí nghiệp
-
-![](/uploads/blog/1782656578650-image-4dd22082.png)\+ Đa luồng hay đa hợp luồng (Multiplexing): Khác với việc chia nhỏ ở trên, đây là kỹ thuật **gom nhiều luồng dữ liệu** (từ các người dùng hoặc ứng dụng khác nhau) để truyền đi chung trên một đường truyền duy nhất. Nhờ vậy, chúng ta có thể tối ưu hóa băng thông, cho phép nhiều người cùng sử dụng mạng một lúc mà không sợ bị "kẹt xe" hay gián đoạn.
+- Ghép kênh/Đa hợp kênh (Multiplexing): Khác với việc chia nhỏ ở trên, đây là kỹ thuật **gom nhiều luồng dữ liệu** (từ các người dùng hoặc ứng dụng khác nhau) để truyền đi chung trên một đường truyền duy nhất. Nhờ vậy, chúng ta có thể tối ưu hóa băng thông, cho phép nhiều người cùng sử dụng mạng một lúc mà không bị gián đoạn.
+  Hay mang tính học thuật/hàn lâm hơn: là quá trình đan xen (interleave) các phần dữ liệu nhỏ (từ nhiều cuộc hội thoại hay ứng dụng khác nhau) vào với nhau để chúng có thể cùng truyền tải qua một môi trường mạng duy nhất.
 
 ![](/uploads/blog/1782699499847-image-d1f4f894.png)
 
 ### Tổng kết:
 
-Như vậy, chúng ta đã cùng tìm hiểu qua những khái niệm cơ sở nhất về mạng. Biết cách thông tin được luân chuyển từ nơi này sang nơi khác. Phần sau, hãy cùng nhau tìm hiểu về đặc trưng đường truyền, các thành phần có trong mạng, môi trường truyền dẫn, kiến trúc mạng và kiến trúc Internet!!!
+Như vậy, chúng ta đã cùng tìm hiểu qua những khái niệm cơ sở nhất về mạng. Biết cách thông tin được luân chuyển từ nơi này sang nơi khác. Phần sau, hãy cùng nhau tìm hiểu về cơ sở hạ tầng mạng (network infrastructure) và cấu trúc mạng (network structure)!!!

@@ -27,7 +27,7 @@ const languageFilters: Array<{
   href: string
 }> = [
   { label: 'All posts', href: '/blog' },
-  { label: 'Tiếng Việt', language: 'vi', href: '/blog?language=vi' },
+  { label: 'Vietnamese', language: 'vi', href: '/blog?language=vi' },
   { label: 'English', language: 'en', href: '/blog?language=en' },
 ]
 
