@@ -9,6 +9,7 @@
     "@neondatabase/serverless": "^1.1.0",
     "@octokit/rest": "^22.0.1",
     "@tailwindcss/postcss": "4.0.0-alpha.13",
+    "@tiptap/core": "^3.27.1",
     "@tiptap/extension-code-block-lowlight": "^3.27.1",
     "@tiptap/extension-highlight": "^3.27.1",
     "@tiptap/extension-image": "^3.27.1",
