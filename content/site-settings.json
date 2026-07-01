@@ -35,22 +35,22 @@
     "contactLabel": "Open to",
     "contactDescription": "Security projects, automation ideas, and knowledge-sharing collaborations.",
     "featuredTitle": "Featured work",
-    "featuredDescription": "Selected projects with the problem, implementation, and skills they helped me practice.",
+    "featuredDescription": "A few projects I've enjoyed building and learned the most from.",
     "latestTitle": "Latest blog",
-    "latestDescription": "Vietnamese and English blog posts on networking, Linux, security fundamentals, and software design."
+    "latestDescription": "Recent posts — mostly notes-to-self that might be useful to you too."
   },
   "projectsPage": {
     "eyebrow": "Selected work",
     "title": "Projects",
-    "description": "Tools and applications I use to practice systems thinking, automation, and software design."
+    "description": "Things I've built to learn. Some are finished, some are still evolving - spanning systems, networking, software, automation, and beyond."
   },
   "blogPage": {
     "eyebrow": "Learning in public",
     "title": "Blog",
-    "description": "Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design."
+    "description": "Notes on networking, Linux, security, and whatever else I'm studying."
   },
   "footer": {
     "title": "Let's connect",
-    "description": "Contact me via these platforms."
+    "description": "Feel free to reach out via these platforms - I'm always happy to connect."
   }
 }
