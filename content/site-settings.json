@@ -6,46 +6,26 @@
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
     "secondaryCtaHref": "/blog",
-    "programmingLanguagesLabel": "Languages & Scripting",
+    "programmingLanguagesLabel": "Languages",
     "programmingLanguagesItems": [
       "Java",
-<<<<<<< HEAD
       "Python",
       "Bash",
       "TypeScript"
-=======
-      "C++",
-      "Python",
-      "Bash/Script"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "frameworksToolsLabel": "Systems & Security",
     "frameworksToolsItems": [
-<<<<<<< HEAD
       "Linux",
       "Kali Linux",
       "Network fundamentals",
       "Web security labs"
-=======
-      "Next.js",
-      "Maven",
-      "Gradle",
-      "Automation",
-      "Kali Linux Tools"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
-    "technicalSkillsLabel": "Build & Deliver",
+    "technicalSkillsLabel": "Technical Skills",
     "technicalSkillsItems": [
-<<<<<<< HEAD
       "Automation",
       "Git",
       "Maven / Gradle",
       "Technical writing"
-=======
-      "System Design",
-      "Write-up Report",
-      "Operating System Administration (LPI)"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "languageLabel": "Language",
     "languageItems": [
@@ -71,6 +51,6 @@
   },
   "footer": {
     "title": "Let's connect",
-    "description": "The easiest way to reach me is through LinkedIn or the platforms below."
+    "description": "Contact me via these platforms."
   }
 }
