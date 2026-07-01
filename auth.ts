@@ -1,5 +1,8 @@
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
+// Uncomment when keys are configured in .env.local:
+// import Google from 'next-auth/providers/google'
+// import Facebook from 'next-auth/providers/facebook'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -10,6 +13,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         params: { scope: 'read:user user:email public_repo' },
       },
     }),
+    // Uncomment when keys are configured:
+    // Google({ clientId: process.env.AUTH_GOOGLE_ID, clientSecret: process.env.AUTH_GOOGLE_SECRET }),
+    // Facebook({ clientId: process.env.AUTH_FACEBOOK_ID, clientSecret: process.env.AUTH_FACEBOOK_SECRET }),
   ],
   callbacks: {
     jwt({ token, account, profile }) {

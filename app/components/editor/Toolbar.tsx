@@ -1,6 +1,6 @@
 'use client'
 
-import type { Editor } from '@tiptap/react'
+import { useEditorState, type Editor } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
 import { isHlsSource, isVideoSource, normalizeMediaSource } from '../EmbeddedMedia'
 import {
@@ -9,8 +9,16 @@ import {
   type EditorShortcuts,
 } from './shortcuts'
 import DiagramInsert from './DiagramInsert'
+import {
+  BULLET_LIST_MARKERS,
+  changeListLevel,
+  getBulletListState,
+  setBulletListMarker,
+  toggleCompositeBulletList,
+} from './listComposite'
 import MathInsert from './MathInsert'
 import { uploadMediaFile } from './mediaUpload'
+import SymbolInsert from './SymbolInsert'
 import ToolbarButton from './ToolbarButton'
 
 interface Props {
@@ -24,48 +32,20 @@ function Sep() {
   return <span className="w-px h-5 bg-neutral-200 dark:bg-neutral-700 mx-0.5 self-center" />
 }
 
-const LIST_LEVELS = [
-  { level: 1, indent: 0, label: 'Level 1' },
-  { level: 2, indent: 1, label: 'Level 2' },
-  { level: 3, indent: 2, label: 'Level 3' },
-  { level: 4, indent: 3, label: 'Level 4' },
-] as const
-
-/** Counts the bullet lists around the current selection. */
-function getBulletListLevel(editor: Editor) {
-  const { $from } = editor.state.selection
-  let level = 0
-
-  for (let depth = 0; depth <= $from.depth; depth += 1) {
-    if ($from.node(depth).type.name === 'bulletList') level += 1
-  }
-
-  return level
-}
-
-/** Moves selected list items toward the requested nesting level. */
-function setBulletListLevel(editor: Editor, targetLevel: number) {
-  editor.commands.focus()
-  if (!editor.isActive('bulletList')) editor.commands.toggleBulletList()
-
-  let currentLevel = getBulletListLevel(editor)
-
-  while (currentLevel < targetLevel) {
-    if (!editor.commands.sinkListItem('listItem')) break
-    currentLevel = getBulletListLevel(editor)
-  }
-
-  while (currentLevel > targetLevel) {
-    if (!editor.commands.liftListItem('listItem')) break
-    currentLevel = getBulletListLevel(editor)
-  }
-}
-
-/** Lets the user choose a bullet marker by nesting level. */
-function ListLevelMenu({ editor }: { editor: Editor }) {
+/** Selects the real marker stored on the active Markdown bullet-list node. */
+function BulletListMenu({
+  editor,
+  shortcut,
+}: {
+  editor: Editor
+  shortcut: string
+}) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const currentLevel = getBulletListLevel(editor)
+  const listState = useEditorState({
+    editor,
+    selector: ({ editor: currentEditor }) => getBulletListState(currentEditor),
+  })
 
   useEffect(() => {
     if (!open) return
@@ -81,15 +61,15 @@ function ListLevelMenu({ editor }: { editor: Editor }) {
   return (
     <div ref={containerRef} className="relative flex items-center">
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        active={editor.isActive('bulletList')}
-        title="Toggle bullet list"
+        onClick={() => toggleCompositeBulletList(editor)}
+        active={listState.active}
+        title={`Toggle ${listState.marker} list${shortcut ? ` (${shortcut})` : ''}`}
       >
-        <span aria-hidden="true">&#8226;&#8801;</span>
+        <span aria-hidden="true" className="font-mono">{listState.marker}&#8801;</span>
       </ToolbarButton>
       <button
         type="button"
-        aria-label="Choose list level"
+        aria-label="Choose Markdown list marker"
         aria-haspopup="menu"
         aria-expanded={open}
         onMouseDown={event => {
@@ -101,7 +81,7 @@ function ListLevelMenu({ editor }: { editor: Editor }) {
             ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-black'
             : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
         }`}
-        title="Choose list level"
+        title="Choose Markdown list marker"
       >
         <span aria-hidden="true">&#9662;</span>
       </button>
@@ -111,29 +91,25 @@ function ListLevelMenu({ editor }: { editor: Editor }) {
           role="menu"
           className="absolute left-0 top-full z-30 mt-2 w-40 rounded-md border border-neutral-200 bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
         >
-          {LIST_LEVELS.map(option => (
+          {BULLET_LIST_MARKERS.map(option => (
             <button
-              key={option.level}
+              key={option.marker}
               type="button"
               role="menuitemradio"
-              aria-checked={currentLevel === option.level}
+              aria-checked={listState.marker === option.marker}
               onMouseDown={event => {
                 event.preventDefault()
-                setBulletListLevel(editor, option.level)
+                setBulletListMarker(editor, option.marker)
                 setOpen(false)
               }}
               className={`flex h-9 w-full items-center gap-2 rounded px-2 text-left text-xs ${
-                currentLevel === option.level
+                listState.marker === option.marker
                   ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-black'
                   : 'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800'
               }`}
             >
-              <span
-                aria-hidden="true"
-                style={{ paddingLeft: `${option.indent * 10}px` }}
-                className="font-mono text-sm leading-none"
-              >
-                &#8226;
+              <span aria-hidden="true" className="w-5 text-center font-mono text-sm leading-none">
+                {option.marker}
               </span>
               <span>{option.label}</span>
             </button>
@@ -168,14 +144,13 @@ function ShortcutSettings({
   }, [open])
 
   const setShortcut = (action: keyof EditorShortcuts, value: string) => {
-    const otherAction =
-      action === 'increaseListLevel' ? 'decreaseListLevel' : 'increaseListLevel'
+    const next = { ...shortcuts, [action]: value }
 
-    onChange({
-      ...shortcuts,
-      [action]: value,
-      [otherAction]: shortcuts[otherAction] === value ? '' : shortcuts[otherAction],
-    })
+    for (const otherAction of Object.keys(next) as (keyof EditorShortcuts)[]) {
+      if (otherAction !== action && next[otherAction] === value) next[otherAction] = ''
+    }
+
+    onChange(next)
   }
 
   const recorder = (action: keyof EditorShortcuts, label: string) => (
@@ -238,6 +213,7 @@ function ShortcutSettings({
             </button>
           </div>
           <div className="grid gap-3">
+            {recorder('toggleBulletList', 'Toggle bullet list')}
             {recorder('increaseListLevel', 'Increase level')}
             {recorder('decreaseListLevel', 'Decrease level')}
           </div>
@@ -471,21 +447,22 @@ export default function Toolbar({ editor, shortcuts, onShortcutsChange }: Props)
       <Sep />
 
       {/* Lists + structure */}
-      <ListLevelMenu editor={editor} />
+      <BulletListMenu editor={editor} shortcut={shortcuts.toggleBulletList} />
+      <SymbolInsert editor={editor} />
       <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} title="Ordered list">
         1&#8801;
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().liftListItem('listItem').run()}
+        onClick={() => changeListLevel(editor, 'decrease')}
         disabled={!canDecreaseListLevel}
-        title="Decrease list level (Shift+Tab)"
+        title={`Decrease list level${shortcuts.decreaseListLevel ? ` (${shortcuts.decreaseListLevel})` : ''}`}
       >
         <span aria-hidden="true">&#8226;&#8592;</span>
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
+        onClick={() => changeListLevel(editor, 'increase')}
         disabled={!canIncreaseListLevel}
-        title="Increase list level (Tab)"
+        title={`Increase list level${shortcuts.increaseListLevel ? ` (${shortcuts.increaseListLevel})` : ''}`}
       >
         <span aria-hidden="true">&#8594;&#8226;</span>
       </ToolbarButton>

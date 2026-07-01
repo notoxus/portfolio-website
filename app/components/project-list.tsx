@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { getFeaturedProjects, getProjects, type Project } from 'lib/projects'
+import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 
 const tagStyles = {
   green: 'bg-teal-500/15 text-teal-700 dark:text-teal-300',
@@ -38,17 +39,38 @@ function ProjectAnchor({
 export function ProjectList({
   limit,
   featuredOnly = false,
+  searchQuery = '',
 }: {
   limit?: number
   featuredOnly?: boolean
+  searchQuery?: string
 }) {
   const allProjects = featuredOnly ? getFeaturedProjects(limit) : getProjects()
-  const projects = typeof limit === 'number' ? allProjects.slice(0, limit) : allProjects
+  let projects = typeof limit === 'number' ? allProjects.slice(0, limit) : allProjects
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase()
+    projects = projects.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.tech.toLowerCase().includes(q) ||
+        p.kind.toLowerCase().includes(q)
+    )
+  }
+
+  if (projects.length === 0) {
+    return (
+      <div className="surface-panel rounded-2xl px-5 py-10 text-center text-sm text-neutral-500 dark:text-neutral-400">
+        No projects found matching "{searchQuery}".
+      </div>
+    )
+  }
 
   return (
-    <div className="glass-list">
+    <StaggerContainer className="glass-list">
       {projects.map((project, index) => (
-        <div
+        <StaggerItem
           key={project.title}
           className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 border-b border-neutral-200/80 py-6 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80"
         >
@@ -90,8 +112,8 @@ export function ProjectList({
               </Link>
             )}
           </div>
-        </div>
+        </StaggerItem>
       ))}
-    </div>
+    </StaggerContainer>
   )
 }

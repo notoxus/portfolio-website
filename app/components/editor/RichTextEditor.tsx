@@ -29,6 +29,12 @@ import {
   matchesShortcut,
   type EditorShortcuts,
 } from './shortcuts'
+import {
+  changeListLevel,
+  CompositeBulletList,
+  CompositeListItem,
+  toggleCompositeBulletList,
+} from './listComposite'
 
 const lowlight = createLowlight(common)
 
@@ -71,12 +77,6 @@ interface Props {
   placeholder?: string
 }
 
-/** Checks whether a list shortcut can change the current nesting level. */
-function canUseListShortcut(editor: Editor) {
-  const { selection } = editor.state
-  return !selection.empty || selection.$from.parentOffset === 0
-}
-
 /** Returns the first image file copied into the clipboard. */
 function getClipboardImage(event: ClipboardEvent) {
   const imageItem = Array.from(event.clipboardData?.items ?? []).find(
@@ -107,7 +107,9 @@ export default function RichTextEditor({
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      StarterKit.configure({ bulletList: false, codeBlock: false, listItem: false }),
+      CompositeBulletList,
+      CompositeListItem,
       CodeBlockLowlight.configure({ lowlight }),
       LinkExt.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer' } }),
       MediaImage,
@@ -153,24 +155,25 @@ export default function RichTextEditor({
       },
       handleKeyDown: (_view, event) => {
         const currentEditor = editorRef.current
-        if (!currentEditor?.isActive('listItem')) return false
+        if (!currentEditor) return false
 
-        if (
-          matchesShortcut(event, shortcutsRef.current.increaseListLevel) &&
-          canUseListShortcut(currentEditor)
-        ) {
+        if (matchesShortcut(event, shortcutsRef.current.toggleBulletList)) {
           event.preventDefault()
-          currentEditor.commands.sinkListItem('listItem')
-          return true
+          return toggleCompositeBulletList(currentEditor)
         }
 
-        if (
-          matchesShortcut(event, shortcutsRef.current.decreaseListLevel) &&
-          canUseListShortcut(currentEditor)
-        ) {
+        if (!currentEditor.isActive('listItem')) return false
+
+        if (matchesShortcut(event, shortcutsRef.current.increaseListLevel)) {
+          if (!currentEditor.can().sinkListItem('listItem')) return false
           event.preventDefault()
-          currentEditor.commands.liftListItem('listItem')
-          return true
+          return changeListLevel(currentEditor, 'increase')
+        }
+
+        if (matchesShortcut(event, shortcutsRef.current.decreaseListLevel)) {
+          if (!currentEditor.can().liftListItem('listItem')) return false
+          event.preventDefault()
+          return changeListLevel(currentEditor, 'decrease')
         }
 
         return false
@@ -233,6 +236,10 @@ export default function RichTextEditor({
 
       const parsed = JSON.parse(stored) as Partial<EditorShortcuts>
       const next = {
+        toggleBulletList:
+          typeof parsed.toggleBulletList === 'string'
+            ? parsed.toggleBulletList
+            : DEFAULT_EDITOR_SHORTCUTS.toggleBulletList,
         increaseListLevel:
           typeof parsed.increaseListLevel === 'string'
             ? parsed.increaseListLevel

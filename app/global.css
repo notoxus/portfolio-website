@@ -306,6 +306,19 @@ body {
   content: '\002a\00a0';
 }
 
+/* The editor stores the chosen MDX marker on each list node. */
+.prose ul[data-list-marker='-'] > li::marker {
+  content: '\002d\00a0';
+}
+
+.prose ul[data-list-marker='+'] > li::marker {
+  content: '\002b\00a0';
+}
+
+.prose ul[data-list-marker='*'] > li::marker {
+  content: '\002a\00a0';
+}
+
 .prose li {
   padding-inline-start: 0.1rem;
 }

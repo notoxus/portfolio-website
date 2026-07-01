@@ -1,15 +1,17 @@
 export type EditorShortcuts = {
+  toggleBulletList: string
   increaseListLevel: string
   decreaseListLevel: string
 }
 
 export const DEFAULT_EDITOR_SHORTCUTS: EditorShortcuts = {
+  toggleBulletList: 'Alt+B',
   increaseListLevel: 'Tab',
   decreaseListLevel: 'Shift+Tab',
 }
 
-// Bumped to v3 — invalidates old Ctrl+Tab/Ctrl+Shift+Tab shortcuts that browsers intercept.
-export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts-v3'
+// v4 adds the bullet-list shortcut and clears incompatible older settings.
+export const EDITOR_SHORTCUTS_STORAGE_KEY = 'blog-editor-shortcuts-v4'
 
 type ShortcutEvent = Pick<
   KeyboardEvent,

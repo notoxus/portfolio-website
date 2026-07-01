@@ -1,6 +1,6 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -67,7 +67,12 @@ export default function AuthButton({
     )
   }
 
-  // Authentication is an administrative concern, so public visitors should not
-  // see a sign-in control in the portfolio navigation.
-  return null
+  return (
+    <button
+      onClick={() => signIn('github')}
+      className="text-sm font-medium text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+    >
+      Sign in
+    </button>
+  )
 }

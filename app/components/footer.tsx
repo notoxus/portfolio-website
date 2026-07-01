@@ -10,7 +10,7 @@ export default function Footer() {
       className="mt-20 mb-10 border-t border-neutral-200/80 pt-8 dark:border-neutral-800/80"
     >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex-1 pr-4 sm:pr-8">
           <p className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
             {settings.footer.title}
           </p>
@@ -18,7 +18,9 @@ export default function Footer() {
             {settings.footer.description}
           </p>
         </div>
-        <SocialLinks />
+        <div className="flex-shrink-0">
+          <SocialLinks />
+        </div>
       </div>
       <p className="mt-8 text-sm text-neutral-500 dark:text-neutral-500">
         &copy; {new Date().getFullYear()} by Phuoc Thinh. All rights reserved.

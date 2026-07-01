@@ -1,51 +1,31 @@
 {
   "home": {
-    "eyebrow": "Cybersecurity learner · SysAdmin / DevSecOps",
-    "headline": "I build practical tools, study how systems break, and document what I learn.",
+    "eyebrow": "Building security foundations",
+    "headline": "Documenting my path into security and system administration",
     "primaryCtaLabel": "Explore my work",
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
     "secondaryCtaHref": "/blog",
-    "programmingLanguagesLabel": "Languages & Scripting",
+    "programmingLanguagesLabel": "Languages",
     "programmingLanguagesItems": [
       "Java",
-<<<<<<< HEAD
       "Python",
       "Bash",
       "TypeScript"
-=======
-      "C++",
-      "Python",
-      "Bash/Script"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "frameworksToolsLabel": "Systems & Security",
     "frameworksToolsItems": [
-<<<<<<< HEAD
       "Linux",
       "Kali Linux",
       "Network fundamentals",
       "Web security labs"
-=======
-      "Next.js",
-      "Maven",
-      "Gradle",
-      "Automation",
-      "Kali Linux Tools"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
-    "technicalSkillsLabel": "Build & Deliver",
+    "technicalSkillsLabel": "Technical Skills",
     "technicalSkillsItems": [
-<<<<<<< HEAD
       "Automation",
       "Git",
       "Maven / Gradle",
       "Technical writing"
-=======
-      "System Design",
-      "Write-up Report",
-      "Operating System Administration (LPI)"
->>>>>>> 5b9d83e9738141e07d305cae163958d980e293c9
     ],
     "languageLabel": "Language",
     "languageItems": [
@@ -55,22 +35,22 @@
     "contactLabel": "Open to",
     "contactDescription": "Security projects, automation ideas, and knowledge-sharing collaborations.",
     "featuredTitle": "Featured work",
-    "featuredDescription": "Selected projects with the problem, implementation, and skills they helped me practice.",
-    "latestTitle": "Latest blog posts",
-    "latestDescription": "Vietnamese and English blog posts on networking, Linux, security fundamentals, and software design."
+    "featuredDescription": "A few projects I've enjoyed building and learned the most from.",
+    "latestTitle": "Latest blog",
+    "latestDescription": "Recent posts — mostly notes-to-self that might be useful to you too."
   },
   "projectsPage": {
     "eyebrow": "Selected work",
     "title": "Projects",
-    "description": "Tools and applications I use to practice systems thinking, automation, and software design."
+    "description": "Things I've built to learn. Some are finished, some are still evolving - spanning systems, networking, software, automation, and beyond."
   },
   "blogPage": {
     "eyebrow": "Learning in public",
     "title": "Blog",
-    "description": "Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design."
+    "description": "Notes on networking, Linux, security, and whatever else I'm studying."
   },
   "footer": {
     "title": "Let's connect",
-    "description": "The easiest way to reach me is through LinkedIn or the platforms below."
+    "description": "Feel free to reach out via these platforms - I'm always happy to connect."
   }
 }

@@ -19,9 +19,17 @@ export const metadata = {
   },
 }
 
-export default function ProjectsPage() {
+import SearchInput from 'app/components/SearchInput'
+
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
   const settings = getSiteSettings()
   const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+  const params = await searchParams
+  const q = params.q
 
   return (
     <section>
@@ -44,7 +52,11 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <ProjectList />
+      <div className="mb-8">
+        <SearchInput placeholder="Search projects by title, tech, or kind..." />
+      </div>
+
+      <ProjectList searchQuery={q} />
     </section>
   )
 }
