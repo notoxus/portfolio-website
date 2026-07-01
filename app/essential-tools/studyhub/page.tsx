@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function StudyHubPage() {
   return (
-    <section className="w-[100vw] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-4 md:px-8 lg:px-16 pb-20">
+    <section className="w-[100dvw] relative left-1/2 right-1/2 -ml-[50dvw] -mr-[50dvw] overflow-x-hidden px-4 md:px-8 lg:px-16 pb-20">
       <div className="max-w-[1600px] mx-auto w-full">
         <Link
           href="/essential-tools"

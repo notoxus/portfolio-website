@@ -4,7 +4,7 @@ import NavLinks from './NavLinks'
 
 export function Navbar() {
   return (
-    <aside className="mb-16 tracking-tight">
+    <aside className="mb-10 sm:mb-16 tracking-tight">
       <div className="lg:sticky lg:top-6 lg:z-20">
         <nav
           className="surface-panel flex flex-col gap-4 rounded-2xl px-4 py-3 sm:flex-row sm:items-center sm:justify-between"

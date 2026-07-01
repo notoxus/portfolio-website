@@ -72,6 +72,7 @@ body {
 .glass-list {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
   border-top: 1px solid var(--portfolio-line);
 }
 
@@ -359,7 +360,6 @@ input[type='email'] {
   @apply w-full border-collapse border border-neutral-300 dark:border-neutral-700 my-6 text-sm;
   display: block;
   overflow-x: auto;
-  white-space: nowrap;
 }
 
 .prose th {
