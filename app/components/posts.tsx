@@ -69,7 +69,7 @@ export async function BlogPosts({
       {posts.map((post) => (
         <StaggerItem
           key={post.slug}
-          className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 border-b border-neutral-200/80 py-6 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80"
+          className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 border-b border-neutral-200/80 px-5 py-6 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80"
         >
           <Link href={`/blog/${post.slug}`} className="min-w-0">
             <p className="mb-2 font-mono text-xs text-neutral-500 dark:text-neutral-500">

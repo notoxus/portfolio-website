@@ -78,7 +78,7 @@ body {
 .glass-list::before {
   content: '';
   position: absolute;
-  inset: -1px -18px;
+  inset: -1px 0px;
   z-index: -1;
   border: 1px solid color-mix(in srgb, var(--portfolio-line), transparent 34%);
   border-radius: 16px;
