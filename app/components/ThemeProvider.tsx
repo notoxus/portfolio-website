@@ -79,45 +79,41 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     
     setTheme(initial)
     setBgPresetState(initialBg)
-    applyTheme(initial, initialBg)
     setMounted(true)
   }, [])
+
+  // Apply theme to DOM whenever state changes
+  useEffect(() => {
+    if (mounted) {
+      applyTheme(theme, bgPreset)
+    }
+  }, [theme, bgPreset, mounted])
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === 'dark' ? 'light' : 'dark'
       localStorage.setItem(THEME_KEY, next)
       setIsCustomTheme(true)
-      applyTheme(next, bgPreset)
       return next
     })
-  }, [bgPreset])
+  }, [])
 
-  const setBgPreset = useCallback(
-    (preset: BgPreset) => {
-      setBgPresetState(preset)
-      localStorage.setItem(BG_KEY, preset)
-      applyTheme(theme, preset)
-    },
-    [theme]
-  )
+  const setBgPreset = useCallback((preset: BgPreset) => {
+    setBgPresetState(preset)
+    localStorage.setItem(BG_KEY, preset)
+  }, [])
 
-  const setThemeContext = useCallback(
-    (newTheme: Theme) => {
-      setTheme(newTheme)
-      localStorage.setItem(THEME_KEY, newTheme)
-      setIsCustomTheme(true)
-      applyTheme(newTheme, bgPreset)
-    },
-    [bgPreset]
-  )
+  const setThemeContext = useCallback((newTheme: Theme) => {
+    setTheme(newTheme)
+    localStorage.setItem(THEME_KEY, newTheme)
+    setIsCustomTheme(true)
+  }, [])
 
   const resetToDefault = useCallback(() => {
     localStorage.removeItem(THEME_KEY)
     setIsCustomTheme(false)
     setTheme(systemTheme)
-    applyTheme(systemTheme, bgPreset)
-  }, [systemTheme, bgPreset])
+  }, [systemTheme])
 
   // Listen for system theme changes
   useEffect(() => {
@@ -127,12 +123,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setSystemTheme(sys)
       if (!localStorage.getItem(THEME_KEY)) {
         setTheme(sys)
-        applyTheme(sys, bgPreset)
       }
     }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
-  }, [bgPreset])
+  }, [])
 
   return (
     <ThemeContext.Provider value={{ theme, systemTheme, isCustomTheme, setTheme: setThemeContext, resetToDefault, toggleTheme, bgPreset, setBgPreset }}>
