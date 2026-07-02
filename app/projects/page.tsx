@@ -1,5 +1,4 @@
 import { ProjectList } from 'app/components/project-list'
-import AdminEditLink from 'app/components/AdminEditLink'
 import { getSiteSettings } from 'lib/site-settings'
 
 export const metadata = {
@@ -27,7 +26,7 @@ export default async function ProjectsPage({
   searchParams: Promise<{ q?: string }>
 }) {
   const settings = getSiteSettings()
-  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
   const params = await searchParams
   const q = params.q
 
@@ -38,11 +37,10 @@ export default async function ProjectsPage({
           <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">
             {settings.projectsPage.eyebrow}
           </p>
-          <div className="flex items-center gap-2">
+          <div>
             <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-3xl md:text-4xl">
               {settings.projectsPage.title}
             </h1>
-            <AdminEditLink href="/admin/projects" label="edit projects" adminUsername={adminUsername} />
           </div>
         </div>
         <div className="max-w-md sm:text-right">

@@ -1,6 +1,5 @@
 import { BlogPosts } from 'app/components/posts'
 import { getHomeIntro } from 'lib/site-content'
-import AdminEditLink from 'app/components/AdminEditLink'
 import { ProjectList } from './components/project-list'
 import { SocialLinks } from './components/social-links'
 import { getSiteSettings } from 'lib/site-settings'
@@ -33,7 +32,7 @@ export default function Page() {
   const intro = getHomeIntro()
   const settings = getSiteSettings()
   const home = settings.home
-  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
 
   return (
     <section className="space-y-10 md:space-y-16">
@@ -42,7 +41,6 @@ export default function Page() {
           <div className="mb-5 flex items-center gap-2.5 text-sm text-neutral-600 dark:text-neutral-400">
             <span className="status-dot" />
             <span>{home.eyebrow}</span>
-            <AdminEditLink href="/admin/site-settings" label="edit homepage labels" adminUsername={adminUsername} />
           </div>
           <h1 className="max-w-3xl text-3xl font-semibold leading-none tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-4xl md:text-5xl lg:text-7xl">
             {home.headline}
@@ -51,7 +49,6 @@ export default function Page() {
             <p className="max-w-2xl whitespace-pre-line text-sm leading-7 text-neutral-700 dark:text-neutral-300 sm:text-base sm:leading-8 md:text-lg">
               {intro}
             </p>
-            <AdminEditLink href="/admin/intro" label="edit intro" adminUsername={adminUsername} />
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
@@ -66,14 +63,10 @@ export default function Page() {
             >
               {home.secondaryCtaLabel}
             </a>
-            <AdminEditLink href="/admin/site-settings" label="edit home buttons" adminUsername={adminUsername} />
           </div>
         </div>
 
         <aside className="surface-panel relative overflow-hidden rounded-2xl">
-          <div className="absolute right-4 top-4 z-10">
-            <AdminEditLink href="/admin/site-settings" label="edit side panel" adminUsername={adminUsername} />
-          </div>
           <div className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80">
             <div className="mb-3 pr-8">
               <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
@@ -197,12 +190,9 @@ export default function Page() {
 
       <section>
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
-              {home.featuredTitle}
-            </h2>
-            <AdminEditLink href="/admin/projects" label="edit featured projects" adminUsername={adminUsername} />
-          </div>
+          <h2 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+            {home.featuredTitle}
+          </h2>
           <div className="max-w-md sm:text-right">
             <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
               {home.featuredDescription}
@@ -214,12 +204,9 @@ export default function Page() {
 
       <section>
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
-              {home.latestTitle}
-            </h2>
-            <AdminEditLink href="/admin/blog" label="edit latest blog posts" adminUsername={adminUsername} />
-          </div>
+          <h2 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+            {home.latestTitle}
+          </h2>
           <p className="max-w-md text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right">
             {home.latestDescription}
           </p>

@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 ::selection {
   background-color: #47a3f3;
   color: #fefefe;
@@ -27,30 +29,111 @@
   --portfolio-shadow: 0 18px 55px rgba(24, 24, 23, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sh-class: #4c97f8;
-    --sh-identifier: white;
-    --sh-keyword: #f47067;
-    --sh-string: #0fa295;
-    --portfolio-bg: #080908;
-    --portfolio-surface: #101110;
-    --portfolio-surface-soft: #171816;
-    --portfolio-line: #282a26;
-    --portfolio-muted: #a8aaa2;
-    --portfolio-faint: #6f716b;
-    --portfolio-accent: #60a5fa;
-    --portfolio-green: #5eead4;
-    --portfolio-amber: #f59e0b;
-    --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
-  }
-  html {
-    color-scheme: dark;
-  }
+/* ── Class-based dark mode ── */
+.dark {
+  --sh-class: #4c97f8;
+  --sh-identifier: white;
+  --sh-keyword: #f47067;
+  --sh-string: #0fa295;
+  --portfolio-bg: #080908;
+  --portfolio-surface: #101110;
+  --portfolio-surface-soft: #171816;
+  --portfolio-line: #282a26;
+  --portfolio-muted: #a8aaa2;
+  --portfolio-faint: #6f716b;
+  --portfolio-accent: #60a5fa;
+  --portfolio-green: #5eead4;
+  --portfolio-amber: #f59e0b;
+  --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+  color-scheme: dark;
+}
+
+/* ── Background Presets: Midnight Blue ── */
+.bg-preset-midnight {
+  --portfolio-bg: #eef2f7;
+  --portfolio-surface: #f6f8fb;
+  --portfolio-surface-soft: #e4eaf2;
+  --portfolio-line: #c8d3e0;
+  --portfolio-accent: #3b82f6;
+}
+.dark.bg-preset-midnight {
+  --portfolio-bg: #0a1628;
+  --portfolio-surface: #0f1d32;
+  --portfolio-surface-soft: #142640;
+  --portfolio-line: #1e3352;
+  --portfolio-accent: #60a5fa;
+}
+
+/* ── Background Presets: Forest Green ── */
+.bg-preset-forest {
+  --portfolio-bg: #f0f5ee;
+  --portfolio-surface: #f7faf6;
+  --portfolio-surface-soft: #e3eddf;
+  --portfolio-line: #c6d6c0;
+  --portfolio-accent: #16a34a;
+  --portfolio-green: #0d9488;
+}
+.dark.bg-preset-forest {
+  --portfolio-bg: #0a130a;
+  --portfolio-surface: #0f1a0f;
+  --portfolio-surface-soft: #152215;
+  --portfolio-line: #1e321e;
+  --portfolio-accent: #4ade80;
+  --portfolio-green: #5eead4;
+}
+
+/* ── Background Presets: Warm Sepia ── */
+.bg-preset-sepia {
+  --portfolio-bg: #f8f4ee;
+  --portfolio-surface: #fdfaf5;
+  --portfolio-surface-soft: #f0e8db;
+  --portfolio-line: #ddd2c0;
+  --portfolio-accent: #b45309;
+  --portfolio-amber: #d97706;
+}
+.dark.bg-preset-sepia {
+  --portfolio-bg: #12100a;
+  --portfolio-surface: #1a1710;
+  --portfolio-surface-soft: #221e14;
+  --portfolio-line: #332d20;
+  --portfolio-accent: #f59e0b;
+  --portfolio-amber: #fbbf24;
+}
+
+/* ── Background Presets: Rose ── */
+.bg-preset-rose {
+  --portfolio-bg: #faf0f2;
+  --portfolio-surface: #fdf6f8;
+  --portfolio-surface-soft: #f5e4e9;
+  --portfolio-line: #e8cdd5;
+  --portfolio-accent: #e11d48;
+}
+.dark.bg-preset-rose {
+  --portfolio-bg: #140a0e;
+  --portfolio-surface: #1c0f15;
+  --portfolio-surface-soft: #25141c;
+  --portfolio-line: #3a1e2a;
+  --portfolio-accent: #fb7185;
 }
 
 html {
   min-width: 360px;
+}
+
+/* ── Dropdown animation ── */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-dropdown {
+  animation: dropdown-in 180ms ease-out;
 }
 
 body {

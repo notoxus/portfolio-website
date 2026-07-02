@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { BlogPosts } from 'app/components/posts'
-import AdminEditLink from 'app/components/AdminEditLink'
 import { getSiteSettings } from 'lib/site-settings'
 import type { BlogLanguage } from 'app/blog/utils'
 
@@ -39,7 +38,7 @@ export default async function Page({
   searchParams: Promise<{ language?: string; q?: string }>
 }) {
   const settings = getSiteSettings()
-  const adminUsername = process.env.ADMIN_GITHUB_USERNAME
+
   const params = await searchParams
   const selectedLanguage: BlogLanguage | undefined =
     params.language === 'vi' || params.language === 'en' ? params.language : undefined
@@ -52,11 +51,10 @@ export default async function Page({
           <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">
             {settings.blogPage.eyebrow}
           </p>
-          <div className="flex items-center gap-2">
+          <div>
             <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-3xl md:text-4xl">
               {settings.blogPage.title}
             </h1>
-            <AdminEditLink href="/admin/blog" label="edit blog" adminUsername={adminUsername} />
           </div>
         </div>
         <p className="max-w-md text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right">

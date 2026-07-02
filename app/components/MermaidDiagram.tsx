@@ -16,7 +16,7 @@ export default function MermaidDiagram({ chart }: { chart: string }) {
       try {
         await document.fonts?.ready
         const { default: mermaid } = await import('mermaid')
-        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        const dark = document.documentElement.classList.contains('dark')
 
         mermaid.initialize({
           startOnLoad: false,

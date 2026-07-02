@@ -41,5 +41,12 @@ yarn-error.log*
 next-env.d.ts
 
 # ai
-.agent
-.env*
+.agents/
+.claude/
+.gemini/
+
+# keep example env
+!.env.example
+
+# ignore large audio files
+/public/audio/ambient/*.mp3
