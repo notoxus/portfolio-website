@@ -53,7 +53,7 @@ export default async function Page({
             {settings.blogPage.eyebrow}
           </p>
           <div className="flex items-center gap-2">
-            <h1 className="text-4xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+            <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-3xl md:text-4xl">
               {settings.blogPage.title}
             </h1>
             <AdminEditLink href="/admin/blog" label="edit blog" adminUsername={adminUsername} />
@@ -64,7 +64,7 @@ export default async function Page({
         </p>
       </div>
 
-      <div className="mb-7 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 items-start sm:flex-row sm:gap-4 sm:items-center sm:justify-between sm:mb-7">
         <nav
           aria-label="Filter blog posts by language"
           className="flex flex-wrap items-center gap-2"

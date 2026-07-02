@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="mt-20 mb-10 border-t border-neutral-200/80 pt-8 dark:border-neutral-800/80"
+      className="mt-14 mb-8 border-t border-neutral-200/80 pt-6 dark:border-neutral-800/80 sm:mt-20 sm:mb-10 sm:pt-8"
     >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 pr-4 sm:pr-8">

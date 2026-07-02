@@ -39,7 +39,7 @@ export default async function ProjectsPage({
             {settings.projectsPage.eyebrow}
           </p>
           <div className="flex items-center gap-2">
-            <h1 className="text-4xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+            <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-3xl md:text-4xl">
               {settings.projectsPage.title}
             </h1>
             <AdminEditLink href="/admin/projects" label="edit projects" adminUsername={adminUsername} />

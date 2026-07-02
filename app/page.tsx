@@ -36,19 +36,19 @@ export default function Page() {
   const adminUsername = process.env.ADMIN_GITHUB_USERNAME
 
   return (
-    <section className="space-y-16">
-      <section className="grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+    <section className="space-y-10 md:space-y-16">
+      <section className="grid gap-6 lg:gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
         <div>
           <div className="mb-5 flex items-center gap-2.5 text-sm text-neutral-600 dark:text-neutral-400">
             <span className="status-dot" />
             <span>{home.eyebrow}</span>
             <AdminEditLink href="/admin/site-settings" label="edit homepage labels" adminUsername={adminUsername} />
           </div>
-          <h1 className="max-w-3xl text-5xl font-semibold leading-none tracking-tight text-neutral-950 dark:text-neutral-50 md:text-7xl">
+          <h1 className="max-w-3xl text-3xl font-semibold leading-none tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-4xl md:text-5xl lg:text-7xl">
             {home.headline}
           </h1>
-          <div className="mt-6 flex items-start justify-between gap-3">
-            <p className="max-w-2xl whitespace-pre-line text-base leading-8 text-neutral-700 dark:text-neutral-300 md:text-lg">
+          <div className="mt-4 flex items-start justify-between gap-3 sm:mt-6">
+            <p className="max-w-2xl whitespace-pre-line text-sm leading-7 text-neutral-700 dark:text-neutral-300 sm:text-base sm:leading-8 md:text-lg">
               {intro}
             </p>
             <AdminEditLink href="/admin/intro" label="edit intro" adminUsername={adminUsername} />
@@ -178,7 +178,7 @@ export default function Page() {
                 href={item.href}
                 target={external ? '_blank' : undefined}
                 rel={external ? 'noopener noreferrer' : undefined}
-                className="surface-panel group flex min-h-52 flex-col rounded-2xl p-5 transition hover:-translate-y-1 hover:border-blue-500"
+                className="surface-panel group flex flex-col rounded-2xl p-4 transition hover:-translate-y-1 hover:border-blue-500 sm:min-h-52 sm:p-5"
               >
                 <h3 className="text-lg font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
                   {item.label}

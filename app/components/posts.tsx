@@ -69,13 +69,13 @@ export async function BlogPosts({
       {posts.map((post) => (
         <StaggerItem
           key={post.slug}
-          className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 border-b border-neutral-200/80 px-5 py-6 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80"
+          className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-neutral-200/80 px-4 py-4 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80 sm:gap-5 sm:px-5 sm:py-6"
         >
           <Link href={`/blog/${post.slug}`} className="min-w-0">
-            <p className="mb-2 font-mono text-xs text-neutral-500 dark:text-neutral-500">
+            <p className="mb-1.5 font-mono text-xs text-neutral-500 dark:text-neutral-500 sm:mb-2">
               {formatDate(post.metadata.publishedAt, false)}
             </p>
-            <h3 className="text-lg font-semibold tracking-tight text-neutral-950 transition-colors group-hover:text-blue-600 dark:text-neutral-50 dark:group-hover:text-blue-400">
+            <h3 className="text-base font-semibold tracking-tight text-neutral-950 transition-colors group-hover:text-blue-600 dark:text-neutral-50 dark:group-hover:text-blue-400 sm:text-lg">
               {post.metadata.title}
             </h3>
             {showSummaries && post.metadata.summary && (

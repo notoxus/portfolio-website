@@ -72,12 +72,12 @@ export function ProjectList({
       {projects.map((project, index) => (
         <StaggerItem
           key={project.title}
-          className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 border-b border-neutral-200/80 px-5 py-6 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80"
+          className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 border-b border-neutral-200/80 px-4 py-4 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80 sm:gap-5 sm:px-5 sm:py-6"
         >
           <ProjectAnchor project={project}>
-            <div className="mb-2 flex flex-wrap items-center gap-2.5">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="index-pill">{String(index + 1).padStart(2, '0')}</span>
-              <h3 className="text-xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
+              <h3 className="text-lg font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-xl">
                 {project.title}
               </h3>
               <span

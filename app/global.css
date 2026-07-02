@@ -59,7 +59,13 @@ body {
     linear-gradient(90deg, var(--portfolio-line) 1px, transparent 1px),
     var(--portfolio-bg);
   background-position: -1px -1px;
-  background-size: 52px 52px;
+  background-size: 36px 36px;
+}
+
+@media (min-width: 640px) {
+  body {
+    background-size: 52px 52px;
+  }
 }
 
 .surface-panel {
