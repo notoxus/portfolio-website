@@ -54,6 +54,8 @@
   --portfolio-surface: #f6f8fb;
   --portfolio-surface-soft: #e4eaf2;
   --portfolio-line: #c8d3e0;
+  --portfolio-muted: #64748b;
+  --portfolio-faint: #94a3b8;
   --portfolio-accent: #3b82f6;
 }
 .dark.bg-preset-midnight {
@@ -61,7 +63,10 @@
   --portfolio-surface: #0f1d32;
   --portfolio-surface-soft: #142640;
   --portfolio-line: #1e3352;
+  --portfolio-muted: #94a3b8;
+  --portfolio-faint: #64748b;
   --portfolio-accent: #60a5fa;
+  --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Background Presets: Forest Green ── */
@@ -70,6 +75,8 @@
   --portfolio-surface: #f7faf6;
   --portfolio-surface-soft: #e3eddf;
   --portfolio-line: #c6d6c0;
+  --portfolio-muted: #5f7a5a;
+  --portfolio-faint: #8ca388;
   --portfolio-accent: #16a34a;
   --portfolio-green: #0d9488;
 }
@@ -78,8 +85,11 @@
   --portfolio-surface: #0f1a0f;
   --portfolio-surface-soft: #152215;
   --portfolio-line: #1e321e;
+  --portfolio-muted: #8ca388;
+  --portfolio-faint: #5f7a5a;
   --portfolio-accent: #4ade80;
   --portfolio-green: #5eead4;
+  --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Background Presets: Warm Sepia ── */
@@ -88,6 +98,8 @@
   --portfolio-surface: #fdfaf5;
   --portfolio-surface-soft: #f0e8db;
   --portfolio-line: #ddd2c0;
+  --portfolio-muted: #857056;
+  --portfolio-faint: #b3a18a;
   --portfolio-accent: #b45309;
   --portfolio-amber: #d97706;
 }
@@ -96,8 +108,11 @@
   --portfolio-surface: #1a1710;
   --portfolio-surface-soft: #221e14;
   --portfolio-line: #332d20;
+  --portfolio-muted: #b3a18a;
+  --portfolio-faint: #857056;
   --portfolio-accent: #f59e0b;
   --portfolio-amber: #fbbf24;
+  --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Background Presets: Rose ── */
@@ -106,6 +121,8 @@
   --portfolio-surface: #fdf6f8;
   --portfolio-surface-soft: #f5e4e9;
   --portfolio-line: #e8cdd5;
+  --portfolio-muted: #9e6d7d;
+  --portfolio-faint: #c9a3b0;
   --portfolio-accent: #e11d48;
 }
 .dark.bg-preset-rose {
@@ -113,7 +130,10 @@
   --portfolio-surface: #1c0f15;
   --portfolio-surface-soft: #25141c;
   --portfolio-line: #3a1e2a;
+  --portfolio-muted: #c9a3b0;
+  --portfolio-faint: #9e6d7d;
   --portfolio-accent: #fb7185;
+  --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
 }
 
 html {

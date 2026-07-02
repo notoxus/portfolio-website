@@ -284,12 +284,15 @@ function DropdownPanel({
           {systemTheme === 'light' ? 'Dark' : 'Light'}
         </button>
 
-        <div className="mx-0.5 h-6 w-px bg-neutral-200 dark:bg-neutral-800" />
-
         {BG_PRESETS.filter(p => p.value !== 'default').map((preset) => (
           <button
             key={preset.value}
-            onClick={() => { setBgPreset(preset.value); playToggle() }}
+            onClick={() => { 
+              if (preset.value === 'midnight' || preset.value === 'forest') setTheme('dark');
+              if (preset.value === 'sepia' || preset.value === 'rose') setTheme('light');
+              setBgPreset(preset.value); 
+              playToggle(); 
+            }}
             className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
               bgPreset === preset.value
                 ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'

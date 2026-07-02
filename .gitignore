@@ -49,4 +49,4 @@ next-env.d.ts
 !.env.example
 
 # ignore large audio files
-/public/audio/ambient/*.mp3
+# /public/audio/ambient/*.mp3
