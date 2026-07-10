@@ -1,12 +1,12 @@
 {
   "home": {
     "eyebrow": "Building security foundations",
-    "headline": "Documenting my path into security and system administration",
+    "headline": "Documenting my journey through Linux, DevSecOps, and cybersecurity.",
     "primaryCtaLabel": "Explore my work",
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
     "secondaryCtaHref": "/blog",
-    "programmingLanguagesLabel": "Languages",
+    "programmingLanguagesLabel": "Languages & Scripting",
     "programmingLanguagesItems": [
       "Java",
       "Python",
@@ -16,18 +16,19 @@
     "frameworksToolsLabel": "Systems & Security",
     "frameworksToolsItems": [
       "Linux",
-      "Kali Linux",
-      "Network fundamentals",
-      "Web security labs"
+      "Networking",
+      "Homelab",
+      "OWASP Top 10"
     ],
     "technicalSkillsLabel": "Technical Skills",
     "technicalSkillsItems": [
       "Automation",
+      "Docker",
       "Git",
-      "Maven / Gradle",
-      "Technical writing"
+      "SSH",
+      "Technical Report"
     ],
-    "languageLabel": "Language",
+    "languageLabel": "Languages",
     "languageItems": [
       "Vietnamese",
       "English"
