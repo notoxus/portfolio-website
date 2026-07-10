@@ -67,6 +67,7 @@
   --portfolio-faint: #64748b;
   --portfolio-accent: #60a5fa;
   --portfolio-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
+  --nav-active: var(--portfolio-amber);
 }
 
 /* ── Background Presets: Forest Green ── */
@@ -240,6 +241,11 @@ body {
   border-radius: 999px;
   background: var(--portfolio-green);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--portfolio-green), transparent 82%);
+}
+
+.nav-link-active {
+  background: color-mix(in srgb, var(--nav-active, var(--portfolio-accent)), transparent 85%);
+  color: var(--nav-active, var(--portfolio-accent));
 }
 
 .prose .anchor {

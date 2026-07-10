@@ -25,10 +25,8 @@ export default function NavLinks() {
         <Link
           key={path}
           href={path}
-          className={`rounded-lg px-2.5 py-1.5 transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
-            isActive(path)
-              ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100'
-              : ''
+          className={`rounded-lg px-2.5 py-1.5 font-medium transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
+            isActive(path) ? 'nav-link-active' : ''
           }`}
         >
           {name}
