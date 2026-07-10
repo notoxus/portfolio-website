@@ -4,59 +4,137 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { SiteSettings } from 'lib/site-settings'
 
-type EditableSettings = SiteSettings & {
-  home: SiteSettings['home'] & {
-    programmingLanguagesItemsText: string
-    frameworksToolsItemsText: string
-    technicalSkillsItemsText: string
-    languageItemsText: string
+type EditableSettings = SiteSettings
+
+function SkillGroupsEditor({
+  groups,
+  onChange,
+}: {
+  groups: SiteSettings['home']['skillGroups']
+  onChange: (groups: SiteSettings['home']['skillGroups']) => void
+}) {
+  const updateGroupLabel = (index: number, label: string) => {
+    onChange(groups.map((group, i) => (i === index ? { ...group, label } : group)))
   }
+
+  const addGroup = () => {
+    onChange([...groups, { label: 'New group', items: [] }])
+  }
+
+  const removeGroup = (index: number) => {
+    onChange(groups.filter((_, i) => i !== index))
+  }
+
+  const addTag = (index: number, tag: string) => {
+    const trimmed = tag.trim()
+    if (!trimmed) return
+    onChange(
+      groups.map((group, i) =>
+        i === index ? { ...group, items: [...group.items, trimmed] } : group,
+      ),
+    )
+  }
+
+  const removeTag = (groupIndex: number, itemIndex: number) => {
+    onChange(
+      groups.map((group, i) =>
+        i === groupIndex
+          ? { ...group, items: group.items.filter((_, j) => j !== itemIndex) }
+          : group,
+      ),
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <span className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+        Skill groups
+      </span>
+      {groups.map((group, groupIndex) => (
+        <div
+          key={groupIndex}
+          className="rounded-lg border border-neutral-200 p-3 dark:border-neutral-700"
+        >
+          <div className="flex items-center gap-2">
+            <input
+              value={group.label}
+              onChange={(event) => updateGroupLabel(groupIndex, event.target.value)}
+              placeholder="Group label"
+              className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+            />
+            <button
+              type="button"
+              onClick={() => removeGroup(groupIndex)}
+              className="shrink-0 rounded-md px-2 py-1 text-xs text-neutral-400 transition-colors hover:text-red-500"
+            >
+              Remove group
+            </button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {group.items.map((item, itemIndex) => (
+              <span
+                key={itemIndex}
+                className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+              >
+                {item}
+                <button
+                  type="button"
+                  onClick={() => removeTag(groupIndex, itemIndex)}
+                  aria-label={`Remove ${item}`}
+                  className="text-neutral-400 hover:text-red-500"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <TagInput onAdd={(tag) => addTag(groupIndex, tag)} />
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={addGroup}
+        className="rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+      >
+        + Add group
+      </button>
+    </div>
+  )
 }
 
-function toEditable(settings: SiteSettings): EditableSettings {
-  return {
-    ...settings,
-    home: {
-      ...settings.home,
-      programmingLanguagesItemsText: settings.home.programmingLanguagesItems.join('\n'),
-      frameworksToolsItemsText: settings.home.frameworksToolsItems.join('\n'),
-      technicalSkillsItemsText: settings.home.technicalSkillsItems.join('\n'),
-      languageItemsText: settings.home.languageItems.join('\n'),
-    },
-  }
-}
+function TagInput({ onAdd }: { onAdd: (tag: string) => void }) {
+  const [value, setValue] = useState('')
 
-function toPayload(settings: EditableSettings): SiteSettings {
-  const {
-    programmingLanguagesItemsText,
-    frameworksToolsItemsText,
-    technicalSkillsItemsText,
-    languageItemsText,
-    ...home
-  } = settings.home
-
-  return {
-    ...settings,
-    home: {
-      ...home,
-      programmingLanguagesItems: settings.home.programmingLanguagesItemsText
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-      frameworksToolsItems: settings.home.frameworksToolsItemsText
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-      technicalSkillsItems: settings.home.technicalSkillsItemsText
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-      languageItems: settings.home.languageItemsText
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-    },
+  const submit = () => {
+    if (!value.trim()) return
+    onAdd(value)
+    setValue('')
   }
+
+  return (
+    <span className="flex items-center gap-1">
+      <input
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            submit()
+          }
+        }}
+        placeholder="New tag"
+        className="w-24 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+      />
+      <button
+        type="button"
+        onClick={submit}
+        aria-label="Add tag"
+        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-dashed border-neutral-300 text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+      >
+        +
+      </button>
+    </span>
+  )
 }
 
 function Field({
@@ -113,11 +191,14 @@ export default function SiteSettingsPage() {
   useEffect(() => {
     fetch('/api/site-settings')
       .then((res) => res.json())
-      .then((data) => setSettings(toEditable(data.settings)))
+      .then((data) => setSettings(data.settings))
       .catch(() => setError('Failed to load site settings'))
   }, [])
 
-  const updateHome = (key: keyof EditableSettings['home'], value: string) => {
+  const updateHome = <K extends keyof EditableSettings['home']>(
+    key: K,
+    value: EditableSettings['home'][K],
+  ) => {
     setSettings((current) =>
       current ? { ...current, home: { ...current.home, [key]: value } } : current,
     )
@@ -142,7 +223,7 @@ export default function SiteSettingsPage() {
       const res = await fetch('/api/site-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings: toPayload(settings) }),
+        body: JSON.stringify({ settings }),
       })
       const data = await readJsonResponse(res)
       if (!res.ok) throw new Error(data.error ?? 'Save failed')
@@ -202,16 +283,10 @@ export default function SiteSettingsPage() {
               <Field label="Secondary CTA label" value={settings.home.secondaryCtaLabel} onChange={(v) => updateHome('secondaryCtaLabel', v)} />
               <Field label="Secondary CTA link" value={settings.home.secondaryCtaHref} onChange={(v) => updateHome('secondaryCtaHref', v)} />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Programming language label" value={settings.home.programmingLanguagesLabel} onChange={(v) => updateHome('programmingLanguagesLabel', v)} />
-              <Field label="Frameworks & tools label" value={settings.home.frameworksToolsLabel} onChange={(v) => updateHome('frameworksToolsLabel', v)} />
-              <Field label="Technical skills label" value={settings.home.technicalSkillsLabel} onChange={(v) => updateHome('technicalSkillsLabel', v)} />
-              <Field label="Language label" value={settings.home.languageLabel} onChange={(v) => updateHome('languageLabel', v)} />
-            </div>
-            <Field label="Programming languages, one per line" value={settings.home.programmingLanguagesItemsText} onChange={(v) => updateHome('programmingLanguagesItemsText', v)} multiline />
-            <Field label="Frameworks & tools, one per line" value={settings.home.frameworksToolsItemsText} onChange={(v) => updateHome('frameworksToolsItemsText', v)} multiline />
-            <Field label="Technical skills, one per line" value={settings.home.technicalSkillsItemsText} onChange={(v) => updateHome('technicalSkillsItemsText', v)} multiline />
-            <Field label="Languages, one per line" value={settings.home.languageItemsText} onChange={(v) => updateHome('languageItemsText', v)} multiline />
+            <SkillGroupsEditor
+              groups={settings.home.skillGroups}
+              onChange={(groups) => updateHome('skillGroups', groups)}
+            />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Contact label" value={settings.home.contactLabel} onChange={(v) => updateHome('contactLabel', v)} />
               <Field label="Featured title" value={settings.home.featuredTitle} onChange={(v) => updateHome('featuredTitle', v)} />

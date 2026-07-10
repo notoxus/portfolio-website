@@ -67,74 +67,28 @@ export default function Page() {
         </div>
 
         <aside className="surface-panel relative overflow-hidden rounded-2xl">
-          <div className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80">
-            <div className="mb-3 pr-8">
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                {home.programmingLanguagesLabel}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {home.programmingLanguagesItems.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                >
-                  {item}
+          {home.skillGroups.map((group) => (
+            <div
+              key={group.label}
+              className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80"
+            >
+              <div className="mb-3">
+                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
+                  {group.label}
                 </span>
-              ))}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80">
-            <div className="mb-3">
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                {home.frameworksToolsLabel}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {home.frameworksToolsItems.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80">
-            <div className="mb-3">
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                {home.technicalSkillsLabel}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {home.technicalSkillsItems.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80">
-            <div className="mb-3">
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                {home.languageLabel}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {home.languageItems.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
+          ))}
           <div className="p-5">
             <div className="mb-2">
               <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">

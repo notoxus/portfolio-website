@@ -1,6 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 
+export type SkillGroup = {
+  label: string
+  items: string[]
+}
+
 export type SiteSettings = {
   home: {
     eyebrow: string
@@ -9,14 +14,7 @@ export type SiteSettings = {
     primaryCtaHref: string
     secondaryCtaLabel: string
     secondaryCtaHref: string
-    programmingLanguagesLabel: string
-    programmingLanguagesItems: string[]
-    frameworksToolsLabel: string
-    frameworksToolsItems: string[]
-    technicalSkillsLabel: string
-    technicalSkillsItems: string[]
-    languageLabel: string
-    languageItems: string[]
+    skillGroups: SkillGroup[]
     contactLabel: string
     contactDescription: string
     featuredTitle: string
@@ -50,14 +48,20 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     primaryCtaHref: '/projects',
     secondaryCtaLabel: 'Read my blog',
     secondaryCtaHref: '/blog',
-    programmingLanguagesLabel: 'Languages & Scripting',
-    programmingLanguagesItems: ['Java', 'Python', 'Bash', 'TypeScript'],
-    frameworksToolsLabel: 'Systems & Security',
-    frameworksToolsItems: ['Linux', 'Kali Linux', 'Network fundamentals', 'Web security labs'],
-    technicalSkillsLabel: 'Build & Deliver',
-    technicalSkillsItems: ['Automation', 'Git', 'Maven / Gradle', 'Technical writing'],
-    languageLabel: 'Language',
-    languageItems: ['Vietnamese', 'English'],
+    skillGroups: [
+      {
+        label: 'Systems & Security',
+        items: ['Linux', 'Kali Linux', 'Network fundamentals', 'Web security labs'],
+      },
+      {
+        label: 'Build & Deliver',
+        items: ['Automation', 'Git', 'Maven / Gradle', 'Technical writing'],
+      },
+      {
+        label: 'Language',
+        items: ['Vietnamese', 'English'],
+      },
+    ],
     contactLabel: 'Open to',
     contactDescription:
       'Security projects, automation ideas, and knowledge-sharing collaborations.',
@@ -98,6 +102,21 @@ function asStringArray(value: unknown, fallback: string[]) {
   return items.length ? items : fallback
 }
 
+function asSkillGroups(value: unknown, fallback: SkillGroup[]): SkillGroup[] {
+  if (Array.isArray(value)) {
+    const groups = value
+      .map((group): SkillGroup | null => {
+        const label = asString(group?.label, '')
+        const items = asStringArray(group?.items, [])
+        if (!label && !items.length) return null
+        return { label, items }
+      })
+      .filter((group): group is SkillGroup => group !== null)
+    if (groups.length) return groups
+  }
+  return fallback
+}
+
 export function normalizeSiteSettings(value: any): SiteSettings {
   const defaults = DEFAULT_SITE_SETTINGS
 
@@ -109,32 +128,7 @@ export function normalizeSiteSettings(value: any): SiteSettings {
       primaryCtaHref: asString(value?.home?.primaryCtaHref, defaults.home.primaryCtaHref),
       secondaryCtaLabel: asString(value?.home?.secondaryCtaLabel, defaults.home.secondaryCtaLabel),
       secondaryCtaHref: asString(value?.home?.secondaryCtaHref, defaults.home.secondaryCtaHref),
-      programmingLanguagesLabel: asString(
-        value?.home?.programmingLanguagesLabel ?? value?.home?.focusLabel,
-        defaults.home.programmingLanguagesLabel,
-      ),
-      programmingLanguagesItems: asStringArray(
-        value?.home?.programmingLanguagesItems ?? value?.home?.focusItems,
-        defaults.home.programmingLanguagesItems,
-      ),
-      frameworksToolsLabel: asString(
-        value?.home?.frameworksToolsLabel,
-        defaults.home.frameworksToolsLabel,
-      ),
-      frameworksToolsItems: asStringArray(
-        value?.home?.frameworksToolsItems,
-        defaults.home.frameworksToolsItems,
-      ),
-      technicalSkillsLabel: asString(
-        value?.home?.technicalSkillsLabel,
-        defaults.home.technicalSkillsLabel,
-      ),
-      technicalSkillsItems: asStringArray(
-        value?.home?.technicalSkillsItems,
-        defaults.home.technicalSkillsItems,
-      ),
-      languageLabel: asString(value?.home?.languageLabel, defaults.home.languageLabel),
-      languageItems: asStringArray(value?.home?.languageItems, defaults.home.languageItems),
+      skillGroups: asSkillGroups(value?.home?.skillGroups, defaults.home.skillGroups),
       contactLabel: asString(value?.home?.contactLabel, defaults.home.contactLabel),
       contactDescription: asString(value?.home?.contactDescription, defaults.home.contactDescription),
       featuredTitle: asString(value?.home?.featuredTitle, defaults.home.featuredTitle),

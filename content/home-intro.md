@@ -1,1 +1,5 @@
-Hi, I'm Bui Vo Phuoc Thinh. You can also call me Notoxus. I'm an IT student. I'm focused on cybersecurity and slowly transitioning into system administration and DevSecOps. This blog is my personal notebook for everything I learn along the way. My posts are mostly in Vietnamese and English, about networking, Linux, software knowledge, ethical hacking labs, and whatever tech rabbit hole I'm currently digging into. I might even drop in my workflow or video breakdowns here and there. Grab a seat, relax, and enjoy your stay!
+Hi, I'm Bui Vo Phuoc Thinh, also known as Notoxus. I'm an IT student passionate about Linux systems, infrastructure automation, and cybersecurity.
+
+This blog is where I document what I learn — from homelab experiments and Linux administration to networking, DevSecOps, and security labs. Most articles are written in Vietnamese or English as I continue learning and building along the way.
+
+Thanks for stopping by!
