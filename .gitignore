@@ -50,3 +50,6 @@ next-env.d.ts
 
 # ignore large audio files
 # /public/audio/ambient/*.mp3
+
+# ignore dev env
+.pnpm-store/

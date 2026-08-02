@@ -1,0 +1,26 @@
+// That config file is used for my Windows workflow and i think that may also be useful for u
+{
+  "name": "Node.js & pnpm Workspace",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  
+  // When vscode connect to my container
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "formulahendry.code-runner",
+        "usernamehw.errorlens",
+        "github.vscode-github-actions",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+
+  "postCreateCommand": "npm install -g pnpm && pnpm install",
+  "forwardPorts": [3000, 5173],
+  // normal user permission
+  "remoteUser": "node"
+}

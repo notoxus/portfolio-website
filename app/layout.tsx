@@ -13,30 +13,30 @@ import SessionProviderWrapper from './components/SessionProviderWrapper'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
+    default: 'Phuoc Thinh — DevOps / CyberSec fields',
     template: '%s | Phuoc Thinh',
   },
   description:
-    'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
-  keywords: ['cybersecurity', 'ethical hacking', 'sysadmin', 'devsecops', 'portfolio', 'blog', 'TryHackMe'],
+    'Phuoc Thinh is a DevOps and Cyber Security learner who shares practical projects, labs, and technical blog posts.',
+  keywords: ['cybersecurity', 'ethical hacking', 'sysadmin', 'devops', 'devsecops', 'phuoc thinh','portfolio', 'phuoc thinh portfolio', 'blog', 'automation', 'it'],
   authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
   creator: 'Phuoc Thinh',
   openGraph: {
-    title: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
+    title: 'Phuoc Thinh — DevOps/CyberSec learner',
     description:
       'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
     url: baseUrl,
     siteName: 'Phuoc Thinh',
     locale: 'en_US',
     type: 'website',
-    images: [{ url: `${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevSecOps`, width: 1200, height: 630 }],
+    images: [{ url: `${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevOps`, width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Phuoc Thinh — Cybersecurity Learner & SysAdmin / DevSecOps',
+    title: 'Phuoc Thinh — DevOps & Cybersecurity Learner',
     description:
       'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
-    images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevSecOps`],
+    images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevOps`],
   },
   alternates: {
     canonical: baseUrl,
