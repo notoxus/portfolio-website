@@ -1,7 +1,7 @@
 {
   "home": {
-    "eyebrow": "Building security foundations",
-    "headline": "Documenting my journey through Linux, DevSecOps, and cybersecurity.",
+    "eyebrow": "Aspring to DevOps/CyberSec fields",
+    "headline": "That portfolio is where I introduce myself and break down my working process",
     "primaryCtaLabel": "Explore my work",
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
@@ -9,15 +9,27 @@
     "skillGroups": [
       {
         "label": "Systems & Security",
-        "items": ["Linux", "Networking", "Homelab", "OWASP Top 10"]
+        "items": [
+          "Linux",
+          "Networking"
+        ]
       },
       {
         "label": "Technical Skills",
-        "items": ["Automation", "Docker", "Git", "SSH", "Technical Report"]
+        "items": [
+          "Automation",
+          "Docker",
+          "Git",
+          "SSH",
+          "Technical Report"
+        ]
       },
       {
         "label": "Languages",
-        "items": ["Vietnamese", "English"]
+        "items": [
+          "Vietnamese",
+          "English"
+        ]
       }
     ],
     "contactLabel": "Open to",
