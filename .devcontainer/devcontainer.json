@@ -19,8 +19,12 @@
     }
   },
 
-  "postCreateCommand": "npm install -g pnpm && pnpm install",
-  "forwardPorts": [3000, 5173],
+  "features": {
+    "ghcr.io/devcontainers/features/git-lfs:1": {}
+  },
+
+  "postCreateCommand": "npm install -g pnpm && pnpm install && git lfs install",
+  "forwardPorts": [3000],
   // normal user permission
   "remoteUser": "node"
 }

@@ -1,79 +1,122 @@
-# Phuoc Thinh — Portfolio
+# Phuoc Thinh — Personal Portfolio Website
 
-Personal portfolio and technical blog for documenting projects, practical labs, and lessons on cybersecurity, Linux, automation, and software design.
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**Live site:** [phuocthinh.is-a.dev](https://phuocthinh.is-a.dev)
+A modern, high-performance personal portfolio and technical blog built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS v4**. 
 
-## What is included
+Feel free to fork and customize this project for your own portfolio!
 
-- A focused homepage with featured work and recent technical blog posts.
-- Project entries managed from `content/projects.json`.
-- MDX blog posts with syntax highlighting, math, diagrams, and embedded media.
-- A GitHub-backed notebook explorer.
-- Study Hub for video transcripts, translation, and dictionary lookup.
-- Dynamic Open Graph images, RSS, sitemap, robots metadata, and analytics.
-- A private GitHub-authenticated admin workflow for editing and publishing content.
+**Live Site:** [phuocthinh.is-a.dev](https://phuocthinh.is-a.dev) · [Vercel Backup](https://notoxus-morales.vercel.app/)
 
-## Tech stack
+---
 
-- Next.js 16 and React 19
-- TypeScript
-- Tailwind CSS 4
-- NextAuth with GitHub OAuth
-- MDX, KaTeX, Mermaid, and Sugar High
-- Vercel Analytics and Speed Insights
+## Features
 
-## Run locally
+- **Modern Tech Blog:** Rich MDX posts with syntax highlighting (Sugar High), KaTeX math rendering, and Mermaid diagrams.
+- **Project Showcase:** Easily managed project portfolio loaded dynamically via JSON.
+- **TipTap Rich-Text Editor:** Embedded admin editor to manage and update site content directly.
+- **GitHub OAuth Authentication:** Private admin session powered by `NextAuth.js` v5.
+- **GitHub Notebook Explorer:** Integrated viewer linked to [my-note-book repository](https://github.com/notoxus/my-note-book).
+- **Integrated Tools (Study Hub):** YouTube video transcript parser, translation, and instant dictionary lookup.
+- **Complete SEO & Analytics:** Dynamic OpenGraph images, RSS feed, sitemap.xml, Vercel Analytics & Speed Insights.
 
-Install dependencies and start the development server:
+---
 
-```bash
-npm install
-npm run dev
-```
+## Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000).
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router), [React 19](https://react.dev/)
+- **Styling & Motion:** [Tailwind CSS v4](https://tailwindcss.com/), [Framer Motion](https://www.framer.com/motion/)
+- **Database & Sync:** [Neon Postgres](https://neon.tech/) (Serverless), GitHub REST API (`@octokit/rest`)
+- **Authentication:** [NextAuth.js v5](https://next-auth.js.org/) (GitHub Provider)
+- **Content Rendering:** MDX (`next-mdx-remote`), TipTap, KaTeX, Mermaid.js, Sugar High
+- **Analytics:** Vercel Analytics & Speed Insights
 
-Create `.env.local` only for the integrations you need:
+---
 
-```dotenv
-AUTH_SECRET=
-AUTH_GITHUB_ID=
-AUTH_GITHUB_SECRET=
-ADMIN_GITHUB_USERNAME=
+## Getting Started
 
-GITHUB_TOKEN=
-GITHUB_OWNER=
-GITHUB_REPO=
+### Prerequisites
 
-GROQ_API_KEY=
-```
+- **Node.js** 20+ and **pnpm** installed.
+- **Git** & **Git LFS** (Large File Storage) for handling media assets.
+- *(Optional)* **VS Code Dev Containers** with Docker Desktop & WSL2 for an isolated setup.
 
-Never commit real credentials. The public portfolio can still render without the optional admin and translation integrations.
+### Installation
 
-## Content workflow
+#### 🚀 Quick Setup (UNIX users)
 
-- Homepage copy: `content/home-intro.md` and `content/site-settings.json`
-- Projects: `content/projects.json`
-- Blog posts: `app/blog/posts/*.mdx`
-- Social links: `app/components/social-links.tsx`
-- SEO metadata: `app/layout.tsx`, `app/sitemap.ts`, and `app/robots.ts`
-
-Authenticated admin pages can update the same content and sync it back to the configured GitHub repository.
-The public navigation intentionally hides authentication; open `/api/auth/signin` directly when you need to start an admin session.
-
-## Scripts
+You can run the interactive setup script to automatically check Node.js, install `pnpm`, set up `.env.local`, and install all dependencies:
 
 ```bash
-npm run dev    # start the development server
-npm run build  # create a production build
-npm run start  # serve the production build
+chmod +x setup.sh
+./setup.sh
 ```
 
-## Deployment
+#### 🛠️ Manual Installation
 
-The site is designed for Vercel. Configure the required environment variables in the deployment project, connect the intended GitHub repository, and deploy the `main` branch.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/notoxus/portfolio-website.git
+   cd portfolio-website
+   ```
 
-## License
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
 
-This repository contains a personal portfolio and its content. Please ask before reusing the written content, branding, or personal assets.
+3. **Configure Environment Variables:**
+   Create a `.env.local` file in the root directory:
+   ```dotenv
+   # NextAuth Configuration
+   AUTH_SECRET=your_auth_secret
+   AUTH_GITHUB_ID=your_github_client_id
+   AUTH_GITHUB_SECRET=your_github_client_secret
+   ADMIN_GITHUB_USERNAME=your_github_username
+
+   # GitHub Content Sync & Notebook Integration
+   GITHUB_TOKEN=your_personal_access_token
+   GITHUB_OWNER=notoxus
+   GITHUB_REPO=my-note-book
+
+   # AI / LLM Tools
+   GROQ_API_KEY=your_groq_api_key
+   ```
+
+4. **Run the Development Server:**
+   ```bash
+   pnpm dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+    > **Note for Dev Container users:** If you encounter Git ownership errors (*dubious ownership*) or need Git LFS enabled inside the container, run:
+    > ```bash
+    > git config --global --add safe.directory /workspaces/portfolio-website
+    > git lfs install
+    > ```
+---
+
+## Content Management Architecture
+
+- **Homepage Info:** `content/home-intro.md` & `content/site-settings.json`
+- **Projects List:** `content/projects.json`
+- **Blog Posts:** `app/blog/posts/*.mdx`
+- **Social Links:** `app/components/social-links.tsx`
+
+> **Note for Admins:** Authenticated users can edit content via the web editor and sync changes back to GitHub. Access `/api/auth/signin` directly to authenticate.
+
+---
+
+## Available Scripts
+
+| Command | Description |
+| :--- | :--- |
+| `pnpm dev` | Starts the development server |
+| `pnpm build` | Builds the application for production |
+| `pnpm start` | Runs the compiled production build |
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE). Feel free to fork, customize, and build upon it!
