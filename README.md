@@ -6,7 +6,7 @@ A modern, high-performance personal portfolio and technical blog built with **Ne
 
 Feel free to fork and customize this project for your own portfolio!
 
-**Live Site:** [phuocthinh.is-a.dev](https://phuocthinh.is-a.dev) · [Vercel Backup](https://notoxus-morales.vercel.app/)
+**Live Site:** [phuocthinh.is-a.dev](https://phuocthinh.is-a.dev) · [notoxus-morales.vercel.app](https://notoxus-morales.vercel.app/)
 
 ---
 
