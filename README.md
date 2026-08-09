@@ -92,8 +92,12 @@ chmod +x setup.sh
     > **Note for Dev Container users:** If you encounter Git ownership errors (*dubious ownership*) or need Git LFS enabled inside the container, run:
     > ```bash
     > git config --global --add safe.directory /workspaces/portfolio-website
+    > sudo apt-get update
+    > sudo apt-get install git-lfs
     > git lfs install
     > ```
+   
+   Because Docker is used for Debian Trixie distro.
 ---
 
 ## Content Management Architecture
