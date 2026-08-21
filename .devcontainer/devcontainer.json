@@ -1,7 +1,10 @@
-// That config file is used for my Windows workflow and i think that may also be useful for u
 {
-  "name": "Node.js & pnpm Workspace",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "name": "Portfolio Website (Docker)",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "target": "development"
+  },
   
   // When vscode connect to my container
   "customizations": {
@@ -23,7 +26,7 @@
     "ghcr.io/devcontainers/features/git-lfs:1": {}
   },
 
-  "postCreateCommand": "npm install -g pnpm && pnpm install && git lfs install",
+  "postCreateCommand": "pnpm install --frozen-lockfile && git lfs install",
   "forwardPorts": [3000],
   // normal user permission
   "remoteUser": "node"

@@ -1,0 +1,17 @@
+.git
+.next
+node_modules
+.pnpm-store
+.env
+.env.*
+!.env.example
+.vercel
+.vscode
+.devcontainer
+coverage
+out
+*.log
+*.tsbuildinfo
+Dockerfile*
+compose*.yaml
+README.md
