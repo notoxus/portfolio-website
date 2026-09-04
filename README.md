@@ -40,7 +40,7 @@ Feel free to fork and customize this project for your own portfolio!
 - **Docker Engine**, Docker Compose v2, and Docker Buildx (recommended). The Dockerfile uses BuildKit cache mounts, so the legacy Docker builder is not supported. See the [Docker on Linux guide](docker-on-linux.md) for installation and troubleshooting. No Node.js, pnpm, or VS Code installation is required for this path.
 - **Git** for cloning the repository.
 - *(Optional)* [Nix](https://nixos.org/) with Flakes enabled — for a fully reproducible native dev environment without Docker.
-- *(Optional)* Node.js 22.x LTS and pnpm 10.14.0 for running outside Docker/Nix.
+- *(Optional)* Node.js 24.x and pnpm 10.14.0 for running outside Docker/Nix.
 
 ### Installation
 
@@ -83,7 +83,7 @@ The usual Docker workflow:
 
 #### ❄️ Nix Flakes (native, reproducible)
 
-A [`flake.nix`](flake.nix) is provided for a fully reproducible native development environment. It pins Node.js 22 LTS, pnpm (via Corepack), Git, Docker, and Docker Compose — no global installs needed.
+A [`flake.nix`](flake.nix) is provided for a fully reproducible native development environment. It pins Node.js 24, pnpm (via Corepack), Git, Docker, and Docker Compose — no global installs needed.
 
 1. **Install Nix** (if not already installed):
    ```bash

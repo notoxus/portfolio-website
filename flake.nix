@@ -14,7 +14,7 @@
           config.allowUnfree = true;
         };
 
-        nodejs = pkgs.nodejs_22;
+        nodejs = pkgs.nodejs_24;
       in
       {
         devShells.default = pkgs.mkShell {
