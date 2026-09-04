@@ -1,12 +1,12 @@
 [
   {
     "id": "video-downloader",
-    "title": "Video Downloader",
-    "kind": "Desktop app",
-    "accent": "green",
-    "tech": "Java 21 / Maven / Chrome Extension / yt-dlp / FFmpeg",
-    "description": "A cross-platform desktop app that captures HLS/DASH streams through a generated Chrome extension, queues downloads, and packages yt-dlp and FFmpeg workflows behind one interface.",
-    "link": "https://github.com/notoxus/video-downloader",
+    "title": "MediaSteru - メディアステル",
+    "kind": "Cross-platform media app",
+    "accent": "amber",
+    "tech": "Electron / Java 21 / SQLite / yt-dlp / FFmpeg / mpv",
+    "description": "A local-first, cross-platform media app for hunting streams, downloading and processing media, managing a persistent library, and playing local or online content through yt-dlp, FFmpeg, and mpv.",
+    "link": "https://github.com/notoxus/mediasteru",
     "featured": true
   },
   {
