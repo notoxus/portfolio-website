@@ -7,9 +7,9 @@ function isExternalLink(href: string) {
   return href.startsWith('http://') || href.startsWith('https://')
 }
 
-export default function AdminProjectsPage() {
-  const settings = getSiteSettings()
-  const projects = getProjects()
+export default async function AdminProjectsPage() {
+  const settings = await getSiteSettings()
+  const projects = await getProjects()
   const featuredCount = projects.filter((project) => project.featured).length
 
   return (

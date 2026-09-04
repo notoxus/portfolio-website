@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import { Octokit } from '@octokit/rest'
+import { unstable_cache } from 'next/cache'
 
 export type SkillGroup = {
   label: string
@@ -156,11 +158,47 @@ export function normalizeSiteSettings(value: any): SiteSettings {
   }
 }
 
-export function getSiteSettings(): SiteSettings {
+export const SITE_SETTINGS_CACHE_TAG = 'site-settings'
+
+async function fromGitHub(): Promise<SiteSettings | null> {
+  const { GITHUB_TOKEN: token, GITHUB_OWNER: owner, GITHUB_REPO: repo } = process.env
+  if (!token || !owner || !repo) return null
+
+  try {
+    const octokit = new Octokit({ auth: token })
+    const { data } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path: 'content/site-settings.json',
+    })
+    if (Array.isArray(data) || data.type !== 'file') return null
+    const raw = Buffer.from(data.content, 'base64').toString('utf-8')
+    return normalizeSiteSettings(JSON.parse(raw))
+  } catch {
+    return null
+  }
+}
+
+function fromFilesystem(): SiteSettings {
   try {
     const raw = fs.readFileSync(SETTINGS_FILE, 'utf-8')
     return normalizeSiteSettings(JSON.parse(raw))
-  } catch {}
-
-  return DEFAULT_SITE_SETTINGS
+  } catch {
+    return DEFAULT_SITE_SETTINGS
+  }
 }
+
+const loadSettings = unstable_cache(
+  async (): Promise<SiteSettings> => (await fromGitHub()) ?? fromFilesystem(),
+  [SITE_SETTINGS_CACHE_TAG],
+  { tags: [SITE_SETTINGS_CACHE_TAG], revalidate: 300 },
+)
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  return loadSettings()
+}
+
+export function getSiteSettingsSync(): SiteSettings {
+  return fromFilesystem()
+}
+

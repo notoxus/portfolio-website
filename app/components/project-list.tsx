@@ -36,7 +36,7 @@ function ProjectAnchor({
   )
 }
 
-export function ProjectList({
+export async function ProjectList({
   limit,
   featuredOnly = false,
   searchQuery = '',
@@ -45,7 +45,7 @@ export function ProjectList({
   featuredOnly?: boolean
   searchQuery?: string
 }) {
-  const allProjects = featuredOnly ? getFeaturedProjects(limit) : getProjects()
+  const allProjects = featuredOnly ? await getFeaturedProjects(limit) : await getProjects()
   let projects = typeof limit === 'number' ? allProjects.slice(0, limit) : allProjects
 
   if (searchQuery) {

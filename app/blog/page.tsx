@@ -37,7 +37,7 @@ export default async function Page({
 }: {
   searchParams: Promise<{ language?: string; q?: string }>
 }) {
-  const settings = getSiteSettings()
+  const settings = await getSiteSettings()
 
   const params = await searchParams
   const selectedLanguage: BlogLanguage | undefined =

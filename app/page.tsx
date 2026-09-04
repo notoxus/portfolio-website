@@ -3,6 +3,7 @@ import { getHomeIntro } from 'lib/site-content'
 import { ProjectList } from './components/project-list'
 import { SocialLinks } from './components/social-links'
 import { getSiteSettings } from 'lib/site-settings'
+import { GsapReveal } from './components/GsapReveal'
 
 const practiceItems = [
   {
@@ -28,16 +29,16 @@ const practiceItems = [
   },
 ]
 
-export default function Page() {
-  const intro = getHomeIntro()
-  const settings = getSiteSettings()
+export default async function Page() {
+  const intro = await getHomeIntro()
+  const settings = await getSiteSettings()
   const home = settings.home
 
 
   return (
     <section className="space-y-10 md:space-y-16">
       <section className="grid gap-6 lg:gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
-        <div>
+        <GsapReveal>
           <div className="mb-5 flex items-center gap-2.5 text-sm text-neutral-600 dark:text-neutral-400">
             <span className="status-dot" />
             <span>{home.eyebrow}</span>
@@ -64,9 +65,10 @@ export default function Page() {
               {home.secondaryCtaLabel}
             </a>
           </div>
-        </div>
+        </GsapReveal>
 
-        <aside className="surface-panel relative overflow-hidden rounded-2xl">
+        <GsapReveal delay={0.26} y={24}>
+          <aside className="surface-panel relative overflow-hidden rounded-2xl">
           {home.skillGroups.map((group) => (
             <div
               key={group.label}
@@ -102,7 +104,8 @@ export default function Page() {
               <SocialLinks compact />
             </div>
           </div>
-        </aside>
+          </aside>
+        </GsapReveal>
       </section>
 
       <section aria-labelledby="practice-title">

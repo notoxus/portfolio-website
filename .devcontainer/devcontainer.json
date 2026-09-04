@@ -1,32 +1,36 @@
 {
-  "name": "Portfolio Website (Docker)",
+  "name": "Portfolio Website (Nix + Docker)",
   "build": {
     "dockerfile": "../Dockerfile",
     "context": "..",
     "target": "development"
   },
   
-  // When vscode connect to my container
+  // When vscode / code-oss connects to container
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "zsh"
+        "terminal.integrated.defaultProfile.linux": "bash"
       },
       "extensions": [
         "formulahendry.code-runner",
         "usernamehw.errorlens",
         "github.vscode-github-actions",
         "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "jnoortheen.nix-ide",
+        "mkhl.direnv"
       ]
     }
   },
 
   "features": {
-    "ghcr.io/devcontainers/features/git-lfs:1": {}
+    "ghcr.io/devcontainers/features/nix:1": {
+      "extraNixConfig": "experimental-features = nix-command flakes"
+    }
   },
 
-  "postCreateCommand": "pnpm install --frozen-lockfile && git lfs install",
+  "postCreateCommand": "pnpm install --frozen-lockfile",
   "forwardPorts": [3000],
   // normal user permission
   "remoteUser": "node"

@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
-import { getHomeIntro } from 'lib/site-content'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { getHomeIntro, SITE_INTRO_CACHE_TAG } from 'lib/site-content'
 import { commitFileToGitHub } from 'lib/github-content'
 import fs from 'fs'
 import path from 'path'
@@ -18,7 +19,7 @@ export async function GET() {
   if (!isAdmin((session as any)?.login)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
-  return NextResponse.json({ content: getHomeIntro() })
+  return NextResponse.json({ content: await getHomeIntro() })
 }
 
 // POST /api/intro - save intro text locally + commit to GitHub (admin only)
@@ -42,6 +43,10 @@ export async function POST(req: NextRequest) {
   } catch {}
 
   const github = await commitFileToGitHub(REPO_PATH, text, 'docs(home): update intro')
+
+  // Invalidate cache and revalidate homepage
+  revalidateTag(SITE_INTRO_CACHE_TAG, {})
+  revalidatePath('/')
 
   return NextResponse.json({ ok: true, github })
 }

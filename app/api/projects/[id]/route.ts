@@ -1,7 +1,8 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { commitFileToGitHub } from 'lib/github-content'
-import { getProjects, type Project } from 'lib/projects'
+import { getProjects, type Project, PROJECTS_CACHE_TAG } from 'lib/projects'
 import fs from 'fs'
 import path from 'path'
 
@@ -76,7 +77,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const { id } = await params
-  const project = getProjects().find((item) => item.id === id)
+  const project = (await getProjects()).find((item) => item.id === id)
   if (!project) {
     return NextResponse.json({ error: 'Project not found' }, { status: 404 })
   }
@@ -91,7 +92,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 
   const { id } = await params
-  const projects = getProjects()
+  const projects = await getProjects()
   const index = projects.findIndex((item) => item.id === id)
   if (index === -1) {
     return NextResponse.json({ error: 'Project not found' }, { status: 404 })
@@ -112,6 +113,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       { status: 500 },
     )
   }
+
+  // Invalidate cache and revalidate pages
+  revalidateTag(PROJECTS_CACHE_TAG, {})
+  revalidatePath('/projects')
+  revalidatePath('/')
 
   return NextResponse.json({ ok: true, project: normalized, ...result })
 }

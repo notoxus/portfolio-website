@@ -41,12 +41,17 @@ export async function generateMetadata({ params }) {
 }
 
 import { ViewCounter } from 'app/components/ViewCounter'
+import TableOfContents, { extractHeadings } from 'app/components/TableOfContents'
+import { BlogMenuBuilder } from 'lib/composite/menu-node'
 
 export default async function Blog({ params }) {
   const resolvedParams = await params
   let post = (await getBlogPosts()).find((post) => post.slug === resolvedParams.slug)
 
   if (!post) notFound()
+
+  const headings = extractHeadings(post.content)
+  const tocTree = BlogMenuBuilder.headingsTOC(headings)
 
   return (
     <section>
@@ -87,9 +92,19 @@ export default async function Blog({ params }) {
         )}
       </div>
 
-      <article className="prose max-w-prose">
-        <CustomMDX source={post.content} />
-      </article>
+      <div className="flex flex-col xl:flex-row gap-10 items-start">
+        <div className="flex-1 min-w-0 max-w-prose">
+          <article className="prose max-w-none">
+            <CustomMDX source={post.content} />
+          </article>
+        </div>
+
+        {tocTree.length > 0 && (
+          <div className="w-full xl:w-52 flex-shrink-0 xl:sticky xl:top-24">
+            <TableOfContents tree={tocTree} />
+          </div>
+        )}
+      </div>
 
       {/* Comments section - Observer pattern connects comments to GitHub Issues */}
       <Comments slug={post.slug} />

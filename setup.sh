@@ -63,18 +63,23 @@ if [ "$#" -gt 0 ]; then
     exit 1
 fi
 
+if command -v nix &> /dev/null; then
+    echo -e "${GREEN}  ✓ Nix is available on this system!${NC}"
+    echo -e "${CYAN}  Tip: You can simply run ${BOLD}nix develop${NC}${CYAN} to enter a fully reproducible environment without installing pnpm globally.${NC}\n"
+fi
+
 # Check dependency:
-echo -e "${CYAN}[1/5] Checking Node.js environment...${NC}"
+echo -e "${CYAN}[1/4] Checking Node.js environment...${NC}"
 if ! command -v node &> /dev/null; then
     echo -e "${RED}Node.js is not installed.${NC}"
-    echo -e "${YELLOW}Please install Node.js (v20 or higher recommended) from https://nodejs.org/${NC}"
+    echo -e "${YELLOW}Please install Node.js (v20 or higher recommended) from https://nodejs.org/ or use 'nix develop'${NC}"
     exit 1
 fi
 
 NODE_VERSION=$(node -v)
 echo -e "${GREEN}  ✓ Found Node.js ${NODE_VERSION}${NC}"
 
-echo -e "\n${CYAN}[2/5] Checking pnpm package manager...${NC}"
+echo -e "\n${CYAN}[2/4] Checking pnpm package manager...${NC}"
 PNPM_REQUIRED_VERSION="10.14.0"
 if command -v corepack &> /dev/null; then
     echo -e "${CYAN}  Activating pnpm ${PNPM_REQUIRED_VERSION} with Corepack...${NC}"
@@ -92,16 +97,8 @@ if [ "${PNPM_VERSION}" != "${PNPM_REQUIRED_VERSION}" ]; then
 fi
 echo -e "${GREEN}Found pnpm v${PNPM_VERSION}${NC}"
 
-echo -e "\n${CYAN}[3/5] Checking Git LFS (Large File Storage)...${NC}"
-if command -v git-lfs &> /dev/null || git lfs &> /dev/null; then
-    git lfs install
-    echo -e "${GREEN}Git LFS initialized successfully${NC}"
-else
-    echo -e "${YELLOW}Git LFS is not installed on this system.${NC}"
-fi
-
 # Setup Environment Variables
-echo -e "\n${CYAN}[4/5] Checking environment configuration (.env.local)...${NC}"
+echo -e "\n${CYAN}[3/4] Checking environment configuration (.env.local)...${NC}"
 if [ ! -f ".env.local" ]; then
     if [ -f ".env.example" ]; then
         cp .env.example .env.local
@@ -116,7 +113,7 @@ else
 fi
 
 # Install Dependencies
-echo -e "\n${CYAN}[5/5] Installing dependencies via pnpm...${NC}"
+echo -e "\n${CYAN}[4/4] Installing dependencies via pnpm...${NC}"
 pnpm install
 
 echo -e "\n${GREEN}${BOLD}Environment setup completed successfully!${NC}"

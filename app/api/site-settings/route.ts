@@ -1,7 +1,8 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { commitFileToGitHub } from 'lib/github-content'
-import { getSiteSettings, normalizeSiteSettings } from 'lib/site-settings'
+import { getSiteSettings, normalizeSiteSettings, SITE_SETTINGS_CACHE_TAG } from 'lib/site-settings'
 import fs from 'fs'
 import path from 'path'
 
@@ -59,6 +60,12 @@ export async function POST(req: NextRequest) {
         { status: 500 },
       )
     }
+
+    // Invalidate site-settings cache and revalidate pages
+    revalidateTag(SITE_SETTINGS_CACHE_TAG, {})
+    revalidatePath('/')
+    revalidatePath('/blog')
+    revalidatePath('/projects')
 
     return NextResponse.json({ ok: true, settings: normalized, github, localSaved, localReason })
   } catch (err: any) {

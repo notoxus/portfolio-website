@@ -1,8 +1,8 @@
 import { SocialLinks } from './social-links'
 import { getSiteSettings } from 'lib/site-settings'
 
-export default function Footer() {
-  const settings = getSiteSettings()
+export default async function Footer() {
+  const settings = await getSiteSettings()
 
   return (
     <footer

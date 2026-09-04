@@ -4,7 +4,7 @@ import { getSiteSettings } from 'lib/site-settings'
 import BlogSettingsForm from './blog-settings-form'
 
 export default async function AdminBlogPage() {
-  const settings = getSiteSettings()
+  const settings = await getSiteSettings()
   const posts = (await getBlogPosts()).sort(
     (a, b) => new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime(),
   )

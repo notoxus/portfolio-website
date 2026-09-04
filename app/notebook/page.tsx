@@ -19,7 +19,7 @@ function FileNode({ item }: { item: any }) {
       setIsLoading(true)
       setError(false)
       try {
-        const res = await fetch(`https://api.github.com/repos/notoxus/my-note-book/contents/${item.path}`)
+        const res = await fetch(`/api/notebook?path=${encodeURIComponent(item.path)}`)
 
         if (!res.ok) throw new Error('API Error')
 
@@ -103,7 +103,7 @@ export default function NotebookPage() {
 
   useEffect(() => {
     setHasMounted(true)
-    fetch('https://api.github.com/repos/notoxus/my-note-book/contents')
+    fetch('/api/notebook')
       .then(res => {
         if (!res.ok) throw new Error(`GitHub API returned ${res.status}`)
         return res.json()

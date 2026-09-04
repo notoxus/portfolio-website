@@ -38,8 +38,9 @@ Feel free to fork and customize this project for your own portfolio!
 ### Prerequisites
 
 - **Docker Engine**, Docker Compose v2, and Docker Buildx (recommended). The Dockerfile uses BuildKit cache mounts, so the legacy Docker builder is not supported. See the [Docker on Linux guide](docker-on-linux.md) for installation and troubleshooting. No Node.js, pnpm, or VS Code installation is required for this path.
-- **Git** & **Git LFS** (Large File Storage) for cloning media assets.
-- *(Optional)* Node.js 20.19+ and pnpm 10.14.0 for running outside Docker.
+- **Git** for cloning the repository.
+- *(Optional)* [Nix](https://nixos.org/) with Flakes enabled — for a fully reproducible native dev environment without Docker.
+- *(Optional)* Node.js ≥20.19 and pnpm 10.14.0 for running outside Docker/Nix.
 
 ### Installation
 
@@ -68,6 +69,7 @@ The usual Docker workflow:
 | :--- | :--- |
 | `docker compose up --build` / `make dev` | Build when needed and start development with hot reload |
 | `make rebuild` | Fully recreate the development environment, including dependency/cache volumes |
+| `make clean-rebuild` | Purge all containers, volumes, and rebuild without Docker layer cache |
 | `make shell` | Open a shell in the running development container |
 | `make prod` | Build and run the small standalone production image |
 | `make down` | Stop containers while keeping Docker caches |
@@ -78,6 +80,40 @@ The usual Docker workflow:
 > **BuildKit troubleshooting:** See [Docker on Linux](docker-on-linux.md#troubleshooting) if a Docker build or Dev Container fails.
 
 > **Dev Containers:** This optional workflow requires the official Microsoft Visual Studio Code build. See [Docker on Linux](docker-on-linux.md#6-dev-containers-optional) for the reason and compatible editor builds.
+
+#### ❄️ Nix Flakes (native, reproducible)
+
+A [`flake.nix`](flake.nix) is provided for a fully reproducible native development environment. It pins Node.js 22 LTS, pnpm (via Corepack), Git, Docker, and Docker Compose — no global installs needed.
+
+1. **Install Nix** (if not already installed):
+   ```bash
+   # Arch Linux
+   sudo pacman -S nix
+   sudo systemctl enable --now nix-daemon.service
+   sudo nix-store --init   # one-time store initialization
+
+   # Other distros / macOS — use the official installer:
+   # https://nixos.org/download
+   ```
+
+2. **Enable Flakes** (add to `~/.config/nix/nix.conf`):
+   ```ini
+   experimental-features = nix-command flakes
+   ```
+
+3. **Start developing:**
+   ```bash
+   make nix-dev
+   ```
+   This enters the Nix devShell, installs dependencies with `pnpm install --frozen-lockfile`, and starts the Next.js dev server.
+
+4. *(Optional)* **[direnv](https://direnv.net/) auto-activation:**
+   An `.envrc` file is included. If you use `direnv`, the Nix environment activates automatically when you `cd` into the project:
+   ```bash
+   direnv allow
+   ```
+
+> **Note:** The first run downloads the Nix derivations (~1–2 min). Subsequent runs are instant.
 
 #### 🚀 Quick Setup without Docker (UNIX users)
 
@@ -153,6 +189,11 @@ To check the Docker prerequisites instead, run:
 | `pnpm dev` | Starts the development server |
 | `pnpm build` | Builds the application for production |
 | `pnpm start` | Runs the compiled production build |
+| `make dev` | Start hot-reloading dev container (Docker) |
+| `make nix-dev` | Start dev server via Nix Flakes (native, reproducible) |
+| `make rebuild` | Recreate Docker environment with fresh volumes |
+| `make clean-rebuild` | Full Docker purge + rebuild without layer cache |
+| `make prod` | Build and run the production image |
 
 ---
 

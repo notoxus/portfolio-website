@@ -25,7 +25,7 @@ export default async function ProjectsPage({
 }: {
   searchParams: Promise<{ q?: string }>
 }) {
-  const settings = getSiteSettings()
+  const settings = await getSiteSettings()
 
   const params = await searchParams
   const q = params.q

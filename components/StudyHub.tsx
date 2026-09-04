@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import YouTube from 'react-youtube';
 import Subtitle from './Subtitle';
 import ToggleSwitch from './ToggleSwitch';
+import { checkGeminiNanoAvailability, translateWithGeminiNano } from 'lib/gemini';
 
 interface TranscriptItem {
   id: number;
@@ -21,21 +22,49 @@ interface CacheEntry {
   timestamp: number;
 }
 
-async function translateSingleWithGroq(text: string): Promise<string> {
+/**
+ * 3-Tier Hybrid Cascade Translation:
+ * Tier 1: Client-Side on-device AI (Gemini Nano via window.ai) - 0 latency, 0 token cost
+ * Tier 2: Server-Side Groq Llama 3 API
+ * Tier 3: Direct Google Translate endpoint fallback
+ */
+async function translateSentenceHybrid(text: string): Promise<string> {
+  // Tier 1: Client-Side Gemini Nano (Chrome Built-in AI)
+  try {
+    const hasNano = await checkGeminiNanoAvailability();
+    if (hasNano) {
+      const nanoResult = await translateWithGeminiNano(text);
+      if (nanoResult && nanoResult !== text) return nanoResult;
+    }
+  } catch {}
+
+  // Tier 2: Groq Translate API
   try {
     const res = await fetch('/api/groq-translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ texts: [text], type: 'instant' }),
     });
-    if (!res.ok) return text;
-    const data = await res.json();
-    let rawText = data.choices?.[0]?.message?.content?.trim() || text;
-    const match = rawText.match(/^1\.\s+(.+)$/);
-    return match ? match[1] : rawText;
-  } catch {
-    return text;
-  }
+    if (res.ok) {
+      const data = await res.json();
+      let rawText = data.choices?.[0]?.message?.content?.trim() || '';
+      const match = rawText.match(/^1\.\s+(.+)$/);
+      const translated = match ? match[1] : rawText;
+      if (translated) return translated;
+    }
+  } catch {}
+
+  // Tier 3: Direct Google Translate fallback
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      return data[0]?.map((chunk: any[]) => chunk[0]).join('') || text;
+    }
+  } catch {}
+
+  return text;
 }
 
 export default function StudyHub() {
@@ -168,7 +197,7 @@ export default function StudyHub() {
       const t = transcript[i]?.text;
       if (t && !translationCache.current.has(t)) {
         translationCache.current.set(t, '__pending__');
-        translateSingleWithGroq(t).then(translated => {
+        translateSentenceHybrid(t).then(translated => {
           translationCache.current.set(t, translated);
         });
       }
@@ -182,7 +211,7 @@ export default function StudyHub() {
 
     setVietSub('');
     let isCurrent = true;
-    translateSingleWithGroq(engText).then(translated => {
+    translateSentenceHybrid(engText).then(translated => {
       translationCache.current.set(engText, translated);
       if (isCurrent) setVietSub(translated);
     }).catch(() => { if (isCurrent) setVietSub(''); });

@@ -14,7 +14,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
 FROM dependencies AS development
-RUN mkdir .next && chown -R node:node /app
+RUN mkdir -p .next && chown -R node:node /app
 COPY --chown=node:node . .
 USER node
 EXPOSE 3000

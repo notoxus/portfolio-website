@@ -1,7 +1,8 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { commitFileToGitHub } from 'lib/github-content'
-import { getProjects, type Project } from 'lib/projects'
+import { getProjects, type Project, PROJECTS_CACHE_TAG } from 'lib/projects'
 import fs from 'fs'
 import path from 'path'
 
@@ -78,7 +79,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  return NextResponse.json({ projects: getProjects() })
+  return NextResponse.json({ projects: await getProjects() })
 }
 
 export async function POST(req: NextRequest) {
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'All project fields are required' }, { status: 400 })
   }
 
-  const projects = getProjects()
+  const projects = await getProjects()
   if (projects.some((item) => item.id === normalized.id)) {
     return NextResponse.json({ error: 'Project id already exists' }, { status: 409 })
   }
@@ -106,6 +107,11 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     )
   }
+
+  // Invalidate projects cache and revalidate pages
+  revalidateTag(PROJECTS_CACHE_TAG, {})
+  revalidatePath('/projects')
+  revalidatePath('/')
 
   return NextResponse.json({ ok: true, project: normalized, ...result }, { status: 201 })
 }

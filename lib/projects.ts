@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import { Octokit } from '@octokit/rest'
+import { unstable_cache } from 'next/cache'
 
 export type Project = {
   id: string
@@ -85,7 +87,32 @@ function isProject(value: any): value is Project {
   )
 }
 
-export function getProjects(): Project[] {
+export const PROJECTS_CACHE_TAG = 'projects-data'
+
+async function fromGitHub(): Promise<Project[] | null> {
+  const { GITHUB_TOKEN: token, GITHUB_OWNER: owner, GITHUB_REPO: repo } = process.env
+  if (!token || !owner || !repo) return null
+
+  try {
+    const octokit = new Octokit({ auth: token })
+    const { data } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path: 'content/projects.json',
+    })
+    if (Array.isArray(data) || data.type !== 'file') return null
+    const raw = Buffer.from(data.content, 'base64').toString('utf-8')
+    const parsed = JSON.parse(raw)
+    if (Array.isArray(parsed) && parsed.every(isProject)) {
+      return parsed
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+function fromFilesystem(): Project[] {
   try {
     const raw = fs.readFileSync(PROJECTS_FILE, 'utf-8')
     const parsed = JSON.parse(raw)
@@ -97,8 +124,29 @@ export function getProjects(): Project[] {
   return DEFAULT_PROJECTS
 }
 
-export function getFeaturedProjects(limit = 3): Project[] {
-  const projects = getProjects()
+const loadProjects = unstable_cache(
+  async (): Promise<Project[]> => (await fromGitHub()) ?? fromFilesystem(),
+  [PROJECTS_CACHE_TAG],
+  { tags: [PROJECTS_CACHE_TAG], revalidate: 300 },
+)
+
+export async function getProjects(): Promise<Project[]> {
+  return loadProjects()
+}
+
+export function getProjectsSync(): Project[] {
+  return fromFilesystem()
+}
+
+export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
+  const projects = await getProjects()
+  const featuredProjects = projects.filter((project) => project.featured)
+
+  return (featuredProjects.length ? featuredProjects : projects).slice(0, limit)
+}
+
+export function getFeaturedProjectsSync(limit = 3): Project[] {
+  const projects = getProjectsSync()
   const featuredProjects = projects.filter((project) => project.featured)
 
   return (featuredProjects.length ? featuredProjects : projects).slice(0, limit)
