@@ -41,8 +41,8 @@ export async function generateMetadata({ params }) {
 }
 
 import { ViewCounter } from 'app/components/ViewCounter'
-import TableOfContents, { extractHeadings } from 'app/components/TableOfContents'
-import { BlogMenuBuilder } from 'lib/composite/menu-node'
+import TableOfContents from 'app/components/TableOfContents'
+import { BlogMenuBuilder, extractHeadings } from 'lib/composite/menu-node'
 
 export default async function Blog({ params }) {
   const resolvedParams = await params

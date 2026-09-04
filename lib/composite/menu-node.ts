@@ -110,3 +110,34 @@ export class BlogMenuBuilder {
     return root
   }
 }
+
+export function extractHeadings(source: string): Array<{ id: string; text: string; level: number }> {
+  // Extract H2 to H4 headings from markdown source
+  const headingRegex = /^(#{2,4})\s+(.+)$/gm
+  const headings: Array<{ id: string; text: string; level: number }> = []
+  let match: RegExpExecArray | null
+
+  while ((match = headingRegex.exec(source)) !== null) {
+    const level = match[1].length
+    const rawText = match[2].trim()
+    // Clean inline markdown links, bold, code
+    const text = rawText
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+      .replace(/[*_`]/g, '')
+      .trim()
+
+    if (!text) continue
+
+    const id = text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/&/g, '-and-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/-+/g, '-')
+
+    headings.push({ id, text, level })
+  }
+
+  return headings
+}
