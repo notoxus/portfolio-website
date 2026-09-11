@@ -187,6 +187,30 @@ html:not(.dark) body {
   background-size: auto, auto, 36px 36px, 36px 36px, auto;
 }
 
+.preview-canvas {
+  background:
+    linear-gradient(var(--portfolio-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--portfolio-line) 1px, transparent 1px),
+    var(--portfolio-bg);
+  background-position: -1px -1px;
+  background-size: 52px 52px;
+}
+
+html:not(.dark) .preview-canvas {
+  background:
+    radial-gradient(circle at 12% 2%, var(--glass-glow), transparent 34rem),
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, var(--portfolio-green) 10%, transparent),
+      transparent 30rem
+    ),
+    linear-gradient(color-mix(in srgb, var(--portfolio-line) 72%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--portfolio-line) 72%, transparent) 1px, transparent 1px),
+    var(--portfolio-bg);
+  background-position: center, center, -1px -1px, -1px -1px, center;
+  background-size: auto, auto, 52px 52px, 52px 52px, auto;
+}
+
 @media (min-width: 640px) {
   body {
     background-size: 52px 52px;

@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CustomHomeItem, HomeSection, SiteSettings } from 'lib/site-settings'
-import { FONT_SIZE_MAX, FONT_SIZE_MIN, type FontSize, type FontSizeSettings } from 'lib/font-sizes'
+import {
+  FONT_SIZE_MAX,
+  FONT_SIZE_MIN,
+  fontSizeStyle,
+  responsiveFontSizeStyle,
+  type FontSize,
+  type FontSizeSettings,
+} from 'lib/font-sizes'
+import { HomeHero } from 'app/components/HomeHero'
 import {
   PROJECT_ACCENTS,
   PROJECT_ACCENT_LABELS,
@@ -12,6 +20,66 @@ import {
 } from 'lib/project-accents'
 
 type EditableSettings = SiteSettings
+
+function HomepageDraftPreview({ settings, intro }: { settings: SiteSettings; intro: string }) {
+  return (
+    <div className="space-y-10 md:space-y-16">
+      <HomeHero settings={settings} intro={intro} />
+      {settings.home.sections.map((section) => (
+        <section key={section.id}>
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <h2
+              style={responsiveFontSizeStyle(section.titleSize)}
+              className="font-semibold tracking-tight text-neutral-950 dark:text-neutral-50"
+            >
+              {section.title}
+            </h2>
+            {section.description && (
+              <p
+                style={fontSizeStyle(section.descriptionSize)}
+                className="max-w-md leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right"
+              >
+                {section.description}
+              </p>
+            )}
+          </div>
+          {section.type === 'custom' && section.items.length > 0 ? (
+            <div className="glass-list">
+              {section.items.map((item, index) => (
+                <div key={item.id} className="border-b border-neutral-200/80 px-5 py-5 dark:border-neutral-800/80">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className="index-pill">{String(index + 1).padStart(2, '0')}</span>
+                    <h3 style={responsiveFontSizeStyle(item.titleSize)} className="font-semibold">
+                      {item.title}
+                    </h3>
+                    {item.label && (
+                      <span
+                        style={fontSizeStyle(item.labelSize)}
+                        className={`rounded-full px-2.5 py-1 font-bold ${PROJECT_ACCENT_STYLES[item.accent]}`}
+                      >
+                        {item.label}
+                      </span>
+                    )}
+                  </div>
+                  {item.description && <p style={fontSizeStyle(item.descriptionSize)} className="text-neutral-600 dark:text-neutral-400">{item.description}</p>}
+                  {item.meta && <p style={fontSizeStyle(item.metaSize)} className="mt-3 font-mono text-neutral-500">{item.meta}</p>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="surface-panel rounded-2xl px-5 py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+              {section.type === 'projects'
+                ? `Project list · up to ${section.limit} item${section.limit === 1 ? '' : 's'}`
+                : section.type === 'blog'
+                  ? `Blog list · up to ${section.limit} post${section.limit === 1 ? '' : 's'}`
+                  : 'No custom items yet'}
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+  )
+}
 
 const SOCIAL_ICON_CHOICES = [
   { value: 'instagram', label: 'Instagram' },
@@ -781,6 +849,7 @@ export default function SiteSettingsPage() {
   const router = useRouter()
   const [settings, setSettings] = useState<EditableSettings | null>(null)
   const [intro, setIntro] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -871,6 +940,13 @@ export default function SiteSettingsPage() {
             className="text-sm text-neutral-400 transition-colors hover:text-neutral-700 dark:hover:text-neutral-300"
           >
             Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowPreview(true)}
+            className="rounded-md border border-neutral-300 px-4 py-1.5 text-sm font-medium text-neutral-600 transition hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700 dark:text-neutral-300"
+          >
+            Preview
           </button>
           <button
             onClick={save}
@@ -1034,6 +1110,34 @@ export default function SiteSettingsPage() {
           </div>
         </section>
       </div>
+
+      {showPreview && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-neutral-950/35 p-3 backdrop-blur-sm sm:p-6">
+          <div className="preview-canvas mx-auto min-h-full max-w-6xl rounded-3xl border border-white/70 shadow-2xl dark:border-neutral-700">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/70 bg-white/65 px-4 py-3 backdrop-blur-2xl dark:border-neutral-800 dark:bg-neutral-950/75 sm:px-6">
+              <div>
+                <p className="text-sm font-semibold">Unsaved homepage preview</p>
+                <p className="text-xs text-neutral-500">Nothing is written or committed until you press Save.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPreview(false)}
+                className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium transition hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+              >
+                Close preview
+              </button>
+            </div>
+            <div
+              className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-0"
+              onClickCapture={(event) => {
+                if ((event.target as HTMLElement).closest('a')) event.preventDefault()
+              }}
+            >
+              <HomepageDraftPreview settings={settings} intro={intro} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
