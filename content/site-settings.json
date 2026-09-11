@@ -1,12 +1,6 @@
 {
   "socialLinks": [
     {
-      "id": "instagram",
-      "name": "Instagram",
-      "href": "https://www.instagram.com/notoxus._morales",
-      "icon": "instagram"
-    },
-    {
       "id": "linkedin",
       "name": "LinkedIn",
       "href": "https://www.linkedin.com/in/notoxus/",
@@ -71,38 +65,27 @@
   },
   "home": {
     "eyebrow": "DevOps & Cybersecurity learner",
-    "headline": "I build practical tools and document what I learn.",
+    "headline": "Welcome to my portfolio website. Thank you for taking the time to stop by!!!",
     "primaryCtaLabel": "View projects",
     "primaryCtaHref": "/projects",
     "secondaryCtaLabel": "Read my blog",
     "secondaryCtaHref": "/blog",
     "skillGroups": [
       {
-        "label": "DevOps & Linux",
+        "label": "Operating System",
         "items": [
-          "Linux",
-          "Docker",
-          "Infrastructure"
+          "Linux"
         ]
       },
       {
-        "label": "Security & Networking",
+        "label": "Development & Operation",
         "items": [
-          "Networking",
-          "Security labs",
-          "System hardening"
-        ]
-      },
-      {
-        "label": "Automation & Tooling",
-        "items": [
-          "Bash",
-          "Git",
-          "Technical writing"
+          "OOP",
+          "Docker Container"
         ]
       }
     ],
-    "contactLabel": "Open to",
+    "contactLabel": "To collab, contacting me via",
     "contactDescription": "Projects and knowledge-sharing collaborations.",
     "panelLayout": {
       "side": "right",
@@ -114,12 +97,12 @@
     },
     "sections": [
       {
-        "id": "featured-work",
+        "id": "section-1789134487282",
         "type": "projects",
-        "title": "Featured work",
-        "description": "Selected projects that best represent what I build and how I approach problems.",
-        "titleSize": 24,
-        "descriptionSize": 14,
+        "title": "Publications",
+        "description": "Some projects I am still evolving and working on, hoping for your contributions",
+        "titleSize": "2xl",
+        "descriptionSize": "sm",
         "limit": 3,
         "featuredOnly": true,
         "items": []
@@ -127,10 +110,10 @@
       {
         "id": "recent-writing",
         "type": "blog",
-        "title": "Recent writing",
-        "description": "Notes from my work with Linux, networking, security, and software.",
-        "titleSize": 24,
-        "descriptionSize": 14,
+        "title": "Recent blogs",
+        "description": "Blogging my knowledge",
+        "titleSize": "2xl",
+        "descriptionSize": "sm",
         "limit": 3,
         "featuredOnly": false,
         "items": []
@@ -138,21 +121,14 @@
     ]
   },
   "projectsPage": {
-    "eyebrow": "Selected work",
-    "title": "Projects",
-    "description": "Things I've built to learn. Some are finished, some are still evolving - spanning systems, networking, software, automation, and beyond."
+    "eyebrow": "My own open-source projects",
+    "title": "Publications",
+    "description": "Some projects I am still evolving and working on, hoping for your contributions."
   },
   "blogPage": {
-    "eyebrow": "Learning in public",
+    "eyebrow": "Where I share my knowledge",
     "title": "Blog",
-    "description": "Notes on networking, Linux, security, and whatever else I'm studying."
-  },
-  "notebookPage": {
-    "title": "My Notebook",
-    "description": "Interactive explorer with direct raw access to my GitHub assets.",
-    "owner": "notoxus",
-    "repo": "my-note-book",
-    "branch": "main"
+    "description": "These posts are an experiential process and the things I have deeply absorbed."
   },
   "footer": {
     "title": "Let's connect",
