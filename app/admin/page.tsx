@@ -25,19 +25,19 @@ export default async function AdminDashboard() {
     <div>
       <div className="mb-8 grid gap-3 sm:grid-cols-2">
         <Link
-          href="/admin/site-settings"
+          href="/admin/homepage"
           className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
         >
-          <span className="text-sm font-semibold">Site labels</span>
+          <span className="text-sm font-semibold">Homepage</span>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Edit homepage, blog, projects, and footer text.
+            Edit hero, side card, sections, social links, and footer.
           </p>
         </Link>
         <Link
           href="/admin/blog"
           className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
         >
-          <span className="text-sm font-semibold">Blog content</span>
+          <span className="text-sm font-semibold">Blog</span>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
             Edit blog labels and MDX posts.
           </p>
@@ -46,9 +46,27 @@ export default async function AdminDashboard() {
           href="/admin/projects"
           className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
         >
-          <span className="text-sm font-semibold">Project content</span>
+          <span className="text-sm font-semibold">Projects</span>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
             Edit project labels and portfolio entries.
+          </p>
+        </Link>
+        <Link
+          href="/admin/notebook"
+          className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
+        >
+          <span className="text-sm font-semibold">Notebook</span>
+          <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+            Configure the notebook repository, labels, and typography.
+          </p>
+        </Link>
+        <Link
+          href="/admin/custom-menu"
+          className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
+        >
+          <span className="text-sm font-semibold">Custom Menu</span>
+          <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+            Add, hide, remove, and reorder navigation items.
           </p>
         </Link>
       </div>

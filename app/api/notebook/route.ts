@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from '@octokit/rest'
-
-const REPO_OWNER = process.env.GITHUB_OWNER || 'notoxus'
-const REPO_NAME = 'my-note-book'
+import { getSiteSettings } from 'lib/site-settings'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -12,16 +10,27 @@ export async function GET(req: NextRequest) {
   const cleanPath = subPath.replace(/\.\./g, '').replace(/^\/+/, '')
 
   try {
+    const settings = await getSiteSettings()
+    const notebook = settings.notebookPage
     const token = process.env.GITHUB_TOKEN
     const octokit = new Octokit(token ? { auth: token } : {})
 
     const { data } = await octokit.repos.getContent({
-      owner: REPO_OWNER,
-      repo: REPO_NAME,
+      owner: notebook.owner,
+      repo: notebook.repo,
       path: cleanPath,
+      ref: notebook.branch,
     })
 
-    return NextResponse.json(data, {
+    return NextResponse.json(cleanPath ? data : {
+      items: data,
+      notebook,
+      fontSizes: {
+        title: settings.fontSizes.notebookTitle,
+        description: settings.fontSizes.notebookDescription,
+        file: settings.fontSizes.notebookFile,
+      },
+    }, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
       },

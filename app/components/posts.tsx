@@ -7,7 +7,7 @@ import {
 } from 'app/blog/utils'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 import { getSiteSettings } from 'lib/site-settings'
-import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
+import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 
 const languageLabels: Record<BlogLanguage, string> = {
   vi: 'VI',
@@ -74,26 +74,27 @@ export async function BlogPosts({
           className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-neutral-200/80 px-4 py-4 transition-colors hover:border-blue-500/50 dark:border-neutral-800/80 sm:gap-5 sm:px-5 sm:py-6"
         >
           <Link href={`/blog/${post.slug}`} className="min-w-0">
-            <p className={`mb-1.5 font-mono ${fontSizeClass(settings.fontSizes.postMeta)} text-neutral-500 dark:text-neutral-500 sm:mb-2`}>
+            <p style={fontSizeStyle(settings.fontSizes.postMeta)} className="mb-1.5 font-mono text-neutral-500 dark:text-neutral-500 sm:mb-2">
               {formatDate(post.metadata.publishedAt, false)}
             </p>
-            <h3 className={`${responsiveFontSizeClass(settings.fontSizes.postTitle)} font-semibold tracking-tight text-neutral-950 transition-colors group-hover:text-blue-600 dark:text-neutral-50 dark:group-hover:text-blue-400`}>
+            <h3 style={responsiveFontSizeStyle(settings.fontSizes.postTitle)} className="font-semibold tracking-tight text-neutral-950 transition-colors group-hover:text-blue-600 dark:text-neutral-50 dark:group-hover:text-blue-400">
               {post.metadata.title}
             </h3>
             {showSummaries && post.metadata.summary && (
-              <p className={`mt-2 max-w-3xl ${fontSizeClass(settings.fontSizes.postSummary)} leading-6 text-neutral-600 dark:text-neutral-400`}>
+              <p style={fontSizeStyle(settings.fontSizes.postSummary)} className="mt-2 max-w-3xl leading-6 text-neutral-600 dark:text-neutral-400">
                 {post.metadata.summary}
               </p>
             )}
             <div className="mt-3 flex flex-wrap items-center gap-3">
               <span
-                className={`inline-flex rounded-full bg-blue-500/10 px-2.5 py-1 font-mono ${fontSizeClass(settings.fontSizes.postBadge)} font-bold text-blue-700 dark:text-blue-300`}
+                style={fontSizeStyle(settings.fontSizes.postBadge)}
+                className="inline-flex rounded-full bg-blue-500/10 px-2.5 py-1 font-mono font-bold text-blue-700 dark:text-blue-300"
                 title={resolvePostLanguage(post) === 'vi' ? 'Tiếng Việt' : 'English'}
               >
                 {languageLabels[resolvePostLanguage(post)]}
               </span>
               {post.metadata.category && (
-                <span className={`inline-flex rounded-full bg-neutral-200/70 px-2.5 py-1 ${fontSizeClass(settings.fontSizes.postBadge)} font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>
+                <span style={fontSizeStyle(settings.fontSizes.postBadge)} className="inline-flex rounded-full bg-neutral-200/70 px-2.5 py-1 font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                   {post.metadata.category}
                 </span>
               )}

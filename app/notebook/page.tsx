@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-function FileNode({ item }: { item: any }) {
+function FileNode({ item, fileSize }: { item: any; fileSize: number }) {
   const [isOpen, setIsOpen] = useState(false)
   const [children, setChildren] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +43,7 @@ function FileNode({ item }: { item: any }) {
   ? item.name.split('.').pop()?.toUpperCase()
   : '';
   // Raw download link
-  const rawUrl = `https://raw.githubusercontent.com/notoxus/my-note-book/main/${item.path}`
+  const rawUrl = item.download_url || item.html_url
 
   return (
     <div className="flex flex-col">
@@ -55,7 +55,7 @@ function FileNode({ item }: { item: any }) {
           <span className="text-lg select-none">
             {item.type === 'dir' ? (isOpen ? '\u{1F4C2}' : '\u{1F4C1}') : '\u{1F4C4}'}
           </span>
-          <span className="text-neutral-700 dark:text-neutral-300 font-mono text-sm truncate max-w-[200px] md:max-w-xs">
+          <span style={{ fontSize: `${fileSize}px` }} className="text-neutral-700 dark:text-neutral-300 font-mono truncate max-w-[200px] md:max-w-xs">
             {item.name}
           </span>
         </div>
@@ -87,7 +87,7 @@ function FileNode({ item }: { item: any }) {
           {isLoading && <div className="px-4 py-2 text-xs text-neutral-400 animate-pulse">Loading...</div>}
           {error && <div className="px-4 py-2 text-xs text-red-500">Failed to load. Limit reached?</div>}
           {!isLoading && !error && children.map((child: any) => (
-            <FileNode key={child.sha} item={child} />
+            <FileNode key={child.sha} item={child} fileSize={fileSize} />
           ))}
         </div>
       )}
@@ -100,6 +100,14 @@ export default function NotebookPage() {
   const [hasMounted, setHasMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [notebook, setNotebook] = useState({
+    title: 'My Notebook',
+    description: 'Interactive explorer with direct raw access to my GitHub assets.',
+    owner: 'notoxus',
+    repo: 'my-note-book',
+    branch: 'main',
+  })
+  const [fontSizes, setFontSizes] = useState({ title: 24, description: 16, file: 14 })
 
   useEffect(() => {
     setHasMounted(true)
@@ -109,8 +117,10 @@ export default function NotebookPage() {
         return res.json()
       })
       .then(data => {
-        if (Array.isArray(data)) {
-          setRootFiles(data.sort((a: any, b: any) => (a.type === 'dir' ? -1 : 1)))
+        if (Array.isArray(data.items)) {
+          setRootFiles(data.items.sort((a: any, b: any) => (a.type === 'dir' ? -1 : 1)))
+          setNotebook(data.notebook)
+          setFontSizes(data.fontSizes)
         }
       })
       .catch(() => {
@@ -125,9 +135,9 @@ export default function NotebookPage() {
 
   return (
     <section>
-      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Notebook</h1>
-      <p className="mb-6 text-neutral-600 dark:text-neutral-400">
-        Interactive explorer with direct raw access to my GitHub assets.
+      <h1 style={{ fontSize: `${fontSizes.title}px` }} className="font-semibold mb-8 tracking-tighter">{notebook.title}</h1>
+      <p style={{ fontSize: `${fontSizes.description}px` }} className="mb-6 text-neutral-600 dark:text-neutral-400">
+        {notebook.description}
       </p>
 
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
@@ -139,7 +149,7 @@ export default function NotebookPage() {
           <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
             The notebook could not be loaded from GitHub right now. You can still browse the source directly on{' '}
             <a
-              href="https://github.com/notoxus/my-note-book"
+              href={`https://github.com/${notebook.owner}/${notebook.repo}/tree/${notebook.branch}`}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
@@ -154,7 +164,7 @@ export default function NotebookPage() {
           </div>
         ) : (
           rootFiles.map((file: any) => (
-            <FileNode key={file.sha} item={file} />
+            <FileNode key={file.sha} item={file} fileSize={fontSizes.file} />
           ))
         )}
       </div>

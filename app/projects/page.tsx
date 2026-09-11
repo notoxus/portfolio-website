@@ -1,6 +1,6 @@
 import { ProjectList } from 'app/components/project-list'
 import { getSiteSettings } from 'lib/site-settings'
-import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
+import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 
 export const metadata = {
   title: 'Projects',
@@ -35,17 +35,17 @@ export default async function ProjectsPage({
     <section>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className={`mb-2 ${fontSizeClass(settings.fontSizes.projectsEyebrow)} text-neutral-500 dark:text-neutral-500`}>
+          <p style={fontSizeStyle(settings.fontSizes.projectsEyebrow)} className="mb-2 text-neutral-500 dark:text-neutral-500">
             {settings.projectsPage.eyebrow}
           </p>
           <div>
-            <h1 className={`${responsiveFontSizeClass(settings.fontSizes.projectsTitle)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}>
+            <h1 style={responsiveFontSizeStyle(settings.fontSizes.projectsTitle)} className="font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
               {settings.projectsPage.title}
             </h1>
           </div>
         </div>
         <div className="max-w-md sm:text-right">
-          <p className={`${fontSizeClass(settings.fontSizes.projectsDescription)} leading-6 text-neutral-600 dark:text-neutral-400`}>
+          <p style={fontSizeStyle(settings.fontSizes.projectsDescription)} className="leading-6 text-neutral-600 dark:text-neutral-400">
             {settings.projectsPage.description}
           </p>
         </div>

@@ -1,42 +1,19 @@
-export const FONT_SIZE_OPTIONS = [
-  { value: 'xs', label: 'text-xs' },
-  { value: 'sm', label: 'text-sm' },
-  { value: 'base', label: 'text-base' },
-  { value: 'lg', label: 'text-lg' },
-  { value: 'xl', label: 'text-xl' },
-  { value: '2xl', label: 'text-2xl' },
-  { value: '3xl', label: 'text-3xl' },
-  { value: '4xl', label: 'text-4xl' },
-  { value: '5xl', label: 'text-5xl' },
-  { value: '6xl', label: 'text-6xl' },
-] as const
+export type FontSize = number
 
-export type FontSize = (typeof FONT_SIZE_OPTIONS)[number]['value']
+export const FONT_SIZE_MIN = 8
+export const FONT_SIZE_MAX = 96
 
-export const FONT_SIZE_CLASSES: Record<FontSize, string> = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  base: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl',
-  '2xl': 'text-2xl',
-  '3xl': 'text-3xl',
-  '4xl': 'text-4xl',
-  '5xl': 'text-5xl',
-  '6xl': 'text-6xl',
-}
-
-export const RESPONSIVE_FONT_SIZE_CLASSES: Record<FontSize, string> = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  base: 'text-sm sm:text-base',
-  lg: 'text-base sm:text-lg',
-  xl: 'text-lg sm:text-xl',
-  '2xl': 'text-xl sm:text-2xl',
-  '3xl': 'text-2xl sm:text-3xl',
-  '4xl': 'text-2xl sm:text-3xl md:text-4xl',
-  '5xl': 'text-3xl sm:text-4xl lg:text-5xl',
-  '6xl': 'text-3xl sm:text-5xl lg:text-6xl',
+const LEGACY_FONT_SIZE_PIXELS: Record<string, number> = {
+  xs: 12,
+  sm: 14,
+  base: 16,
+  lg: 18,
+  xl: 20,
+  '2xl': 24,
+  '3xl': 30,
+  '4xl': 36,
+  '5xl': 48,
+  '6xl': 60,
 }
 
 export type FontSizeSettings = {
@@ -62,41 +39,51 @@ export type FontSizeSettings = {
   postSummary: FontSize
   postMeta: FontSize
   postBadge: FontSize
+  notebookTitle: FontSize
+  notebookDescription: FontSize
+  notebookFile: FontSize
+  navigationLabel: FontSize
   footerTitle: FontSize
   footerDescription: FontSize
   socialLabel: FontSize
 }
 
 export const DEFAULT_FONT_SIZES: FontSizeSettings = {
-  homeEyebrow: 'sm',
-  homeHeadline: '5xl',
-  homeIntro: 'lg',
-  homeCta: 'sm',
-  skillGroupLabel: 'xs',
-  skillTag: 'xs',
-  contactLabel: 'xs',
-  contactDescription: 'xs',
-  projectsEyebrow: 'sm',
-  projectsTitle: '4xl',
-  projectsDescription: 'sm',
-  projectTitle: 'xl',
-  projectKind: 'xs',
-  projectDescription: 'sm',
-  projectTech: 'xs',
-  blogEyebrow: 'sm',
-  blogTitle: '4xl',
-  blogDescription: 'sm',
-  postTitle: 'lg',
-  postSummary: 'sm',
-  postMeta: 'xs',
-  postBadge: 'xs',
-  footerTitle: 'sm',
-  footerDescription: 'sm',
-  socialLabel: 'sm',
+  homeEyebrow: 14,
+  homeHeadline: 48,
+  homeIntro: 18,
+  homeCta: 14,
+  skillGroupLabel: 12,
+  skillTag: 12,
+  contactLabel: 12,
+  contactDescription: 12,
+  projectsEyebrow: 14,
+  projectsTitle: 36,
+  projectsDescription: 14,
+  projectTitle: 20,
+  projectKind: 12,
+  projectDescription: 14,
+  projectTech: 12,
+  blogEyebrow: 14,
+  blogTitle: 36,
+  blogDescription: 14,
+  postTitle: 18,
+  postSummary: 14,
+  postMeta: 12,
+  postBadge: 12,
+  notebookTitle: 24,
+  notebookDescription: 16,
+  notebookFile: 14,
+  navigationLabel: 14,
+  footerTitle: 14,
+  footerDescription: 14,
+  socialLabel: 14,
 }
 
-export function isFontSize(value: unknown): value is FontSize {
-  return FONT_SIZE_OPTIONS.some((option) => option.value === value)
+export function normalizeFontSize(value: unknown, fallback: FontSize): FontSize {
+  const migrated = typeof value === 'string' ? LEGACY_FONT_SIZE_PIXELS[value] ?? Number(value) : value
+  if (typeof migrated !== 'number' || !Number.isFinite(migrated)) return fallback
+  return Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, Math.round(migrated)))
 }
 
 export function normalizeFontSizes(value: unknown): FontSizeSettings {
@@ -104,15 +91,18 @@ export function normalizeFontSizes(value: unknown): FontSizeSettings {
   return Object.fromEntries(
     Object.entries(DEFAULT_FONT_SIZES).map(([key, fallback]) => [
       key,
-      isFontSize(source[key]) ? source[key] : fallback,
+      normalizeFontSize(source[key], fallback),
     ]),
   ) as FontSizeSettings
 }
 
-export function fontSizeClass(size: FontSize) {
-  return FONT_SIZE_CLASSES[size]
+export function fontSizeStyle(size: FontSize) {
+  return { fontSize: `${normalizeFontSize(size, 14)}px` }
 }
 
-export function responsiveFontSizeClass(size: FontSize) {
-  return RESPONSIVE_FONT_SIZE_CLASSES[size]
+export function responsiveFontSizeStyle(size: FontSize) {
+  const pixels = normalizeFontSize(size, 14)
+  const minimum = Math.min(pixels, pixels >= 36 ? 30 : pixels)
+  const fluid = Number(Math.max(1.5, pixels / 12).toFixed(3))
+  return { fontSize: `clamp(${minimum}px, ${fluid}vw, ${pixels}px)` }
 }

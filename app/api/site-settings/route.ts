@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
     revalidatePath('/')
     revalidatePath('/blog')
     revalidatePath('/projects')
+    revalidatePath('/notebook')
 
     return NextResponse.json({ ok: true, settings: normalized, github, localSaved, localReason })
   } catch (err: any) {

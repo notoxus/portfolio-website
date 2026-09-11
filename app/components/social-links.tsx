@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { fontSizeClass, type FontSize } from 'lib/font-sizes'
+import { fontSizeStyle, type FontSize } from 'lib/font-sizes'
 import type { SocialIcon, SocialLink } from 'lib/site-settings'
 
 const SOCIAL_ICON_SOURCES: Partial<Record<SocialIcon, string>> = {
@@ -39,7 +39,7 @@ function SocialIconView({ link }: { link: SocialLink }) {
 export function SocialLinks({
   links,
   compact = false,
-  labelSize = 'sm',
+  labelSize = 14,
 }: {
   links: SocialLink[]
   compact?: boolean
@@ -64,7 +64,8 @@ export function SocialLinks({
           <SocialIconView link={link} />
           {!compact && (
             <span
-              className={`${fontSizeClass(labelSize)} font-medium text-neutral-700 transition group-hover:text-neutral-950 dark:text-neutral-300 dark:group-hover:text-neutral-50`}
+              style={fontSizeStyle(labelSize)}
+              className="font-medium text-neutral-700 transition group-hover:text-neutral-950 dark:text-neutral-300 dark:group-hover:text-neutral-50"
             >
               {link.name}
             </span>

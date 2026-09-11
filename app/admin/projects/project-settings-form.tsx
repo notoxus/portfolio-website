@@ -3,6 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { SiteSettings } from 'lib/site-settings'
+import { FONT_SIZE_MAX, FONT_SIZE_MIN, type FontSizeSettings } from 'lib/font-sizes'
+
+const PROJECT_SIZE_FIELDS: Array<{ key: keyof FontSizeSettings; label: string }> = [
+  { key: 'projectsEyebrow', label: 'Page eyebrow' },
+  { key: 'projectsTitle', label: 'Page title' },
+  { key: 'projectsDescription', label: 'Page description' },
+  { key: 'projectTitle', label: 'Card title' },
+  { key: 'projectKind', label: 'Kind label' },
+  { key: 'projectDescription', label: 'Card description' },
+  { key: 'projectTech', label: 'Tech stack' },
+]
 
 function Field({
   label,
@@ -63,6 +74,13 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
     }))
   }
 
+  const updateFontSize = (key: keyof FontSizeSettings, value: number) => {
+    setSettings((current) => ({
+      ...current,
+      fontSizes: { ...current.fontSizes, [key]: value },
+    }))
+  }
+
   const save = async () => {
     setSaving(true)
     setError('')
@@ -91,7 +109,7 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
         <div>
           <h2 className="text-base font-semibold">Project labels</h2>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Edit the public projects page. Homepage sections are managed in Site labels.
+            Edit the public projects page. Featured homepage sections stay in Homepage.
           </p>
         </div>
         <button
@@ -132,6 +150,27 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
             onChange={(value) => updateProjectsPage('description', value)}
             multiline
           />
+        </div>
+        <div className="border-t border-neutral-200 pt-4 dark:border-neutral-800">
+          <h3 className="mb-3 text-sm font-semibold">Typography</h3>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {PROJECT_SIZE_FIELDS.map((item) => (
+              <label key={item.key}>
+                <span className="text-xs text-neutral-500">{item.label}</span>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={FONT_SIZE_MIN}
+                    max={FONT_SIZE_MAX}
+                    value={settings.fontSizes[item.key]}
+                    onChange={(event) => updateFontSize(item.key, Number(event.target.value))}
+                    className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 pr-9 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-3 text-xs text-neutral-400">px</span>
+                </div>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
     </section>

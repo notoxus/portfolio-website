@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import AuthButton from './AuthButton'
 import NavLinks from './NavLinks'
+import { getSiteSettings } from 'lib/site-settings'
 
-export function Navbar() {
+export async function Navbar() {
+  const settings = await getSiteSettings()
   return (
     <aside className="mb-8 sm:mb-12 lg:mb-16 tracking-tight">
       <div className="lg:sticky lg:top-6 lg:z-20">
@@ -25,7 +27,7 @@ export function Navbar() {
 
           <div className="order-3 sm:order-2 flex w-full sm:w-auto sm:flex-1 items-center gap-3">
             <div className="hidden h-5 w-px bg-neutral-200 dark:bg-neutral-800 sm:block" />
-            <NavLinks />
+            <NavLinks items={settings.navigation} fontSize={settings.fontSizes.navigationLabel} />
           </div>
         </nav>
       </div>

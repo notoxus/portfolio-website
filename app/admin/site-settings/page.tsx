@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CustomHomeItem, HomeSection, SiteSettings } from 'lib/site-settings'
-import { FONT_SIZE_OPTIONS, type FontSize, type FontSizeSettings } from 'lib/font-sizes'
+import { FONT_SIZE_MAX, FONT_SIZE_MIN, type FontSize, type FontSizeSettings } from 'lib/font-sizes'
 import {
   PROJECT_ACCENTS,
   PROJECT_ACCENT_LABELS,
@@ -43,30 +43,6 @@ const TYPOGRAPHY_GROUPS: Array<{
       { key: 'contactLabel', label: 'Contact label' },
       { key: 'contactDescription', label: 'Contact description' },
       { key: 'socialLabel', label: 'Social names' },
-    ],
-  },
-  {
-    title: 'Projects page & cards',
-    items: [
-      { key: 'projectsEyebrow', label: 'Projects eyebrow' },
-      { key: 'projectsTitle', label: 'Projects title' },
-      { key: 'projectsDescription', label: 'Projects description' },
-      { key: 'projectTitle', label: 'Project card title' },
-      { key: 'projectKind', label: 'Project kind label' },
-      { key: 'projectDescription', label: 'Project description' },
-      { key: 'projectTech', label: 'Project tech stack' },
-    ],
-  },
-  {
-    title: 'Blog page & post list',
-    items: [
-      { key: 'blogEyebrow', label: 'Blog eyebrow' },
-      { key: 'blogTitle', label: 'Blog title' },
-      { key: 'blogDescription', label: 'Blog description' },
-      { key: 'postTitle', label: 'Post title' },
-      { key: 'postSummary', label: 'Post summary' },
-      { key: 'postMeta', label: 'Post date' },
-      { key: 'postBadge', label: 'Post badges' },
     ],
   },
   {
@@ -204,17 +180,15 @@ function TypographyEditor({
                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
                   {item.label}
                 </span>
-                <select
+                <input
+                  type="number"
+                  min={FONT_SIZE_MIN}
+                  max={FONT_SIZE_MAX}
                   value={sizes[item.key]}
-                  onChange={(event) => onChange(item.key, event.target.value as FontSize)}
+                  onChange={(event) => onChange(item.key, Number(event.target.value))}
                   className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
-                >
-                  {FONT_SIZE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                />
+                <span className="ml-1 text-xs text-neutral-400">px</span>
               </label>
             ))}
           </div>
@@ -236,17 +210,15 @@ function SizeSelect({
   return (
     <label className="block">
       <span className="text-xs text-neutral-500 dark:text-neutral-400">{label}</span>
-      <select
+      <input
+        type="number"
+        min={FONT_SIZE_MIN}
+        max={FONT_SIZE_MAX}
         value={value}
-        onChange={(event) => onChange(event.target.value as FontSize)}
+        onChange={(event) => onChange(Number(event.target.value))}
         className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
-      >
-        {FONT_SIZE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      />
+      <span className="ml-1 text-xs text-neutral-400">px</span>
     </label>
   )
 }
@@ -288,8 +260,8 @@ function HomeSectionsEditor({
         type,
         title: labels[type][0],
         description: labels[type][1],
-        titleSize: '2xl',
-        descriptionSize: 'sm',
+        titleSize: 24,
+        descriptionSize: 14,
         limit: 3,
         featuredOnly: type === 'projects',
         items: [],
@@ -322,10 +294,10 @@ function HomeSectionsEditor({
         meta: '',
         href: '',
         accent: 'blue',
-        titleSize: 'xl',
-        labelSize: 'xs',
-        descriptionSize: 'sm',
-        metaSize: 'xs',
+        titleSize: 20,
+        labelSize: 12,
+        descriptionSize: 14,
+        metaSize: 12,
       },
     ])
   }
@@ -808,13 +780,19 @@ async function readJsonResponse(res: Response) {
 export default function SiteSettingsPage() {
   const router = useRouter()
   const [settings, setSettings] = useState<EditableSettings | null>(null)
+  const [intro, setIntro] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('/api/site-settings')
-      .then((res) => res.json())
-      .then((data) => setSettings(data.settings))
+    Promise.all([
+      fetch('/api/site-settings').then((res) => res.json()),
+      fetch('/api/intro').then((res) => res.json()),
+    ])
+      .then(([settingsData, introData]) => {
+        setSettings(settingsData.settings)
+        setIntro(introData.content ?? '')
+      })
       .catch(() => setError('Failed to load site settings'))
   }, [])
 
@@ -851,13 +829,21 @@ export default function SiteSettingsPage() {
     setError('')
 
     try {
-      const res = await fetch('/api/site-settings', {
+      const settingsRes = await fetch('/api/site-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings }),
       })
-      const data = await readJsonResponse(res)
-      if (!res.ok) throw new Error(data.error ?? 'Save failed')
+      const settingsData = await readJsonResponse(settingsRes)
+      if (!settingsRes.ok) throw new Error(settingsData.error ?? 'Settings save failed')
+
+      const introRes = await fetch('/api/intro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: intro }),
+      })
+      const introData = await readJsonResponse(introRes)
+      if (!introRes.ok) throw new Error(introData.error ?? 'Intro save failed')
       router.push('/')
       router.refresh()
     } catch (err: any) {
@@ -878,7 +864,7 @@ export default function SiteSettingsPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-base font-semibold">Edit site labels</h2>
+        <h2 className="text-base font-semibold">Homepage editor</h2>
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
@@ -908,6 +894,7 @@ export default function SiteSettingsPage() {
           <div className="grid gap-4">
             <Field label="Eyebrow" value={settings.home.eyebrow} onChange={(v) => updateHome('eyebrow', v)} />
             <Field label="Headline" value={settings.home.headline} onChange={(v) => updateHome('headline', v)} multiline />
+            <Field label="Introduction" value={intro} onChange={setIntro} multiline />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Primary CTA label" value={settings.home.primaryCtaLabel} onChange={(v) => updateHome('primaryCtaLabel', v)} />
               <Field label="Primary CTA link" value={settings.home.primaryCtaHref} onChange={(v) => updateHome('primaryCtaHref', v)} />
@@ -932,6 +919,97 @@ export default function SiteSettingsPage() {
         </section>
 
         <section className="surface-panel rounded-2xl p-5">
+          <div className="mb-4">
+            <h3 className="font-semibold">Hero side card layout</h3>
+            <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+              These controls apply on desktop. Mobile keeps a safe full-width stacked layout.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <label>
+              <span className="text-xs text-neutral-500">Card side</span>
+              <select
+                value={settings.home.panelLayout.side}
+                onChange={(event) => updateHome('panelLayout', { ...settings.home.panelLayout, side: event.target.value as 'left' | 'right' })}
+                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+              >
+                <option value="right">Right</option>
+                <option value="left">Left</option>
+              </select>
+            </label>
+            <label>
+              <span className="text-xs text-neutral-500">Vertical alignment</span>
+              <select
+                value={settings.home.panelLayout.verticalAlign}
+                onChange={(event) => updateHome('panelLayout', { ...settings.home.panelLayout, verticalAlign: event.target.value as 'start' | 'center' | 'end' })}
+                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+              >
+                <option value="start">Top</option>
+                <option value="center">Center</option>
+                <option value="end">Bottom</option>
+              </select>
+            </label>
+            {([
+              ['widthPercent', 'Width', '%', 24, 55],
+              ['minHeightPx', 'Minimum height', 'px', 0, 900],
+              ['offsetXPx', 'Horizontal offset', 'px', -160, 160],
+              ['offsetYPx', 'Vertical offset', 'px', -160, 160],
+            ] as const).map(([key, label, unit, min, max]) => (
+              <label key={key}>
+                <span className="text-xs text-neutral-500">{label}</span>
+                <div className="mt-1 flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    value={settings.home.panelLayout[key]}
+                    onChange={(event) => updateHome('panelLayout', { ...settings.home.panelLayout, [key]: Number(event.target.value) })}
+                    className="min-w-0 flex-1 accent-blue-600"
+                  />
+                  <div className="relative w-24 shrink-0">
+                    <input
+                      type="number"
+                      min={min}
+                      max={max}
+                      value={settings.home.panelLayout[key]}
+                      onChange={(event) => updateHome('panelLayout', { ...settings.home.panelLayout, [key]: Number(event.target.value) })}
+                      className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 pr-9 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-2.5 text-xs text-neutral-400">{unit}</span>
+                  </div>
+                </div>
+              </label>
+            ))}
+            <div className="sm:col-span-2 lg:col-span-3">
+              <span className="text-xs text-neutral-500">Layout preview</span>
+              <div className="relative mt-1 h-44 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100/70 dark:border-neutral-700 dark:bg-neutral-950">
+                <div className="absolute inset-y-5 left-4 right-4 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700" />
+                <div
+                  className="absolute rounded-lg border border-blue-500/60 bg-blue-500/15 p-3 text-xs font-semibold text-blue-600 shadow-sm dark:text-blue-300"
+                  style={{
+                    width: `${settings.home.panelLayout.widthPercent}%`,
+                    minHeight: `${Math.max(44, settings.home.panelLayout.minHeightPx / 5)}px`,
+                    [settings.home.panelLayout.side]: '1rem',
+                    top:
+                      settings.home.panelLayout.verticalAlign === 'start'
+                        ? '1.25rem'
+                        : settings.home.panelLayout.verticalAlign === 'end'
+                          ? undefined
+                          : '50%',
+                    bottom: settings.home.panelLayout.verticalAlign === 'end' ? '1.25rem' : undefined,
+                    transform: `translate(${settings.home.panelLayout.offsetXPx / 5}px, ${
+                      settings.home.panelLayout.offsetYPx / 5
+                    }px)${settings.home.panelLayout.verticalAlign === 'center' ? ' translateY(-50%)' : ''}`,
+                  }}
+                >
+                  Hero side card
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="surface-panel rounded-2xl p-5">
           <HomeSectionsEditor
             sections={settings.home.sections}
             onChange={(sections) => updateHome('sections', sections)}
@@ -942,28 +1020,10 @@ export default function SiteSettingsPage() {
           <div className="mb-5">
             <h3 className="font-semibold">Typography</h3>
             <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-              Select a Tailwind font-size class for every editable site label. Large headings remain responsive on smaller screens.
+              Enter exact pixel sizes. Large headings remain fluid on smaller screens.
             </p>
           </div>
           <TypographyEditor sizes={settings.fontSizes} onChange={updateFontSize} />
-        </section>
-
-        <section className="surface-panel rounded-2xl p-5">
-          <h3 className="mb-4 font-semibold">Projects page</h3>
-          <div className="grid gap-4">
-            <Field label="Eyebrow" value={settings.projectsPage.eyebrow} onChange={(v) => updateSection('projectsPage', 'eyebrow', v)} />
-            <Field label="Title" value={settings.projectsPage.title} onChange={(v) => updateSection('projectsPage', 'title', v)} />
-            <Field label="Description" value={settings.projectsPage.description} onChange={(v) => updateSection('projectsPage', 'description', v)} multiline />
-          </div>
-        </section>
-
-        <section className="surface-panel rounded-2xl p-5">
-          <h3 className="mb-4 font-semibold">Blog page</h3>
-          <div className="grid gap-4">
-            <Field label="Eyebrow" value={settings.blogPage.eyebrow} onChange={(v) => updateSection('blogPage', 'eyebrow', v)} />
-            <Field label="Title" value={settings.blogPage.title} onChange={(v) => updateSection('blogPage', 'title', v)} />
-            <Field label="Description" value={settings.blogPage.description} onChange={(v) => updateSection('blogPage', 'description', v)} multiline />
-          </div>
         </section>
 
         <section className="surface-panel rounded-2xl p-5">

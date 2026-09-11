@@ -67,11 +67,11 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 /* ── Admin links config ── */
 const ADMIN_LINKS = [
-  { href: '/admin/site-settings', label: 'Edit homepage' },
-  { href: '/admin/intro', label: 'Edit intro' },
-  { href: '/admin/new-post', label: 'New post' },
-  { href: '/admin/projects', label: 'Manage projects' },
-  { href: '/admin/blog', label: 'Manage blog' },
+  { href: '/admin/homepage', label: 'Homepage' },
+  { href: '/admin/projects', label: 'Projects' },
+  { href: '/admin/blog', label: 'Blog' },
+  { href: '/admin/notebook', label: 'Notebook' },
+  { href: '/admin/custom-menu', label: 'Custom Menu' },
 ]
 
 /* ── Main component ── */
@@ -245,7 +245,7 @@ function DropdownPanel({
 }) {
   return (
     <div
-      className="absolute right-0 top-full z-50 mt-2 w-64 origin-top-right animate-dropdown overflow-hidden rounded-xl border border-neutral-200/80 bg-white/95 shadow-xl backdrop-blur-xl dark:border-neutral-700/80 dark:bg-neutral-900/95 sm:w-72"
+      className="liquid-popover absolute right-0 top-full z-50 mt-2 w-64 origin-top-right animate-dropdown overflow-hidden rounded-xl border border-neutral-200/80 bg-white/95 shadow-xl backdrop-blur-xl dark:border-neutral-700/80 dark:bg-neutral-900/95 sm:w-72"
       role="menu"
     >
       {/* User greeting */}

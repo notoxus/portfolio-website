@@ -5,7 +5,7 @@ import { unstable_cache } from 'next/cache'
 import {
   DEFAULT_FONT_SIZES,
   normalizeFontSizes,
-  isFontSize,
+  normalizeFontSize,
   type FontSize,
   type FontSizeSettings,
 } from 'lib/font-sizes'
@@ -14,6 +14,22 @@ import { PROJECT_ACCENTS, type ProjectAccent } from 'lib/project-accents'
 export type SkillGroup = {
   label: string
   items: string[]
+}
+
+export type HeroPanelLayout = {
+  side: 'left' | 'right'
+  verticalAlign: 'start' | 'center' | 'end'
+  widthPercent: number
+  minHeightPx: number
+  offsetXPx: number
+  offsetYPx: number
+}
+
+export type NavigationItem = {
+  id: string
+  label: string
+  href: string
+  visible: boolean
 }
 
 export const SOCIAL_ICON_OPTIONS = [
@@ -65,6 +81,7 @@ export type HomeSection = {
 
 export type SiteSettings = {
   socialLinks: SocialLink[]
+  navigation: NavigationItem[]
   fontSizes: FontSizeSettings
   home: {
     eyebrow: string
@@ -76,6 +93,7 @@ export type SiteSettings = {
     skillGroups: SkillGroup[]
     contactLabel: string
     contactDescription: string
+    panelLayout: HeroPanelLayout
     sections: HomeSection[]
   }
   projectsPage: {
@@ -87,6 +105,13 @@ export type SiteSettings = {
     eyebrow: string
     title: string
     description: string
+  }
+  notebookPage: {
+    title: string
+    description: string
+    owner: string
+    repo: string
+    branch: string
   }
   footer: {
     title: string
@@ -130,6 +155,12 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
       icon: 'youtube',
     },
   ],
+  navigation: [
+    { id: 'home', label: 'home', href: '/', visible: true },
+    { id: 'blog', label: 'blog', href: '/blog', visible: true },
+    { id: 'projects', label: 'projects', href: '/projects', visible: true },
+    { id: 'notebook', label: 'notebook', href: '/notebook', visible: true },
+  ],
   fontSizes: DEFAULT_FONT_SIZES,
   home: {
     eyebrow: 'DevOps & Cybersecurity learner',
@@ -154,6 +185,14 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     ],
     contactLabel: 'Open to',
     contactDescription: 'Projects and knowledge-sharing collaborations.',
+    panelLayout: {
+      side: 'right',
+      verticalAlign: 'start',
+      widthPercent: 32,
+      minHeightPx: 0,
+      offsetXPx: 0,
+      offsetYPx: 0,
+    },
     sections: [
       {
         id: 'featured-work',
@@ -161,8 +200,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
         title: 'Featured work',
         description:
           'Selected projects that best represent what I build and how I approach problems.',
-        titleSize: '2xl',
-        descriptionSize: 'sm',
+        titleSize: 24,
+        descriptionSize: 14,
         limit: 3,
         featuredOnly: true,
         items: [],
@@ -172,8 +211,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
         type: 'blog',
         title: 'Recent writing',
         description: 'Notes from my work with Linux, networking, security, and software.',
-        titleSize: '2xl',
-        descriptionSize: 'sm',
+        titleSize: 24,
+        descriptionSize: 14,
         limit: 3,
         featuredOnly: false,
         items: [],
@@ -191,6 +230,13 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     title: 'Blog',
     description:
       'Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design.',
+  },
+  notebookPage: {
+    title: 'My Notebook',
+    description: 'Interactive explorer with direct raw access to my GitHub assets.',
+    owner: 'notoxus',
+    repo: 'my-note-book',
+    branch: 'main',
   },
   footer: {
     title: "Let's connect",
@@ -256,7 +302,47 @@ function asOptionalString(value: unknown) {
 }
 
 function asFontSize(value: unknown, fallback: FontSize): FontSize {
-  return isFontSize(value) ? value : fallback
+  return normalizeFontSize(value, fallback)
+}
+
+function asNumber(value: unknown, fallback: number, min: number, max: number) {
+  const parsed = typeof value === 'number' ? value : Number(value)
+  if (!Number.isFinite(parsed)) return fallback
+  return Math.min(max, Math.max(min, Math.round(parsed)))
+}
+
+function asNavigation(value: unknown, fallback: NavigationItem[]): NavigationItem[] {
+  if (!Array.isArray(value)) return fallback
+  return value
+    .map((item, index): NavigationItem | null => {
+      if (!item || typeof item !== 'object') return null
+      const source = item as Record<string, unknown>
+      const label = asString(source.label, '')
+      const href = asString(source.href, '')
+      if (!label || !href) return null
+      return {
+        id: asString(source.id, `navigation-${index + 1}`),
+        label,
+        href,
+        visible: source.visible !== false,
+      }
+    })
+    .filter((item): item is NavigationItem => item !== null)
+}
+
+function asPanelLayout(value: any): HeroPanelLayout {
+  const fallback = DEFAULT_SITE_SETTINGS.home.panelLayout
+  return {
+    side: value?.side === 'left' ? 'left' : 'right',
+    verticalAlign:
+      value?.verticalAlign === 'center' || value?.verticalAlign === 'end'
+        ? value.verticalAlign
+        : 'start',
+    widthPercent: asNumber(value?.widthPercent, fallback.widthPercent, 24, 55),
+    minHeightPx: asNumber(value?.minHeightPx, fallback.minHeightPx, 0, 900),
+    offsetXPx: asNumber(value?.offsetXPx, fallback.offsetXPx, -160, 160),
+    offsetYPx: asNumber(value?.offsetYPx, fallback.offsetYPx, -160, 160),
+  }
 }
 
 function asCustomItems(value: unknown): CustomHomeItem[] {
@@ -281,10 +367,10 @@ function asCustomItems(value: unknown): CustomHomeItem[] {
           PROJECT_ACCENTS.includes(source.accent as ProjectAccent)
             ? (source.accent as ProjectAccent)
             : 'blue',
-        titleSize: asFontSize(source.titleSize, 'xl'),
-        labelSize: asFontSize(source.labelSize, 'xs'),
-        descriptionSize: asFontSize(source.descriptionSize, 'sm'),
-        metaSize: asFontSize(source.metaSize, 'xs'),
+        titleSize: asFontSize(source.titleSize, 20),
+        labelSize: asFontSize(source.labelSize, 12),
+        descriptionSize: asFontSize(source.descriptionSize, 14),
+        metaSize: asFontSize(source.metaSize, 12),
       }
     })
     .filter((item): item is CustomHomeItem => item !== null)
@@ -326,8 +412,8 @@ function asHomeSections(value: unknown, legacyHome: any): HomeSection[] {
         type,
         title: asString(source.title, 'Untitled section'),
         description: asOptionalString(source.description),
-        titleSize: asFontSize(source.titleSize, '2xl'),
-        descriptionSize: asFontSize(source.descriptionSize, 'sm'),
+        titleSize: asFontSize(source.titleSize, 24),
+        descriptionSize: asFontSize(source.descriptionSize, 14),
         limit: Number.isFinite(rawLimit) ? Math.min(12, Math.max(1, Math.round(rawLimit))) : 3,
         featuredOnly: source.featuredOnly === true,
         items: type === 'custom' ? asCustomItems(source.items) : [],
@@ -341,6 +427,7 @@ export function normalizeSiteSettings(value: any): SiteSettings {
 
   return {
     socialLinks: asSocialLinks(value?.socialLinks, defaults.socialLinks),
+    navigation: asNavigation(value?.navigation, defaults.navigation),
     fontSizes: normalizeFontSizes(value?.fontSizes),
     home: {
       eyebrow: asString(value?.home?.eyebrow, defaults.home.eyebrow),
@@ -352,6 +439,7 @@ export function normalizeSiteSettings(value: any): SiteSettings {
       skillGroups: asSkillGroups(value?.home?.skillGroups, defaults.home.skillGroups),
       contactLabel: asString(value?.home?.contactLabel, defaults.home.contactLabel),
       contactDescription: asString(value?.home?.contactDescription, defaults.home.contactDescription),
+      panelLayout: asPanelLayout(value?.home?.panelLayout),
       sections: asHomeSections(value?.home?.sections, value?.home),
     },
     projectsPage: {
@@ -363,6 +451,13 @@ export function normalizeSiteSettings(value: any): SiteSettings {
       eyebrow: asString(value?.blogPage?.eyebrow, defaults.blogPage.eyebrow),
       title: asString(value?.blogPage?.title, defaults.blogPage.title),
       description: asString(value?.blogPage?.description, defaults.blogPage.description),
+    },
+    notebookPage: {
+      title: asString(value?.notebookPage?.title, defaults.notebookPage.title),
+      description: asString(value?.notebookPage?.description, defaults.notebookPage.description),
+      owner: asString(value?.notebookPage?.owner, defaults.notebookPage.owner),
+      repo: asString(value?.notebookPage?.repo, defaults.notebookPage.repo),
+      branch: asString(value?.notebookPage?.branch, defaults.notebookPage.branch),
     },
     footer: {
       title: asString(value?.footer?.title, defaults.footer.title),

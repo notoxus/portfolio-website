@@ -2,7 +2,7 @@ import { BlogPosts } from 'app/components/posts'
 import { FadeIn, StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 import { getHomeIntro } from 'lib/site-content'
 import { getSiteSettings, type CustomHomeItem, type HomeSection } from 'lib/site-settings'
-import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
+import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { ProjectList } from './components/project-list'
 import { SocialLinks } from './components/social-links'
@@ -11,13 +11,15 @@ function SectionHeading({ section }: { section: HomeSection }) {
   return (
     <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <h2
-        className={`${responsiveFontSizeClass(section.titleSize)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}
+        style={responsiveFontSizeStyle(section.titleSize)}
+        className="font-semibold tracking-tight text-neutral-950 dark:text-neutral-50"
       >
         {section.title}
       </h2>
       {section.description && (
         <p
-          className={`max-w-md ${fontSizeClass(section.descriptionSize)} leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right`}
+          style={fontSizeStyle(section.descriptionSize)}
+          className="max-w-md leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right"
         >
           {section.description}
         </p>
@@ -32,13 +34,15 @@ function CustomItemContent({ item, index }: { item: CustomHomeItem; index: numbe
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="index-pill">{String(index + 1).padStart(2, '0')}</span>
         <h3
-          className={`${responsiveFontSizeClass(item.titleSize)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}
+          style={responsiveFontSizeStyle(item.titleSize)}
+          className="font-semibold tracking-tight text-neutral-950 dark:text-neutral-50"
         >
           {item.title}
         </h3>
         {item.label && (
           <span
-            className={`rounded-full px-2.5 py-1 ${fontSizeClass(item.labelSize)} font-bold ${PROJECT_ACCENT_STYLES[item.accent]}`}
+            style={fontSizeStyle(item.labelSize)}
+            className={`rounded-full px-2.5 py-1 font-bold ${PROJECT_ACCENT_STYLES[item.accent]}`}
           >
             {item.label}
           </span>
@@ -46,14 +50,16 @@ function CustomItemContent({ item, index }: { item: CustomHomeItem; index: numbe
       </div>
       {item.description && (
         <p
-          className={`max-w-3xl ${fontSizeClass(item.descriptionSize)} leading-6 text-neutral-600 dark:text-neutral-400`}
+          style={fontSizeStyle(item.descriptionSize)}
+          className="max-w-3xl leading-6 text-neutral-600 dark:text-neutral-400"
         >
           {item.description}
         </p>
       )}
       {item.meta && (
         <p
-          className={`mt-3 font-mono ${fontSizeClass(item.metaSize)} text-neutral-500 dark:text-neutral-500`}
+          style={fontSizeStyle(item.metaSize)}
+          className="mt-3 font-mono text-neutral-500 dark:text-neutral-500"
         >
           {item.meta}
         </p>
@@ -123,25 +129,40 @@ export default async function Page() {
   const intro = await getHomeIntro()
   const settings = await getSiteSettings()
   const home = settings.home
+  const panel = home.panelLayout
+  const heroStyle = {
+    '--hero-panel-width': `${panel.widthPercent}%`,
+    '--hero-panel-min-height': `${panel.minHeightPx}px`,
+    '--hero-panel-offset-x': `${panel.offsetXPx}px`,
+    '--hero-panel-offset-y': `${panel.offsetYPx}px`,
+  } as React.CSSProperties
 
   return (
     <section className="space-y-10 md:space-y-16">
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:gap-10">
-        <FadeIn>
+      <section
+        className="hero-grid"
+        data-panel-side={panel.side}
+        data-panel-align={panel.verticalAlign}
+        style={heroStyle}
+      >
+        <FadeIn className="hero-copy">
           <div
-            className={`mb-5 flex items-center gap-2.5 ${fontSizeClass(settings.fontSizes.homeEyebrow)} text-neutral-600 dark:text-neutral-400`}
+            style={fontSizeStyle(settings.fontSizes.homeEyebrow)}
+            className="mb-5 flex items-center gap-2.5 text-neutral-600 dark:text-neutral-400"
           >
             <span className="status-dot" />
             <span>{home.eyebrow}</span>
           </div>
           <h1
-            className={`max-w-3xl ${responsiveFontSizeClass(settings.fontSizes.homeHeadline)} font-semibold leading-[1.05] tracking-tight text-neutral-950 dark:text-neutral-50`}
+            style={responsiveFontSizeStyle(settings.fontSizes.homeHeadline)}
+            className="max-w-3xl font-semibold leading-[1.05] tracking-tight text-neutral-950 dark:text-neutral-50"
           >
             {home.headline}
           </h1>
           <div className="mt-4 sm:mt-6 lg:pr-6">
             <p
-              className={`max-w-xl whitespace-pre-line text-justify ${responsiveFontSizeClass(settings.fontSizes.homeIntro)} leading-7 text-neutral-700 [text-wrap:pretty] dark:text-neutral-300 sm:leading-8`}
+              style={responsiveFontSizeStyle(settings.fontSizes.homeIntro)}
+              className="max-w-xl whitespace-pre-line text-justify leading-7 text-neutral-700 [text-wrap:pretty] dark:text-neutral-300 sm:leading-8"
             >
               {intro}
             </p>
@@ -149,21 +170,24 @@ export default async function Page() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={home.primaryCtaHref}
-              className={`rounded-lg bg-blue-600 px-4 py-2 ${fontSizeClass(settings.fontSizes.homeCta)} font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-500`}
+              style={fontSizeStyle(settings.fontSizes.homeCta)}
+              className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-500"
             >
               {home.primaryCtaLabel}
             </a>
             <a
               href={home.secondaryCtaHref}
-              className={`surface-panel rounded-lg px-4 py-2 ${fontSizeClass(settings.fontSizes.homeCta)} font-semibold text-neutral-900 transition hover:-translate-y-0.5 dark:text-neutral-100`}
+              style={fontSizeStyle(settings.fontSizes.homeCta)}
+              className="surface-panel rounded-lg px-4 py-2 font-semibold text-neutral-900 transition hover:-translate-y-0.5 dark:text-neutral-100"
             >
               {home.secondaryCtaLabel}
             </a>
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.16}>
-          <aside className="surface-panel relative overflow-hidden rounded-2xl">
+        <FadeIn delay={0.16} className="hero-panel-column">
+          <div className="hero-panel-shell">
+          <aside className="surface-panel hero-panel relative overflow-hidden rounded-2xl">
             {home.skillGroups.map((group) => (
               <div
                 key={group.label}
@@ -171,7 +195,8 @@ export default async function Page() {
               >
                 <div className="mb-2">
                   <span
-                    className={`${fontSizeClass(settings.fontSizes.skillGroupLabel)} font-black uppercase tracking-[0.14em] text-neutral-400`}
+                    style={fontSizeStyle(settings.fontSizes.skillGroupLabel)}
+                    className="font-black uppercase tracking-[0.14em] text-neutral-400"
                   >
                     {group.label}
                   </span>
@@ -180,7 +205,8 @@ export default async function Page() {
                   {group.items.map((item) => (
                     <span
                       key={item}
-                      className={`rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 ${fontSizeClass(settings.fontSizes.skillTag)} font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400`}
+                      style={fontSizeStyle(settings.fontSizes.skillTag)}
+                      className="rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
                     >
                       {item}
                     </span>
@@ -191,13 +217,15 @@ export default async function Page() {
             <div className="px-4 py-3.5 sm:px-5">
               <div className="mb-1.5">
                 <span
-                  className={`${fontSizeClass(settings.fontSizes.contactLabel)} font-black uppercase tracking-[0.14em] text-neutral-400`}
+                  style={fontSizeStyle(settings.fontSizes.contactLabel)}
+                  className="font-black uppercase tracking-[0.14em] text-neutral-400"
                 >
                   {home.contactLabel}
                 </span>
               </div>
               <p
-                className={`${fontSizeClass(settings.fontSizes.contactDescription)} leading-5 text-neutral-600 dark:text-neutral-400`}
+                style={fontSizeStyle(settings.fontSizes.contactDescription)}
+                className="leading-5 text-neutral-600 dark:text-neutral-400"
               >
                 {home.contactDescription}
               </p>
@@ -206,6 +234,7 @@ export default async function Page() {
               </div>
             </div>
           </aside>
+          </div>
         </FadeIn>
       </section>
 

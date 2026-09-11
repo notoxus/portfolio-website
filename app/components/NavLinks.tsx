@@ -2,15 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import type { NavigationItem } from 'lib/site-settings'
+import { fontSizeStyle, type FontSize } from 'lib/font-sizes'
 
-const navItems = {
-  '/': { name: 'home' },
-  '/blog': { name: 'blog' },
-  '/projects': { name: 'projects' },
-  '/notebook': { name: 'notebook' },
-}
-
-export default function NavLinks() {
+export default function NavLinks({ items, fontSize }: { items: NavigationItem[]; fontSize: FontSize }) {
   const pathname = usePathname()
 
   function isActive(path: string) {
@@ -20,15 +15,16 @@ export default function NavLinks() {
 
   return (
     <div className="flex flex-row flex-wrap gap-1 text-sm text-neutral-500 dark:text-neutral-400">
-      {Object.entries(navItems).map(([path, { name }]) => (
+      {items.filter((item) => item.visible).map((item) => (
         <Link
-          key={path}
-          href={path}
+          key={item.id}
+          href={item.href}
+          style={fontSizeStyle(fontSize)}
           className={`rounded-lg px-2.5 py-1.5 font-medium transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
-            isActive(path) ? 'nav-link-active' : ''
+            isActive(item.href) ? 'nav-link-active' : ''
           }`}
         >
-          {name}
+          {item.label}
         </Link>
       ))}
     </div>

@@ -8,7 +8,7 @@ import {
 import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 import { getSiteSettings } from 'lib/site-settings'
-import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
+import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 
 function isExternalLink(href: string) {
   return href.startsWith('http://') || href.startsWith('https://')
@@ -80,21 +80,22 @@ export async function ProjectList({
           <ProjectAnchor project={project}>
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="index-pill">{String(index + 1).padStart(2, '0')}</span>
-              <h3 className={`${responsiveFontSizeClass(settings.fontSizes.projectTitle)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}>
+              <h3 style={responsiveFontSizeStyle(settings.fontSizes.projectTitle)} className="font-semibold tracking-tight text-neutral-950 dark:text-neutral-50">
                 {project.title}
               </h3>
               <span
-                className={`rounded-full px-2.5 py-1 ${fontSizeClass(settings.fontSizes.projectKind)} font-bold ${
+                style={fontSizeStyle(settings.fontSizes.projectKind)}
+                className={`rounded-full px-2.5 py-1 font-bold ${
                   PROJECT_ACCENT_STYLES[project.accent ?? 'green']
                 }`}
               >
                 {project.kind}
               </span>
             </div>
-            <p className={`max-w-3xl ${fontSizeClass(settings.fontSizes.projectDescription)} leading-6 text-neutral-600 dark:text-neutral-400`}>
+            <p style={fontSizeStyle(settings.fontSizes.projectDescription)} className="max-w-3xl leading-6 text-neutral-600 dark:text-neutral-400">
               {project.description}
             </p>
-            <p className={`mt-3 font-mono ${fontSizeClass(settings.fontSizes.projectTech)} text-neutral-500 dark:text-neutral-500`}>
+            <p style={fontSizeStyle(settings.fontSizes.projectTech)} className="mt-3 font-mono text-neutral-500 dark:text-neutral-500">
               {project.tech}
             </p>
           </ProjectAnchor>
