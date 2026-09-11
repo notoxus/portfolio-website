@@ -7,7 +7,7 @@ const INTRO_FILE = path.join(process.cwd(), 'content', 'home-intro.md')
 
 // Fallback used if the content file is missing (e.g. fresh clone)
 const DEFAULT_INTRO =
-  "Welcome to my portfolio. Here, I share my blog and notebook, documenting my educational journey. I'm a firm believer in interdisciplinary wisdom, so you'll also find me sharing fascinating breakthroughs in other fields here. Let's sit back, relax and enjoy the moment together!"
+  "I'm Bui Vo Phuoc Thinh, also known as Notoxus—an IT student focused on Linux, networking, automation, and security. I turn coursework and experiments into working projects and practical technical notes."
 
 export const SITE_INTRO_CACHE_TAG = 'site-intro'
 
@@ -45,5 +45,6 @@ const loadIntro = unstable_cache(
 )
 
 export async function getHomeIntro(): Promise<string> {
+  if (process.env.NODE_ENV !== 'production') return fromFilesystem()
   return loadIntro()
 }

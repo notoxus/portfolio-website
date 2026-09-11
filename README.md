@@ -57,16 +57,17 @@ Feel free to fork and customize this project for your own portfolio!
    ```
 4. Start a hot-reloading development container:
    ```bash
-   docker compose up --build
+   docker compose up -d --build
    # or: make
    ```
-   Open [http://localhost:3000](http://localhost:3000). Source code remains on your machine; dependencies and the Next.js cache live in Docker volumes.
+   Open [http://localhost:3000](http://localhost:3000). Source code remains on your machine; dependencies and the Next.js cache live in Docker volumes. This first command is enough for normal use: the development container runs in the background and starts with Docker after a reboot.
 
 The usual Docker workflow:
 
 | Command | Purpose |
 | :--- | :--- |
-| `docker compose up --build` / `make dev` | Build when needed and start development with hot reload |
+| `docker compose up -d --build` / `make dev` | Build when needed and start development in the background with hot reload |
+| `make logs` | Follow the development-server output |
 | `make rebuild` | Fully recreate the development environment, including dependency/cache volumes |
 | `make clean-rebuild` | Purge all containers, volumes, and rebuild without Docker layer cache |
 | `make shell` | Open a shell in the running development container |
@@ -75,6 +76,8 @@ The usual Docker workflow:
 | `make clean` | Stop containers and remove the Docker caches |
 
 `make rebuild` is the clean reset to use after changing the Dockerfile, Node/pnpm version, or dependency lockfile. It intentionally removes only this project's named Compose volumes, never your source checkout.
+
+The `dev` service uses `restart: unless-stopped`. It starts automatically whenever the Docker daemon starts. Running `docker compose down` removes the container, so use that command only when you intentionally want to disable it; run `docker compose up -d` again to restore it.
 
 > **BuildKit troubleshooting:** See [Docker on Linux](docker-on-linux.md#troubleshooting) if a Docker build or Dev Container fails.
 

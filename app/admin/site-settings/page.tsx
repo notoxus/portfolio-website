@@ -2,9 +2,632 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { SiteSettings } from 'lib/site-settings'
+import type { CustomHomeItem, HomeSection, SiteSettings } from 'lib/site-settings'
+import { FONT_SIZE_OPTIONS, type FontSize, type FontSizeSettings } from 'lib/font-sizes'
+import {
+  PROJECT_ACCENTS,
+  PROJECT_ACCENT_LABELS,
+  PROJECT_ACCENT_STYLES,
+  type ProjectAccent,
+} from 'lib/project-accents'
 
 type EditableSettings = SiteSettings
+
+const SOCIAL_ICON_CHOICES = [
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'github', label: 'GitHub' },
+  { value: 'tryhackme', label: 'TryHackMe' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'website', label: 'Text / website' },
+] as const
+
+const TYPOGRAPHY_GROUPS: Array<{
+  title: string
+  items: Array<{ key: keyof FontSizeSettings; label: string }>
+}> = [
+  {
+    title: 'Homepage hero',
+    items: [
+      { key: 'homeEyebrow', label: 'Eyebrow' },
+      { key: 'homeHeadline', label: 'Headline' },
+      { key: 'homeIntro', label: 'Intro' },
+      { key: 'homeCta', label: 'CTA buttons' },
+    ],
+  },
+  {
+    title: 'Homepage side card',
+    items: [
+      { key: 'skillGroupLabel', label: 'Skill group labels' },
+      { key: 'skillTag', label: 'Skill tags' },
+      { key: 'contactLabel', label: 'Contact label' },
+      { key: 'contactDescription', label: 'Contact description' },
+      { key: 'socialLabel', label: 'Social names' },
+    ],
+  },
+  {
+    title: 'Projects page & cards',
+    items: [
+      { key: 'projectsEyebrow', label: 'Projects eyebrow' },
+      { key: 'projectsTitle', label: 'Projects title' },
+      { key: 'projectsDescription', label: 'Projects description' },
+      { key: 'projectTitle', label: 'Project card title' },
+      { key: 'projectKind', label: 'Project kind label' },
+      { key: 'projectDescription', label: 'Project description' },
+      { key: 'projectTech', label: 'Project tech stack' },
+    ],
+  },
+  {
+    title: 'Blog page & post list',
+    items: [
+      { key: 'blogEyebrow', label: 'Blog eyebrow' },
+      { key: 'blogTitle', label: 'Blog title' },
+      { key: 'blogDescription', label: 'Blog description' },
+      { key: 'postTitle', label: 'Post title' },
+      { key: 'postSummary', label: 'Post summary' },
+      { key: 'postMeta', label: 'Post date' },
+      { key: 'postBadge', label: 'Post badges' },
+    ],
+  },
+  {
+    title: 'Footer',
+    items: [
+      { key: 'footerTitle', label: 'Footer title' },
+      { key: 'footerDescription', label: 'Footer description' },
+    ],
+  },
+]
+
+function SocialLinksEditor({
+  links,
+  onChange,
+}: {
+  links: SiteSettings['socialLinks']
+  onChange: (links: SiteSettings['socialLinks']) => void
+}) {
+  const updateLink = (
+    index: number,
+    key: keyof SiteSettings['socialLinks'][number],
+    value: string,
+  ) => {
+    onChange(links.map((link, i) => (i === index ? { ...link, [key]: value } : link)))
+  }
+
+  const addLink = () => {
+    onChange([
+      ...links,
+      {
+        id: `social-${Date.now()}`,
+        name: 'Website',
+        href: 'https://',
+        icon: 'website',
+        shortLabel: 'WEB',
+      },
+    ])
+  }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <span className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+          Social links
+        </span>
+        <p className="mt-1 text-xs text-neutral-400">
+          Add or remove the links shown in the homepage card and footer.
+        </p>
+      </div>
+
+      {links.map((link, index) => (
+        <div
+          key={link.id}
+          className="grid gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700 sm:grid-cols-2"
+        >
+          <label>
+            <span className="text-xs text-neutral-500">Name</span>
+            <input
+              value={link.name}
+              onChange={(event) => updateLink(index, 'name', event.target.value)}
+              className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+            />
+          </label>
+          <label>
+            <span className="text-xs text-neutral-500">Icon</span>
+            <select
+              value={link.icon}
+              onChange={(event) => updateLink(index, 'icon', event.target.value)}
+              className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+            >
+              {SOCIAL_ICON_CHOICES.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="sm:col-span-2">
+            <span className="text-xs text-neutral-500">URL</span>
+            <input
+              value={link.href}
+              onChange={(event) => updateLink(index, 'href', event.target.value)}
+              className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+            />
+          </label>
+          {link.icon === 'website' && (
+            <label>
+              <span className="text-xs text-neutral-500">Short label</span>
+              <input
+                value={link.shortLabel ?? ''}
+                maxLength={6}
+                onChange={(event) => updateLink(index, 'shortLabel', event.target.value)}
+                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+              />
+            </label>
+          )}
+          <div className="flex items-end sm:justify-end">
+            <button
+              type="button"
+              onClick={() => onChange(links.filter((_, i) => i !== index))}
+              className="rounded-md px-2 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-500/10"
+            >
+              Remove link
+            </button>
+          </div>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={addLink}
+        className="rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+      >
+        + Add social link
+      </button>
+    </div>
+  )
+}
+
+function TypographyEditor({
+  sizes,
+  onChange,
+}: {
+  sizes: FontSizeSettings
+  onChange: (key: keyof FontSizeSettings, value: FontSize) => void
+}) {
+  return (
+    <div className="space-y-5">
+      {TYPOGRAPHY_GROUPS.map((group) => (
+        <div key={group.title}>
+          <h4 className="mb-2 text-sm font-semibold">{group.title}</h4>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map((item) => (
+              <label key={item.key} className="block">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {item.label}
+                </span>
+                <select
+                  value={sizes[item.key]}
+                  onChange={(event) => onChange(item.key, event.target.value as FontSize)}
+                  className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+                >
+                  {FONT_SIZE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SizeSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: FontSize
+  onChange: (value: FontSize) => void
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs text-neutral-500 dark:text-neutral-400">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as FontSize)}
+        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+      >
+        {FONT_SIZE_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+function HomeSectionsEditor({
+  sections,
+  onChange,
+}: {
+  sections: HomeSection[]
+  onChange: (sections: HomeSection[]) => void
+}) {
+  const updateSection = <K extends keyof HomeSection>(
+    index: number,
+    key: K,
+    value: HomeSection[K],
+  ) => {
+    onChange(sections.map((section, i) => (i === index ? { ...section, [key]: value } : section)))
+  }
+
+  const moveSection = (index: number, offset: number) => {
+    const target = index + offset
+    if (target < 0 || target >= sections.length) return
+    const next = [...sections]
+    ;[next[index], next[target]] = [next[target], next[index]]
+    onChange(next)
+  }
+
+  const addSection = (type: HomeSection['type']) => {
+    const labels = {
+      projects: ['Projects', 'Selected work from my portfolio.'],
+      blog: ['Writing', 'Recent notes and articles.'],
+      custom: ['New section', ''],
+    } as const
+
+    onChange([
+      ...sections,
+      {
+        id: `section-${Date.now()}`,
+        type,
+        title: labels[type][0],
+        description: labels[type][1],
+        titleSize: '2xl',
+        descriptionSize: 'sm',
+        limit: 3,
+        featuredOnly: type === 'projects',
+        items: [],
+      },
+    ])
+  }
+
+  const updateCustomItem = <K extends keyof CustomHomeItem>(
+    sectionIndex: number,
+    itemIndex: number,
+    key: K,
+    value: CustomHomeItem[K],
+  ) => {
+    const section = sections[sectionIndex]
+    const items = section.items.map((item, i) =>
+      i === itemIndex ? { ...item, [key]: value } : item,
+    )
+    updateSection(sectionIndex, 'items', items)
+  }
+
+  const addCustomItem = (sectionIndex: number) => {
+    const section = sections[sectionIndex]
+    updateSection(sectionIndex, 'items', [
+      ...section.items,
+      {
+        id: `custom-${Date.now()}`,
+        title: 'New item',
+        label: '',
+        description: '',
+        meta: '',
+        href: '',
+        accent: 'blue',
+        titleSize: 'xl',
+        labelSize: 'xs',
+        descriptionSize: 'sm',
+        metaSize: 'xs',
+      },
+    ])
+  }
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="font-semibold">Homepage sections</h3>
+        <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+          Add, remove, and reorder complete sections. Custom sections contain manually managed cards.
+        </p>
+      </div>
+
+      {sections.map((section, sectionIndex) => (
+        <div
+          key={section.id}
+          className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-700"
+        >
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="index-pill">{String(sectionIndex + 1).padStart(2, '0')}</span>
+              <strong className="text-sm">{section.title || 'Untitled section'}</strong>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                disabled={sectionIndex === 0}
+                onClick={() => moveSection(sectionIndex, -1)}
+                className="rounded-md px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
+              >
+                ↑ Up
+              </button>
+              <button
+                type="button"
+                disabled={sectionIndex === sections.length - 1}
+                onClick={() => moveSection(sectionIndex, 1)}
+                className="rounded-md px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
+              >
+                ↓ Down
+              </button>
+              <button
+                type="button"
+                onClick={() => onChange(sections.filter((_, i) => i !== sectionIndex))}
+                className="rounded-md px-2 py-1 text-xs text-red-500 hover:bg-red-500/10"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label>
+              <span className="text-xs text-neutral-500">Section type</span>
+              <select
+                value={section.type}
+                onChange={(event) =>
+                  updateSection(sectionIndex, 'type', event.target.value as HomeSection['type'])
+                }
+                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+              >
+                <option value="projects">Projects</option>
+                <option value="blog">Blog posts</option>
+                <option value="custom">Custom cards</option>
+              </select>
+            </label>
+            <label>
+              <span className="text-xs text-neutral-500">Title</span>
+              <input
+                value={section.title}
+                onChange={(event) => updateSection(sectionIndex, 'title', event.target.value)}
+                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+              />
+            </label>
+            <SizeSelect
+              label="Title size"
+              value={section.titleSize}
+              onChange={(value) => updateSection(sectionIndex, 'titleSize', value)}
+            />
+            <SizeSelect
+              label="Description size"
+              value={section.descriptionSize}
+              onChange={(value) => updateSection(sectionIndex, 'descriptionSize', value)}
+            />
+            <label className="sm:col-span-2">
+              <span className="text-xs text-neutral-500">Description</span>
+              <textarea
+                value={section.description}
+                onChange={(event) => updateSection(sectionIndex, 'description', event.target.value)}
+                rows={2}
+                className="mt-1 w-full resize-y rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+              />
+            </label>
+          </div>
+
+          {section.type !== 'custom' && (
+            <div className="mt-3 flex flex-wrap items-end gap-4">
+              <label>
+                <span className="text-xs text-neutral-500">Items shown</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={section.limit}
+                  onChange={(event) =>
+                    updateSection(sectionIndex, 'limit', Number(event.target.value) || 1)
+                  }
+                  className="mt-1 block w-24 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
+                />
+              </label>
+              {section.type === 'projects' && (
+                <label className="flex items-center gap-2 pb-2 text-sm text-neutral-600 dark:text-neutral-400">
+                  <input
+                    type="checkbox"
+                    checked={section.featuredOnly}
+                    onChange={(event) =>
+                      updateSection(sectionIndex, 'featuredOnly', event.target.checked)
+                    }
+                  />
+                  Featured projects only
+                </label>
+              )}
+            </div>
+          )}
+
+          {section.type === 'custom' && (
+            <div className="mt-5 space-y-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+              {section.items.map((item, itemIndex) => (
+                <div
+                  key={item.id}
+                  className="rounded-lg bg-neutral-50 p-3 dark:bg-neutral-950/60"
+                >
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <strong className="text-xs">Custom item {itemIndex + 1}</strong>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateSection(
+                          sectionIndex,
+                          'items',
+                          section.items.filter((_, i) => i !== itemIndex),
+                        )
+                      }
+                      className="text-xs text-red-500"
+                    >
+                      Remove item
+                    </button>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label>
+                      <span className="text-xs text-neutral-500">Title</span>
+                      <input
+                        value={item.title}
+                        onChange={(event) =>
+                          updateCustomItem(sectionIndex, itemIndex, 'title', event.target.value)
+                        }
+                        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      />
+                    </label>
+                    <label>
+                      <span className="text-xs text-neutral-500">Label</span>
+                      <input
+                        value={item.label}
+                        onChange={(event) =>
+                          updateCustomItem(sectionIndex, itemIndex, 'label', event.target.value)
+                        }
+                        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      />
+                    </label>
+                    <label>
+                      <span className="text-xs text-neutral-500">Label color</span>
+                      <select
+                        value={item.accent}
+                        onChange={(event) =>
+                          updateCustomItem(
+                            sectionIndex,
+                            itemIndex,
+                            'accent',
+                            event.target.value as ProjectAccent,
+                          )
+                        }
+                        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      >
+                        {PROJECT_ACCENTS.map((accent) => (
+                          <option key={accent} value={accent}>
+                            {PROJECT_ACCENT_LABELS[accent]}
+                          </option>
+                        ))}
+                      </select>
+                      {item.label && (
+                        <span
+                          className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${PROJECT_ACCENT_STYLES[item.accent]}`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </label>
+                    <label>
+                      <span className="text-xs text-neutral-500">Metadata</span>
+                      <input
+                        value={item.meta}
+                        placeholder="Date / tools / location"
+                        onChange={(event) =>
+                          updateCustomItem(sectionIndex, itemIndex, 'meta', event.target.value)
+                        }
+                        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      />
+                    </label>
+                    <label className="sm:col-span-2">
+                      <span className="text-xs text-neutral-500">Description</span>
+                      <textarea
+                        value={item.description}
+                        onChange={(event) =>
+                          updateCustomItem(
+                            sectionIndex,
+                            itemIndex,
+                            'description',
+                            event.target.value,
+                          )
+                        }
+                        rows={2}
+                        className="mt-1 w-full resize-y rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      />
+                    </label>
+                    <label className="sm:col-span-2">
+                      <span className="text-xs text-neutral-500">Link (optional)</span>
+                      <input
+                        value={item.href}
+                        onChange={(event) =>
+                          updateCustomItem(sectionIndex, itemIndex, 'href', event.target.value)
+                        }
+                        className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-950"
+                      />
+                    </label>
+                    <SizeSelect
+                      label="Title size"
+                      value={item.titleSize}
+                      onChange={(value) =>
+                        updateCustomItem(sectionIndex, itemIndex, 'titleSize', value)
+                      }
+                    />
+                    <SizeSelect
+                      label="Label size"
+                      value={item.labelSize}
+                      onChange={(value) =>
+                        updateCustomItem(sectionIndex, itemIndex, 'labelSize', value)
+                      }
+                    />
+                    <SizeSelect
+                      label="Description size"
+                      value={item.descriptionSize}
+                      onChange={(value) =>
+                        updateCustomItem(sectionIndex, itemIndex, 'descriptionSize', value)
+                      }
+                    />
+                    <SizeSelect
+                      label="Metadata size"
+                      value={item.metaSize}
+                      onChange={(value) =>
+                        updateCustomItem(sectionIndex, itemIndex, 'metaSize', value)
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => addCustomItem(sectionIndex)}
+                className="rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+              >
+                + Add custom item
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => addSection('projects')}
+          className="rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-500 hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+        >
+          + Projects section
+        </button>
+        <button
+          type="button"
+          onClick={() => addSection('blog')}
+          className="rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-500 hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+        >
+          + Blog section
+        </button>
+        <button
+          type="button"
+          onClick={() => addSection('custom')}
+          className="rounded-lg border border-dashed border-blue-400 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-500/10 dark:border-blue-700 dark:text-blue-400"
+        >
+          + Custom section
+        </button>
+      </div>
+    </div>
+  )
+}
 
 function SkillGroupsEditor({
   groups,
@@ -204,6 +827,14 @@ export default function SiteSettingsPage() {
     )
   }
 
+  const updateFontSize = (key: keyof FontSizeSettings, value: FontSize) => {
+    setSettings((current) =>
+      current
+        ? { ...current, fontSizes: { ...current.fontSizes, [key]: value } }
+        : current,
+    )
+  }
+
   const updateSection = <K extends 'projectsPage' | 'blogPage' | 'footer'>(
     section: K,
     key: keyof EditableSettings[K],
@@ -287,17 +918,34 @@ export default function SiteSettingsPage() {
               groups={settings.home.skillGroups}
               onChange={(groups) => updateHome('skillGroups', groups)}
             />
+            <SocialLinksEditor
+              links={settings.socialLinks}
+              onChange={(socialLinks) =>
+                setSettings((current) => (current ? { ...current, socialLinks } : current))
+              }
+            />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Contact label" value={settings.home.contactLabel} onChange={(v) => updateHome('contactLabel', v)} />
-              <Field label="Featured title" value={settings.home.featuredTitle} onChange={(v) => updateHome('featuredTitle', v)} />
             </div>
             <Field label="Contact description" value={settings.home.contactDescription} onChange={(v) => updateHome('contactDescription', v)} multiline />
-            <Field label="Featured description" value={settings.home.featuredDescription} onChange={(v) => updateHome('featuredDescription', v)} multiline />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Latest title" value={settings.home.latestTitle} onChange={(v) => updateHome('latestTitle', v)} />
-              <Field label="Latest description" value={settings.home.latestDescription} onChange={(v) => updateHome('latestDescription', v)} multiline />
-            </div>
           </div>
+        </section>
+
+        <section className="surface-panel rounded-2xl p-5">
+          <HomeSectionsEditor
+            sections={settings.home.sections}
+            onChange={(sections) => updateHome('sections', sections)}
+          />
+        </section>
+
+        <section className="surface-panel rounded-2xl p-5">
+          <div className="mb-5">
+            <h3 className="font-semibold">Typography</h3>
+            <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+              Select a Tailwind font-size class for every editable site label. Large headings remain responsive on smaller screens.
+            </p>
+          </div>
+          <TypographyEditor sizes={settings.fontSizes} onChange={updateFontSize} />
         </section>
 
         <section className="surface-panel rounded-2xl p-5">

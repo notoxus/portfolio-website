@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Project } from 'lib/projects'
+import {
+  PROJECT_ACCENTS,
+  PROJECT_ACCENT_LABELS,
+  PROJECT_ACCENT_STYLES,
+} from 'lib/project-accents'
 
 const emptyProject: Project = {
   id: '',
@@ -172,9 +177,19 @@ export default function ProjectForm({ projectId }: { projectId?: string }) {
               onChange={(event) => update('accent', event.target.value as Project['accent'])}
               className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
             >
-              <option value="green">Green</option>
-              <option value="amber">Amber</option>
+              {PROJECT_ACCENTS.map((accent) => (
+                <option key={accent} value={accent}>
+                  {PROJECT_ACCENT_LABELS[accent]}
+                </option>
+              ))}
             </select>
+            <span
+              className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${
+                PROJECT_ACCENT_STYLES[project.accent ?? 'green']
+              }`}
+            >
+              {project.kind || 'Label preview'}
+            </span>
           </label>
         </div>
 

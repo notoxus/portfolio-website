@@ -3,12 +3,13 @@ import path from 'path'
 import { Octokit } from '@octokit/rest'
 import { unstable_cache } from 'next/cache'
 import bundledProjects from '../content/projects.json'
+import { PROJECT_ACCENTS, type ProjectAccent } from 'lib/project-accents'
 
 export type Project = {
   id: string
   title: string
   kind: string
-  accent?: 'green' | 'amber'
+  accent?: ProjectAccent
   tech: string
   description: string
   link: string
@@ -27,7 +28,7 @@ function isProject(value: any): value is Project {
     typeof value.description === 'string' &&
     typeof value.link === 'string' &&
     (typeof value.featured === 'undefined' || typeof value.featured === 'boolean') &&
-    (!value.accent || value.accent === 'green' || value.accent === 'amber')
+    (!value.accent || PROJECT_ACCENTS.includes(value.accent))
   )
 }
 

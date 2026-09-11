@@ -19,7 +19,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  return NextResponse.json({ settings: getSiteSettings() })
+  return NextResponse.json({ settings: await getSiteSettings() })
 }
 
 export async function POST(req: NextRequest) {

@@ -1,45 +1,24 @@
 import Image from 'next/image'
+import { fontSizeClass, type FontSize } from 'lib/font-sizes'
+import type { SocialIcon, SocialLink } from 'lib/site-settings'
 
-type SocialLink = {
-  name: string
-  href: string
-  iconSrc?: string
-  shortLabel?: string
+const SOCIAL_ICON_SOURCES: Partial<Record<SocialIcon, string>> = {
+  instagram: '/images/social/instagram-clean.png',
+  linkedin: '/images/social/linkedin-clean.png',
+  github: '/images/social/github.png',
+  youtube: '/images/social/youtube.png',
 }
 
-const SOCIAL_LINKS: SocialLink[] = [
-  {
-    name: 'Instagram',
-    href: 'https://www.instagram.com/notoxus._morales',
-    iconSrc: '/images/social/instagram-clean.png',
-  },
-  {
-    name: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/notoxus/',
-    iconSrc: '/images/social/linkedin-clean.png',
-  },
-  {
-    name: 'GitHub',
-    href: 'https://github.com/notoxus',
-    iconSrc: '/images/social/github.png',
-  },
-  {
-    name: 'TryHackMe',
-    href: 'https://tryhackme.com/p/summerthinh3',
-    shortLabel: 'THM',
-  },
-  {
-    name: 'YouTube',
-    href: 'https://www.youtube.com/@juosterben',
-    iconSrc: '/images/social/youtube.png',
-  },
-]
+function SocialIconView({ link }: { link: SocialLink }) {
+  const iconSrc = SOCIAL_ICON_SOURCES[link.icon]
 
-function SocialIcon({ link }: { link: SocialLink }) {
-  if (!link.iconSrc) {
+  if (!iconSrc) {
+    const fallback =
+      link.shortLabel ?? (link.icon === 'tryhackme' ? 'THM' : link.name.slice(0, 2).toUpperCase())
+
     return (
       <span className="flex h-6 w-6 items-center justify-center rounded bg-red-500/15 font-mono text-[8px] font-black text-red-600 dark:text-red-400">
-        {link.shortLabel ?? link.name.slice(0, 2).toUpperCase()}
+        {fallback}
       </span>
     )
   }
@@ -47,7 +26,7 @@ function SocialIcon({ link }: { link: SocialLink }) {
   return (
     <span className="flex h-6 w-6 items-center justify-center">
       <Image
-        src={link.iconSrc}
+        src={iconSrc}
         alt=""
         width={24}
         height={24}
@@ -57,12 +36,22 @@ function SocialIcon({ link }: { link: SocialLink }) {
   )
 }
 
-export function SocialLinks({ compact = false }: { compact?: boolean }) {
+export function SocialLinks({
+  links,
+  compact = false,
+  labelSize = 'sm',
+}: {
+  links: SocialLink[]
+  compact?: boolean
+  labelSize?: FontSize
+}) {
+  if (!links.length) return null
+
   return (
     <div className={`flex flex-wrap ${compact ? 'gap-2' : 'gap-2.5'}`}>
-      {SOCIAL_LINKS.map((link) => (
+      {links.map((link) => (
         <a
-          key={link.name}
+          key={link.id}
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
@@ -72,9 +61,11 @@ export function SocialLinks({ compact = false }: { compact?: boolean }) {
             compact ? 'min-w-10 p-2' : 'gap-2 px-3 py-2'
           }`}
         >
-          <SocialIcon link={link} />
+          <SocialIconView link={link} />
           {!compact && (
-            <span className="text-sm font-medium text-neutral-700 transition group-hover:text-neutral-950 dark:text-neutral-300 dark:group-hover:text-neutral-50">
+            <span
+              className={`${fontSizeClass(labelSize)} font-medium text-neutral-700 transition group-hover:text-neutral-950 dark:text-neutral-300 dark:group-hover:text-neutral-50`}
+            >
               {link.name}
             </span>
           )}

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { BlogPosts } from 'app/components/posts'
 import { getSiteSettings } from 'lib/site-settings'
 import type { BlogLanguage } from 'app/blog/utils'
+import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
 
 export const metadata = {
   title: 'Blog',
@@ -48,16 +49,16 @@ export default async function Page({
     <section>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-500">
+          <p className={`mb-2 ${fontSizeClass(settings.fontSizes.blogEyebrow)} text-neutral-500 dark:text-neutral-500`}>
             {settings.blogPage.eyebrow}
           </p>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-3xl md:text-4xl">
+            <h1 className={`${responsiveFontSizeClass(settings.fontSizes.blogTitle)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}>
               {settings.blogPage.title}
             </h1>
           </div>
         </div>
-        <p className="max-w-md text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right">
+        <p className={`max-w-md ${fontSizeClass(settings.fontSizes.blogDescription)} leading-6 text-neutral-600 dark:text-neutral-400 sm:text-right`}>
           {settings.blogPage.description}
         </p>
       </div>

@@ -56,13 +56,6 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
-  const updateHome = (key: 'latestTitle' | 'latestDescription', value: string) => {
-    setSettings((current) => ({
-      ...current,
-      home: { ...current.home, [key]: value },
-    }))
-  }
-
   const updateBlogPage = (key: keyof SiteSettings['blogPage'], value: string) => {
     setSettings((current) => ({
       ...current,
@@ -98,7 +91,7 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
         <div>
           <h2 className="text-base font-semibold">Blog labels</h2>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Edit the public blog heading and the homepage latest-blog block.
+            Edit the public blog heading. Homepage sections are managed in Site labels.
           </p>
         </div>
         <button
@@ -122,23 +115,10 @@ export default function BlogSettingsForm({ settings: initialSettings }: { settin
       )}
 
       <div className="grid gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Latest blog title"
-            value={settings.home.latestTitle}
-            onChange={(value) => updateHome('latestTitle', value)}
-          />
-          <Field
-            label="Blog page title"
-            value={settings.blogPage.title}
-            onChange={(value) => updateBlogPage('title', value)}
-          />
-        </div>
         <Field
-          label="Latest blog description"
-          value={settings.home.latestDescription}
-          onChange={(value) => updateHome('latestDescription', value)}
-          multiline
+          label="Blog page title"
+          value={settings.blogPage.title}
+          onChange={(value) => updateBlogPage('title', value)}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field

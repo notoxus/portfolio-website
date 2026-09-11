@@ -4,9 +4,16 @@ ARG NODE_VERSION=24
 
 FROM node:${NODE_VERSION}-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm
+ENV COREPACK_HOME=/corepack
 ENV PATH=$PNPM_HOME:$PATH
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+RUN mkdir -p "$COREPACK_HOME" \
+    && corepack enable \
+    && corepack prepare pnpm@10.14.0 --activate \
+    && chown -R node:node "$COREPACK_HOME"
+
+# pnpm is bundled in the image. Corepack must not download it again at runtime.
+ENV COREPACK_ENABLE_NETWORK=0
 
 FROM base AS dependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

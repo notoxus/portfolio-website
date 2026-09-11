@@ -53,10 +53,12 @@ From the project root:
 ```bash
 cp .env.example .env.local
 ./setup.sh --docker
-docker compose up --build
+docker compose up -d --build
 ```
 
 Open [http://localhost:3000](http://localhost:3000) once the development server is ready. Edit `.env.local` to add any credentials needed by the application.
+
+You normally run the command above only once. The container runs in the background and uses `restart: unless-stopped`, so it starts again with the Docker daemon after login or a system reboot. This requires the Docker service to remain enabled as shown in step 2.
 
 ## 5. Use your preferred editor
 
@@ -69,6 +71,8 @@ docker compose logs --follow dev
 docker compose exec dev sh
 docker compose down
 ```
+
+Use `docker compose down` only when you intentionally want to remove and disable the project container. After doing so, run `docker compose up -d` to create it again.
 
 ## 6. Dev Containers (optional)
 

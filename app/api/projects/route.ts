@@ -2,7 +2,12 @@ import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { commitFileToGitHub } from 'lib/github-content'
-import { getProjects, type Project, PROJECTS_CACHE_TAG } from 'lib/projects'
+import {
+  getProjects,
+  type Project,
+  PROJECTS_CACHE_TAG,
+} from 'lib/projects'
+import { PROJECT_ACCENTS, type ProjectAccent } from 'lib/project-accents'
 import fs from 'fs'
 import path from 'path'
 
@@ -31,7 +36,7 @@ function normalizeProject(value: any, fallbackId?: string): Project {
     id,
     title,
     kind: typeof value?.kind === 'string' ? value.kind.trim() : '',
-    accent: value?.accent === 'amber' ? 'amber' : 'green',
+    accent: PROJECT_ACCENTS.includes(value?.accent as ProjectAccent) ? value.accent : 'green',
     tech: typeof value?.tech === 'string' ? value.tech.trim() : '',
     description: typeof value?.description === 'string' ? value.description.trim() : '',
     link: typeof value?.link === 'string' ? value.link.trim() : '',

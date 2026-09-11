@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { getFeaturedProjects, getProjects, type Project } from 'lib/projects'
+import {
+  getFeaturedProjects,
+  getProjects,
+  type Project,
+} from 'lib/projects'
+import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
-
-const tagStyles = {
-  green: 'bg-teal-500/15 text-teal-700 dark:text-teal-300',
-  amber: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-}
+import { getSiteSettings } from 'lib/site-settings'
+import { fontSizeClass, responsiveFontSizeClass } from 'lib/font-sizes'
 
 function isExternalLink(href: string) {
   return href.startsWith('http://') || href.startsWith('https://')
@@ -46,6 +48,7 @@ export async function ProjectList({
   searchQuery?: string
 }) {
   const allProjects = featuredOnly ? await getFeaturedProjects(limit) : await getProjects()
+  const settings = await getSiteSettings()
   let projects = typeof limit === 'number' ? allProjects.slice(0, limit) : allProjects
 
   if (searchQuery) {
@@ -77,21 +80,21 @@ export async function ProjectList({
           <ProjectAnchor project={project}>
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="index-pill">{String(index + 1).padStart(2, '0')}</span>
-              <h3 className="text-lg font-semibold tracking-tight text-neutral-950 dark:text-neutral-50 sm:text-xl">
+              <h3 className={`${responsiveFontSizeClass(settings.fontSizes.projectTitle)} font-semibold tracking-tight text-neutral-950 dark:text-neutral-50`}>
                 {project.title}
               </h3>
               <span
-                className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                  tagStyles[project.accent ?? 'green']
+                className={`rounded-full px-2.5 py-1 ${fontSizeClass(settings.fontSizes.projectKind)} font-bold ${
+                  PROJECT_ACCENT_STYLES[project.accent ?? 'green']
                 }`}
               >
                 {project.kind}
               </span>
             </div>
-            <p className="max-w-3xl text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+            <p className={`max-w-3xl ${fontSizeClass(settings.fontSizes.projectDescription)} leading-6 text-neutral-600 dark:text-neutral-400`}>
               {project.description}
             </p>
-            <p className="mt-3 font-mono text-xs text-neutral-500 dark:text-neutral-500">
+            <p className={`mt-3 font-mono ${fontSizeClass(settings.fontSizes.projectTech)} text-neutral-500 dark:text-neutral-500`}>
               {project.tech}
             </p>
           </ProjectAnchor>

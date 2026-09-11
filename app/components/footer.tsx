@@ -1,5 +1,6 @@
 import { SocialLinks } from './social-links'
 import { getSiteSettings } from 'lib/site-settings'
+import { fontSizeClass } from 'lib/font-sizes'
 
 export default async function Footer() {
   const settings = await getSiteSettings()
@@ -11,15 +12,18 @@ export default async function Footer() {
     >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 pr-4 sm:pr-8">
-          <p className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+          <p className={`${fontSizeClass(settings.fontSizes.footerTitle)} font-semibold text-neutral-950 dark:text-neutral-50`}>
             {settings.footer.title}
           </p>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-500">
+          <p className={`mt-1 ${fontSizeClass(settings.fontSizes.footerDescription)} text-neutral-500 dark:text-neutral-500`}>
             {settings.footer.description}
           </p>
         </div>
         <div className="flex-shrink-0">
-          <SocialLinks />
+          <SocialLinks
+            links={settings.socialLinks}
+            labelSize={settings.fontSizes.socialLabel}
+          />
         </div>
       </div>
       <p className="mt-8 text-sm text-neutral-500 dark:text-neutral-500">

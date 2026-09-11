@@ -56,13 +56,6 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
-  const updateHome = (key: 'featuredTitle' | 'featuredDescription', value: string) => {
-    setSettings((current) => ({
-      ...current,
-      home: { ...current.home, [key]: value },
-    }))
-  }
-
   const updateProjectsPage = (key: keyof SiteSettings['projectsPage'], value: string) => {
     setSettings((current) => ({
       ...current,
@@ -98,7 +91,7 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
         <div>
           <h2 className="text-base font-semibold">Project labels</h2>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Edit the public projects page and homepage featured-work block.
+            Edit the public projects page. Homepage sections are managed in Site labels.
           </p>
         </div>
         <button
@@ -122,23 +115,10 @@ export default function ProjectSettingsForm({ settings: initialSettings }: { set
       )}
 
       <div className="grid gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Featured title"
-            value={settings.home.featuredTitle}
-            onChange={(value) => updateHome('featuredTitle', value)}
-          />
-          <Field
-            label="Projects page title"
-            value={settings.projectsPage.title}
-            onChange={(value) => updateProjectsPage('title', value)}
-          />
-        </div>
         <Field
-          label="Featured description"
-          value={settings.home.featuredDescription}
-          onChange={(value) => updateHome('featuredDescription', value)}
-          multiline
+          label="Projects page title"
+          value={settings.projectsPage.title}
+          onChange={(value) => updateProjectsPage('title', value)}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
