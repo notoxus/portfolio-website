@@ -27,10 +27,30 @@
     }
   ],
   "navigation": [
-    { "id": "home", "label": "home", "href": "/", "visible": true },
-    { "id": "blog", "label": "blog", "href": "/blog", "visible": true },
-    { "id": "projects", "label": "projects", "href": "/projects", "visible": true },
-    { "id": "notebook", "label": "notebook", "href": "/notebook", "visible": true }
+    {
+      "id": "home",
+      "label": "home",
+      "href": "/",
+      "visible": true
+    },
+    {
+      "id": "blog",
+      "label": "blog",
+      "href": "/blog",
+      "visible": true
+    },
+    {
+      "id": "projects",
+      "label": "projects",
+      "href": "/projects",
+      "visible": true
+    },
+    {
+      "id": "notebook",
+      "label": "notebook",
+      "href": "/notebook",
+      "visible": true
+    }
   ],
   "fontSizes": {
     "homeEyebrow": 14,
@@ -90,10 +110,10 @@
     "panelLayout": {
       "side": "right",
       "verticalAlign": "start",
-      "widthPercent": 32,
-      "minHeightPx": 0,
-      "offsetXPx": 0,
-      "offsetYPx": 0
+      "widthPercent": 34,
+      "minHeightPx": 388,
+      "offsetXPx": -20,
+      "offsetYPx": 17
     },
     "sections": [
       {
@@ -101,8 +121,8 @@
         "type": "projects",
         "title": "Publications",
         "description": "Some projects I am still evolving and working on, hoping for your contributions",
-        "titleSize": "2xl",
-        "descriptionSize": "sm",
+        "titleSize": 24,
+        "descriptionSize": 14,
         "limit": 3,
         "featuredOnly": true,
         "items": []
@@ -112,8 +132,8 @@
         "type": "blog",
         "title": "Recent blogs",
         "description": "Blogging my knowledge",
-        "titleSize": "2xl",
-        "descriptionSize": "sm",
+        "titleSize": 24,
+        "descriptionSize": 14,
         "limit": 3,
         "featuredOnly": false,
         "items": []
@@ -129,6 +149,13 @@
     "eyebrow": "Where I share my knowledge",
     "title": "Blog",
     "description": "These posts are an experiential process and the things I have deeply absorbed."
+  },
+  "notebookPage": {
+    "title": "My Notebook",
+    "description": "Interactive explorer with direct raw access to my GitHub assets.",
+    "owner": "notoxus",
+    "repo": "my-note-book",
+    "branch": "main"
   },
   "footer": {
     "title": "Let's connect",
