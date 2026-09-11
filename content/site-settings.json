@@ -109,11 +109,11 @@
     "contactDescription": "Projects and knowledge-sharing collaborations.",
     "panelLayout": {
       "side": "right",
-      "verticalAlign": "start",
-      "widthPercent": 34,
-      "minHeightPx": 388,
-      "offsetXPx": -20,
-      "offsetYPx": 17
+      "verticalAlign": "center",
+      "widthPercent": 28,
+      "minHeightPx": 445,
+      "offsetXPx": -9,
+      "offsetYPx": 15
     },
     "sections": [
       {
