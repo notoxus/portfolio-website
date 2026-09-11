@@ -101,7 +101,8 @@
         "label": "Development & Operation",
         "items": [
           "OOP",
-          "Docker Container"
+          "Docker Container",
+          "Nix Flakes"
         ]
       }
     ],
@@ -112,7 +113,7 @@
       "verticalAlign": "center",
       "widthPercent": 28,
       "minHeightPx": 445,
-      "offsetXPx": -9,
+      "offsetXPx": -23,
       "offsetYPx": 15
     },
     "sections": [
