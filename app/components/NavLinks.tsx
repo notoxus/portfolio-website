@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { NavigationItem } from 'lib/site-settings'
 import { fontSizeStyle, type FontSize } from 'lib/font-sizes'
+import { useSFX } from './SFXProvider'
 
 export default function NavLinks({ items, fontSize }: { items: NavigationItem[]; fontSize: FontSize }) {
   const pathname = usePathname()
+  const { playClick } = useSFX()
 
   function isActive(path: string) {
     if (path === '/') return pathname === '/'
@@ -19,6 +21,7 @@ export default function NavLinks({ items, fontSize }: { items: NavigationItem[];
         <Link
           key={item.id}
           href={item.href}
+          onClick={playClick}
           style={fontSizeStyle(fontSize)}
           className={`rounded-lg px-2.5 py-1.5 font-medium transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
             isActive(item.href) ? 'nav-link-active' : ''

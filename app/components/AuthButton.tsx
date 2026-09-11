@@ -156,7 +156,9 @@ export default function AuthButton({
             setAmbientVolume={setAmbientVolume}
             uiSounds={uiSounds}
             setUiSounds={setUiSounds}
+            playClick={playClick}
             playToggle={playToggle}
+            onClose={() => setOpen(false)}
           />
         )}
       </div>
@@ -193,7 +195,9 @@ export default function AuthButton({
           setAmbientVolume={setAmbientVolume}
           uiSounds={uiSounds}
           setUiSounds={setUiSounds}
+          playClick={playClick}
           playToggle={playToggle}
+          onClose={() => setOpen(false)}
           isAdmin={isAdmin}
           userName={session.user.name}
           onSignOut={() => signOut()}
@@ -219,7 +223,9 @@ function DropdownPanel({
   setAmbientVolume,
   uiSounds,
   setUiSounds,
+  playClick,
   playToggle,
+  onClose,
   isAdmin = false,
   userName,
   onSignOut,
@@ -238,7 +244,9 @@ function DropdownPanel({
   setAmbientVolume: (v: number) => void
   uiSounds: boolean
   setUiSounds: (on: boolean) => void
+  playClick: () => void
   playToggle: () => void
+  onClose: () => void
   isAdmin?: boolean
   userName?: string | null
   onSignOut?: () => void
@@ -371,6 +379,10 @@ function DropdownPanel({
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => {
+                  playClick()
+                  onClose()
+                }}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
                 role="menuitem"
               >

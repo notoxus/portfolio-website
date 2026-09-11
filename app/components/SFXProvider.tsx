@@ -55,28 +55,31 @@ export const AMBIENT_OPTIONS: { value: AmbientSound; label: string}[] = [
 
 /** Generates a short synthetic sound using Web Audio API. */
 function playSynth(
+  ctx: AudioContext,
   type: OscillatorType,
   freq: number,
   duration: number,
-  volume: number
+  volume: number,
+  delay = 0,
 ) {
   try {
-    const ctx = new AudioContext()
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
+    const startAt = ctx.currentTime + delay
 
     osc.type = type
-    osc.frequency.setValueAtTime(freq, ctx.currentTime)
-    gain.gain.setValueAtTime(volume, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration)
+    osc.frequency.setValueAtTime(freq, startAt)
+    gain.gain.setValueAtTime(volume, startAt)
+    gain.gain.exponentialRampToValueAtTime(0.001, startAt + duration)
 
     osc.connect(gain)
     gain.connect(ctx.destination)
-    osc.start()
-    osc.stop(ctx.currentTime + duration)
-
-    // Cleanup
-    setTimeout(() => ctx.close(), (duration + 0.1) * 1000)
+    osc.start(startAt)
+    osc.stop(startAt + duration)
+    osc.addEventListener('ended', () => {
+      osc.disconnect()
+      gain.disconnect()
+    }, { once: true })
   } catch {
     // Silently fail if AudioContext unavailable
   }
@@ -87,7 +90,34 @@ export function SFXProvider({ children }: { children: React.ReactNode }) {
   const [ambientVolume, setAmbientVolumeState] = useState(40)
   const [uiSounds, setUiSoundsState] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
   const [mounted, setMounted] = useState(false)
+
+  const getAudioContext = useCallback(() => {
+    try {
+      let context = audioContextRef.current
+      if (!context || context.state === 'closed') {
+        context = new AudioContext()
+        audioContextRef.current = context
+      }
+      if (context.state === 'suspended') {
+        void context.resume().catch(() => {})
+      }
+      return context
+    } catch {
+      return null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      const context = audioContextRef.current
+      audioContextRef.current = null
+      if (context && context.state !== 'closed') {
+        void context.close().catch(() => {})
+      }
+    }
+  }, [])
 
   // Initialize from localStorage
   useEffect(() => {
@@ -159,23 +189,28 @@ export function SFXProvider({ children }: { children: React.ReactNode }) {
   const setUiSounds = useCallback((on: boolean) => {
     setUiSoundsState(on)
     writeStorage(UI_KEY, String(on))
-  }, [])
+    if (on) getAudioContext()
+  }, [getAudioContext])
 
   const playClick = useCallback(() => {
     if (!uiSounds) return
-    playSynth('sine', 600, 0.08, 0.15)
-  }, [uiSounds])
+    const context = getAudioContext()
+    if (context) playSynth(context, 'sine', 600, 0.08, 0.15)
+  }, [getAudioContext, uiSounds])
 
   const playHover = useCallback(() => {
     if (!uiSounds) return
-    playSynth('sine', 800, 0.04, 0.06)
-  }, [uiSounds])
+    const context = getAudioContext()
+    if (context) playSynth(context, 'sine', 800, 0.04, 0.06)
+  }, [getAudioContext, uiSounds])
 
   const playToggle = useCallback(() => {
     if (!uiSounds) return
-    playSynth('sine', 500, 0.12, 0.12)
-    setTimeout(() => playSynth('sine', 700, 0.1, 0.1), 60)
-  }, [uiSounds])
+    const context = getAudioContext()
+    if (!context) return
+    playSynth(context, 'sine', 500, 0.12, 0.12)
+    playSynth(context, 'sine', 700, 0.1, 0.1, 0.06)
+  }, [getAudioContext, uiSounds])
 
   return (
     <SFXContext.Provider

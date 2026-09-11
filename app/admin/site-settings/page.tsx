@@ -681,19 +681,30 @@ function SkillGroupsEditor({
   }
 
   const addGroup = () => {
-    onChange([...groups, { label: 'New group', items: [] }])
+    onChange([...groups, { label: 'New group', items: [''] }])
   }
 
   const removeGroup = (index: number) => {
     onChange(groups.filter((_, i) => i !== index))
   }
 
-  const addTag = (index: number, tag: string) => {
-    const trimmed = tag.trim()
-    if (!trimmed) return
+  const addTag = (index: number) => {
     onChange(
       groups.map((group, i) =>
-        i === index ? { ...group, items: [...group.items, trimmed] } : group,
+        i === index ? { ...group, items: [...group.items, ''] } : group,
+      ),
+    )
+  }
+
+  const updateTag = (groupIndex: number, itemIndex: number, value: string) => {
+    onChange(
+      groups.map((group, i) =>
+        i === groupIndex
+          ? {
+              ...group,
+              items: group.items.map((item, j) => (j === itemIndex ? value : item)),
+            }
+          : group,
       ),
     )
   }
@@ -733,13 +744,20 @@ function SkillGroupsEditor({
               Remove group
             </button>
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
             {group.items.map((item, itemIndex) => (
               <span
                 key={itemIndex}
                 className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
               >
-                {item}
+                <input
+                  value={item}
+                  onChange={(event) => updateTag(groupIndex, itemIndex, event.target.value)}
+                  placeholder="New tag"
+                  aria-label={`Tag ${itemIndex + 1} in ${group.label}`}
+                  className="min-w-[5ch] max-w-48 bg-transparent text-center outline-none placeholder:text-neutral-400"
+                  style={{ width: `${Math.max(5, item.length + 1)}ch` }}
+                />
                 <button
                   type="button"
                   onClick={() => removeTag(groupIndex, itemIndex)}
@@ -750,7 +768,13 @@ function SkillGroupsEditor({
                 </button>
               </span>
             ))}
-            <TagInput onAdd={(tag) => addTag(groupIndex, tag)} />
+            <button
+              type="button"
+              onClick={() => addTag(groupIndex)}
+              className="rounded-full border border-dashed border-neutral-300 px-2.5 py-1 text-xs text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
+            >
+              + Add tag
+            </button>
           </div>
         </div>
       ))}
@@ -762,41 +786,6 @@ function SkillGroupsEditor({
         + Add group
       </button>
     </div>
-  )
-}
-
-function TagInput({ onAdd }: { onAdd: (tag: string) => void }) {
-  const [value, setValue] = useState('')
-
-  const submit = () => {
-    if (!value.trim()) return
-    onAdd(value)
-    setValue('')
-  }
-
-  return (
-    <span className="flex items-center gap-1">
-      <input
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.preventDefault()
-            submit()
-          }
-        }}
-        placeholder="New tag"
-        className="w-24 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-950"
-      />
-      <button
-        type="button"
-        onClick={submit}
-        aria-label="Add tag"
-        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-dashed border-neutral-300 text-neutral-500 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-neutral-700"
-      >
-        +
-      </button>
-    </span>
   )
 }
 
@@ -1057,28 +1046,28 @@ export default function SiteSettingsPage() {
               </label>
             ))}
             <div className="sm:col-span-2 lg:col-span-3">
-              <span className="text-xs text-neutral-500">Layout preview</span>
-              <div className="relative mt-1 h-44 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100/70 dark:border-neutral-700 dark:bg-neutral-950">
-                <div className="absolute inset-y-5 left-4 right-4 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700" />
+              <div
+                className="relative left-1/2 mt-3 -translate-x-1/2"
+                style={{ width: 'min(calc(100vw - 2rem), 64rem)' }}
+              >
+                <div className="mb-2 flex items-center justify-between gap-4 px-1">
+                  <div>
+                    <p className="text-sm font-semibold">Live hero preview</p>
+                    <p className="text-xs text-neutral-500">
+                      This is the real hero component. Changes appear here before Save.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-neutral-200 bg-white/60 px-2.5 py-1 font-mono text-[10px] text-neutral-500 dark:border-neutral-700 dark:bg-neutral-900/60">
+                    Unsaved draft
+                  </span>
+                </div>
                 <div
-                  className="absolute rounded-lg border border-blue-500/60 bg-blue-500/15 p-3 text-xs font-semibold text-blue-600 shadow-sm dark:text-blue-300"
-                  style={{
-                    width: `${settings.home.panelLayout.widthPercent}%`,
-                    minHeight: `${Math.max(44, settings.home.panelLayout.minHeightPx / 5)}px`,
-                    [settings.home.panelLayout.side]: '1rem',
-                    top:
-                      settings.home.panelLayout.verticalAlign === 'start'
-                        ? '1.25rem'
-                        : settings.home.panelLayout.verticalAlign === 'end'
-                          ? undefined
-                          : '50%',
-                    bottom: settings.home.panelLayout.verticalAlign === 'end' ? '1.25rem' : undefined,
-                    transform: `translate(${settings.home.panelLayout.offsetXPx / 5}px, ${
-                      settings.home.panelLayout.offsetYPx / 5
-                    }px)${settings.home.panelLayout.verticalAlign === 'center' ? ' translateY(-50%)' : ''}`,
+                  className="preview-canvas overflow-hidden rounded-2xl border border-dashed border-blue-500/40 px-4 py-6 sm:px-5 lg:px-0"
+                  onClickCapture={(event) => {
+                    if ((event.target as HTMLElement).closest('a')) event.preventDefault()
                   }}
                 >
-                  Hero side card
+                  <HomeHero settings={settings} intro={intro} />
                 </div>
               </div>
             </div>

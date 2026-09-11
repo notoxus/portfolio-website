@@ -66,9 +66,9 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
       <FadeIn delay={0.16} className="hero-panel-column">
         <div className="hero-panel-shell">
           <aside className="surface-panel hero-panel relative overflow-hidden rounded-2xl">
-            {home.skillGroups.map((group) => (
+            {home.skillGroups.map((group, groupIndex) => (
               <div
-                key={group.label}
+                key={`${group.label}-${groupIndex}`}
                 className="border-b border-neutral-200/80 px-4 py-3.5 dark:border-neutral-800/80 sm:px-5"
               >
                 <div className="mb-2">
@@ -79,10 +79,10 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
                     {group.label}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.items.map((item) => (
+                <div className="flex flex-wrap justify-center gap-1.5">
+                  {group.items.map((item, itemIndex) => (
                     <span
-                      key={item}
+                      key={`${item}-${itemIndex}`}
                       style={fontSizeStyle(settings.fontSizes.skillTag)}
                       className="rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
                     >
