@@ -22,6 +22,22 @@ const AMBIENT_KEY = 'portfolio-sfx-ambient'
 const VOLUME_KEY = 'portfolio-sfx-volume'
 const UI_KEY = 'portfolio-sfx-ui'
 
+function readStorage(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeStorage(key: string, value: string) {
+  try {
+    window.localStorage.setItem(key, value)
+  } catch {
+    // Sound controls still work for the current session if storage is blocked.
+  }
+}
+
 const AMBIENT_FILES: Record<Exclude<AmbientSound, 'off'>, string> = {
   rain: '/audio/ambient/rain.mp3',
   lofi: '/audio/ambient/lofi.mp3',
@@ -75,13 +91,18 @@ export function SFXProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(AMBIENT_KEY)
+    const stored = readStorage(AMBIENT_KEY)
     if (stored && Object.keys(AMBIENT_FILES).includes(stored)) {
       setAmbientState(stored as AmbientSound)
     }
-    const vol = localStorage.getItem(VOLUME_KEY)
-    if (vol) setAmbientVolumeState(Number(vol))
-    const ui = localStorage.getItem(UI_KEY)
+    const vol = readStorage(VOLUME_KEY)
+    if (vol) {
+      const parsedVolume = Number(vol)
+      if (Number.isFinite(parsedVolume)) {
+        setAmbientVolumeState(Math.min(100, Math.max(0, parsedVolume)))
+      }
+    }
+    const ui = readStorage(UI_KEY)
     if (ui === 'true') setUiSoundsState(true)
     setMounted(true)
   }, [])
@@ -127,17 +148,17 @@ export function SFXProvider({ children }: { children: React.ReactNode }) {
 
   const setAmbient = useCallback((sound: AmbientSound) => {
     setAmbientState(sound)
-    localStorage.setItem(AMBIENT_KEY, sound)
+    writeStorage(AMBIENT_KEY, sound)
   }, [])
 
   const setAmbientVolume = useCallback((vol: number) => {
     setAmbientVolumeState(vol)
-    localStorage.setItem(VOLUME_KEY, String(vol))
+    writeStorage(VOLUME_KEY, String(vol))
   }, [])
 
   const setUiSounds = useCallback((on: boolean) => {
     setUiSoundsState(on)
-    localStorage.setItem(UI_KEY, String(on))
+    writeStorage(UI_KEY, String(on))
   }, [])
 
   const playClick = useCallback(() => {

@@ -47,7 +47,3 @@ const loadIntro = unstable_cache(
 export async function getHomeIntro(): Promise<string> {
   return loadIntro()
 }
-
-export function getHomeIntroSync(): string {
-  return fromFilesystem()
-}

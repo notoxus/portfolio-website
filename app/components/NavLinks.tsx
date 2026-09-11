@@ -8,7 +8,6 @@ const navItems = {
   '/blog': { name: 'blog' },
   '/projects': { name: 'projects' },
   '/notebook': { name: 'notebook' },
-  '/essential-tools': { name: 'tools' },
 }
 
 export default function NavLinks() {

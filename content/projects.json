@@ -10,16 +10,6 @@
     "featured": true
   },
   {
-    "id": "study-hub",
-    "title": "Study Hub",
-    "kind": "Learning tool",
-    "accent": "amber",
-    "tech": "Next.js / TypeScript / YouTube Transcript",
-    "description": "A focused study interface for synced transcripts, instant translation, dictionary lookup, and language learning workflows.",
-    "link": "/essential-tools/studyhub",
-    "featured": true
-  },
-  {
     "id": "gym-tracking",
     "title": "Gym Tracking",
     "kind": "Java coursework",

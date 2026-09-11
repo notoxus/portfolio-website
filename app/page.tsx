@@ -1,9 +1,9 @@
 import { BlogPosts } from 'app/components/posts'
+import { FadeIn } from 'app/components/FadeIn'
 import { getHomeIntro } from 'lib/site-content'
+import { getSiteSettings } from 'lib/site-settings'
 import { ProjectList } from './components/project-list'
 import { SocialLinks } from './components/social-links'
-import { getSiteSettings } from 'lib/site-settings'
-import { GsapReveal } from './components/GsapReveal'
 
 const practiceItems = [
   {
@@ -34,11 +34,10 @@ export default async function Page() {
   const settings = await getSiteSettings()
   const home = settings.home
 
-
   return (
     <section className="space-y-10 md:space-y-16">
       <section className="grid gap-6 lg:gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
-        <GsapReveal>
+        <FadeIn>
           <div className="mb-5 flex items-center gap-2.5 text-sm text-neutral-600 dark:text-neutral-400">
             <span className="status-dot" />
             <span>{home.eyebrow}</span>
@@ -65,47 +64,47 @@ export default async function Page() {
               {home.secondaryCtaLabel}
             </a>
           </div>
-        </GsapReveal>
+        </FadeIn>
 
-        <GsapReveal delay={0.26} y={24}>
+        <FadeIn delay={0.16}>
           <aside className="surface-panel relative overflow-hidden rounded-2xl">
-          {home.skillGroups.map((group) => (
-            <div
-              key={group.label}
-              className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80"
-            >
-              <div className="mb-3">
+            {home.skillGroups.map((group) => (
+              <div
+                key={group.label}
+                className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80"
+              >
+                <div className="mb-3">
+                  <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
+                    {group.label}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="p-5">
+              <div className="mb-2">
                 <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                  {group.label}
+                  {home.contactLabel}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                  >
-                    {item}
-                  </span>
-                ))}
+              <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+                {home.contactDescription}
+              </p>
+              <div className="mt-4">
+                <SocialLinks compact />
               </div>
             </div>
-          ))}
-          <div className="p-5">
-            <div className="mb-2">
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                {home.contactLabel}
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
-              {home.contactDescription}
-            </p>
-            <div className="mt-4">
-              <SocialLinks compact />
-            </div>
-          </div>
           </aside>
-        </GsapReveal>
+        </FadeIn>
       </section>
 
       <section aria-labelledby="practice-title">

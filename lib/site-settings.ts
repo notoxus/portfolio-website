@@ -198,7 +198,3 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   return loadSettings()
 }
 
-export function getSiteSettingsSync(): SiteSettings {
-  return fromFilesystem()
-}
-

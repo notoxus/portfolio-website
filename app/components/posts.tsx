@@ -5,7 +5,6 @@ import {
   type BlogLanguage,
   type BlogPost,
 } from 'app/blog/utils'
-import { ViewCounter } from 'app/components/ViewCounter'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 
 const languageLabels: Record<BlogLanguage, string> = {
@@ -95,9 +94,6 @@ export async function BlogPosts({
                   {post.metadata.category}
                 </span>
               )}
-              <div className="ml-2">
-                <ViewCounter slug={post.slug} />
-              </div>
             </div>
           </Link>
           <div className="flex items-center gap-2">

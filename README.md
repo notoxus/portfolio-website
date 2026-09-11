@@ -17,7 +17,6 @@ Feel free to fork and customize this project for your own portfolio!
 - **TipTap Rich-Text Editor:** Embedded admin editor to manage and update site content directly.
 - **GitHub OAuth Authentication:** Private admin session powered by `NextAuth.js` v5.
 - **GitHub Notebook Explorer:** Integrated viewer linked to [my-note-book repository](https://github.com/notoxus/my-note-book).
-- **Integrated Tools (Study Hub):** YouTube video transcript parser, translation, and instant dictionary lookup.
 - **Complete SEO & Analytics:** Dynamic OpenGraph images, RSS feed, sitemap.xml, Vercel Analytics & Speed Insights.
 
 ---
@@ -157,8 +156,6 @@ To check the Docker prerequisites instead, run:
    GITHUB_OWNER=notoxus
    GITHUB_REPO=my-note-book
 
-   # AI / LLM Tools
-   GROQ_API_KEY=your_groq_api_key
    ```
 
 4. **Run the Development Server:**

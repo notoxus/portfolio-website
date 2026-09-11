@@ -40,7 +40,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-import { ViewCounter } from 'app/components/ViewCounter'
+import { ViewTracker } from 'app/components/ViewTracker'
 import TableOfContents from 'app/components/TableOfContents'
 import { BlogMenuBuilder, extractHeadings } from 'lib/composite/menu-node'
 
@@ -55,6 +55,7 @@ export default async function Blog({ params }) {
 
   return (
     <section>
+      <ViewTracker slug={post.slug} />
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -79,12 +80,9 @@ export default async function Blog({ params }) {
         {post.metadata.title}
       </h1>
       <div className="flex flex-wrap justify-between items-center gap-3 mt-2 mb-8 text-sm">
-        <div className="flex items-center gap-4">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            {formatDate(post.metadata.publishedAt)}
-          </p>
-          <ViewCounter slug={post.slug} trackView={true} />
-        </div>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          {formatDate(post.metadata.publishedAt)}
+        </p>
         {post.metadata.category && (
           <span className="text-xs text-neutral-400 dark:text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-full">
             {post.metadata.category}

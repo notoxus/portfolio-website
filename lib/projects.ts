@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { Octokit } from '@octokit/rest'
 import { unstable_cache } from 'next/cache'
+import bundledProjects from '../content/projects.json'
 
 export type Project = {
   id: string
@@ -16,63 +17,6 @@ export type Project = {
 
 const PROJECTS_FILE = path.join(process.cwd(), 'content', 'projects.json')
 
-export const DEFAULT_PROJECTS: Project[] = [
-  {
-    id: 'video-downloader',
-    title: 'Video Downloader',
-    kind: 'Desktop app',
-    accent: 'green',
-    tech: 'Java 21 / Maven / Chrome Extension / yt-dlp / FFmpeg',
-    description:
-      'A cross-platform desktop app that captures HLS/DASH streams through a generated Chrome extension, queues downloads, and packages yt-dlp and FFmpeg workflows behind one interface.',
-    link: 'https://github.com/notoxus/video-downloader',
-    featured: true,
-  },
-  {
-    id: 'study-hub',
-    title: 'Study Hub',
-    kind: 'Learning tool',
-    accent: 'amber',
-    tech: 'Next.js / TypeScript / YouTube Transcript',
-    description:
-      'A focused study interface for synced transcripts, instant translation, dictionary lookup, and language learning workflows.',
-    link: '/essential-tools/studyhub',
-    featured: true,
-  },
-  {
-    id: 'gym-tracking',
-    title: 'Gym Tracking',
-    kind: 'Java coursework',
-    accent: 'amber',
-    tech: 'Java 21 / Gradle / Gson / JUnit',
-    description:
-      'A Java coursework project with goal-based workout suggestions, set-by-set logs, nutrition lookup, progress charts, and separate user and admin workflows. An Android interface rebuild is planned after the current assessment.',
-    link: 'https://github.com/notoxus/oop-design-project',
-    featured: true,
-  },
-  {
-    id: 'yoshi-pdf',
-    title: 'Yoshi PDF',
-    kind: 'OCR prototype',
-    accent: 'green',
-    tech: 'Java 17 / Maven / PDFBox / Tesseract',
-    description:
-      'An early-stage PDF viewer and OCR utility for experimenting with Tesseract-based text extraction from long documents.',
-    link: 'https://github.com/notoxus/yoshiPDF',
-    featured: false,
-  },
-  {
-    id: 'useful-script',
-    title: 'Useful Script',
-    kind: 'Automation',
-    accent: 'green',
-    tech: 'Bash / Batch / Shell',
-    description:
-      'A small collection of Bash, Batch, and shell experiments created to remove repetitive setup and workflow steps.',
-    link: 'https://github.com/notoxus/UsefulScript',
-  },
-]
-
 function isProject(value: any): value is Project {
   return (
     value &&
@@ -86,6 +30,8 @@ function isProject(value: any): value is Project {
     (!value.accent || value.accent === 'green' || value.accent === 'amber')
   )
 }
+
+const BUNDLED_PROJECTS = bundledProjects.filter(isProject) as Project[]
 
 export const PROJECTS_CACHE_TAG = 'projects-data'
 
@@ -121,7 +67,7 @@ function fromFilesystem(): Project[] {
     }
   } catch {}
 
-  return DEFAULT_PROJECTS
+  return BUNDLED_PROJECTS
 }
 
 const loadProjects = unstable_cache(
@@ -134,19 +80,8 @@ export async function getProjects(): Promise<Project[]> {
   return loadProjects()
 }
 
-export function getProjectsSync(): Project[] {
-  return fromFilesystem()
-}
-
 export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
   const projects = await getProjects()
-  const featuredProjects = projects.filter((project) => project.featured)
-
-  return (featuredProjects.length ? featuredProjects : projects).slice(0, limit)
-}
-
-export function getFeaturedProjectsSync(limit = 3): Project[] {
-  const projects = getProjectsSync()
   const featuredProjects = projects.filter((project) => project.featured)
 
   return (featuredProjects.length ? featuredProjects : projects).slice(0, limit)

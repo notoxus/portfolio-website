@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ReactNode } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import type { ReactNode } from 'react'
 
 export function FadeIn({
   children,
@@ -12,11 +12,13 @@ export function FadeIn({
   delay?: number
   className?: string
 }) {
+  const reduceMotion = useReducedMotion()
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay, ease: 'easeOut' }}
+      transition={reduceMotion ? { duration: 0 } : { duration: 0.5, delay, ease: 'easeOut' }}
       className={className}
     >
       {children}
@@ -24,7 +26,13 @@ export function FadeIn({
   )
 }
 
-export function StaggerContainer({ children, className = '' }: { children: ReactNode, className?: string }) {
+export function StaggerContainer({
+  children,
+  className = '',
+}: {
+  children: ReactNode
+  className?: string
+}) {
   return (
     <motion.div
       initial="hidden"
@@ -45,7 +53,13 @@ export function StaggerContainer({ children, className = '' }: { children: React
   )
 }
 
-export function StaggerItem({ children, className = '' }: { children: ReactNode, className?: string }) {
+export function StaggerItem({
+  children,
+  className = '',
+}: {
+  children: ReactNode
+  className?: string
+}) {
   return (
     <motion.div
       variants={{

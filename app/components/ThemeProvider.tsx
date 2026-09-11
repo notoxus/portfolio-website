@@ -21,21 +21,44 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
 const THEME_KEY = 'portfolio-theme'
 const BG_KEY = 'portfolio-bg-preset'
 
+function readStorage(key: string): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    return window.localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeStorage(key: string, value: string) {
+  try {
+    window.localStorage.setItem(key, value)
+  } catch {
+    // Storage can be unavailable in private or restricted browser contexts.
+  }
+}
+
+function removeStorage(key: string) {
+  try {
+    window.localStorage.removeItem(key)
+  } catch {
+    // Keep the in-memory preference working when persistent storage is blocked.
+  }
+}
+
 function getSystemTheme(): Theme {
   if (typeof window === 'undefined') return 'light'
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 function getStoredTheme(): Theme | null {
-  if (typeof window === 'undefined') return null
-  const stored = localStorage.getItem(THEME_KEY)
+  const stored = readStorage(THEME_KEY)
   if (stored === 'light' || stored === 'dark') return stored
   return null
 }
 
 function getStoredBgPreset(): BgPreset {
-  if (typeof window === 'undefined') return 'default'
-  const stored = localStorage.getItem(BG_KEY)
+  const stored = readStorage(BG_KEY)
   if (['default', 'midnight', 'forest', 'sepia', 'rose'].includes(stored ?? '')) {
     return stored as BgPreset
   }
@@ -92,7 +115,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === 'dark' ? 'light' : 'dark'
-      localStorage.setItem(THEME_KEY, next)
+      writeStorage(THEME_KEY, next)
       setIsCustomTheme(true)
       return next
     })
@@ -100,17 +123,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setBgPreset = useCallback((preset: BgPreset) => {
     setBgPresetState(preset)
-    localStorage.setItem(BG_KEY, preset)
+    writeStorage(BG_KEY, preset)
   }, [])
 
   const setThemeContext = useCallback((newTheme: Theme) => {
     setTheme(newTheme)
-    localStorage.setItem(THEME_KEY, newTheme)
+    writeStorage(THEME_KEY, newTheme)
     setIsCustomTheme(true)
   }, [])
 
   const resetToDefault = useCallback(() => {
-    localStorage.removeItem(THEME_KEY)
+    removeStorage(THEME_KEY)
     setIsCustomTheme(false)
     setTheme(systemTheme)
   }, [systemTheme])
@@ -121,7 +144,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const handler = (e: MediaQueryListEvent) => {
       const sys = e.matches ? 'dark' : 'light'
       setSystemTheme(sys)
-      if (!localStorage.getItem(THEME_KEY)) {
+      if (!readStorage(THEME_KEY)) {
         setTheme(sys)
       }
     }
