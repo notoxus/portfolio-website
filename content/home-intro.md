@@ -1,1 +1,1 @@
-I'm Bui Vo Phuoc Thinh, also known as Notoxus—an IT student focused on Linux, networking, automation, and security. I turn coursework and experiments into working projects and practical technical notes.
+Hi! I'm Bui Vo Phuoc Thinh, also known as Notoxus. I specialize in Linux, networking, automation solutions, and security within practical application development and operation processes. I turn coursework and experiments into fully functional projects and document my learnings through technical blog posts.
