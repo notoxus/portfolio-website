@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CustomHomeItem, HomeSection, SiteSettings } from 'lib/site-settings'
 import {
@@ -676,6 +676,8 @@ function SkillGroupsEditor({
   groups: SiteSettings['home']['skillGroups']
   onChange: (groups: SiteSettings['home']['skillGroups']) => void
 }) {
+  const tagInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
+
   const updateGroupLabel = (index: number, label: string) => {
     onChange(groups.map((group, i) => (i === index ? { ...group, label } : group)))
   }
@@ -689,11 +691,17 @@ function SkillGroupsEditor({
   }
 
   const addTag = (index: number) => {
+    const newTagIndex = groups[index].items.length
     onChange(
       groups.map((group, i) =>
         i === index ? { ...group, items: [...group.items, ''] } : group,
       ),
     )
+    window.requestAnimationFrame(() => {
+      const input = tagInputRefs.current[`${index}-${newTagIndex}`]
+      input?.focus()
+      input?.select()
+    })
   }
 
   const updateTag = (groupIndex: number, itemIndex: number, value: string) => {
@@ -724,6 +732,9 @@ function SkillGroupsEditor({
       <span className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
         Skill groups
       </span>
+      <p className="-mt-3 text-xs text-neutral-400">
+        Click any tag to edit it. Add as many tags as you need.
+      </p>
       {groups.map((group, groupIndex) => (
         <div
           key={groupIndex}
@@ -751,12 +762,24 @@ function SkillGroupsEditor({
                 className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
               >
                 <input
+                  ref={(node) => {
+                    tagInputRefs.current[`${groupIndex}-${itemIndex}`] = node
+                  }}
                   value={item}
                   onChange={(event) => updateTag(groupIndex, itemIndex, event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      addTag(groupIndex)
+                    }
+                    if (event.key === 'Backspace' && !item) {
+                      event.preventDefault()
+                      removeTag(groupIndex, itemIndex)
+                    }
+                  }}
                   placeholder="New tag"
                   aria-label={`Tag ${itemIndex + 1} in ${group.label}`}
-                  className="min-w-[5ch] max-w-48 bg-transparent text-center outline-none placeholder:text-neutral-400"
-                  style={{ width: `${Math.max(5, item.length + 1)}ch` }}
+                  className="w-32 bg-transparent text-center outline-none placeholder:text-neutral-400 focus:text-blue-600 dark:focus:text-blue-300"
                 />
                 <button
                   type="button"
