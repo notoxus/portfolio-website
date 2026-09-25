@@ -94,7 +94,8 @@
       {
         "label": "Operating System",
         "items": [
-          "Linux"
+          "Linux Infrastructure",
+          "Customize Windows Manager"
         ]
       },
       {
