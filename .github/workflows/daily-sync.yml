@@ -10,25 +10,30 @@ permissions:
 
 jobs:
   generate:
+  
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate Contribution Grid Game (Pacman)
-        uses: Platane/snk/svg-only@v3
+      - name: Generate Pacman Contribution Graph
+        uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
-          # Pacman game parameter
-          outputs: |
-            public/snake.svg?snake_type=pacman
-            public/snake-dark.svg?palette=github-dark&snake_type=pacman
 
-      - name: Commit and Push changes
+      - name: Move and Commit Pacman SVG
         run: |
+          # Action này thường xuất file ra thư mục dist hoặc root, ta đưa chuẩn về public/snake.svg để Next.js nhận diện
+          mkdir -p public
+          if [ -f "dist/pacman-contribution-graph.svg" ]; then
+            cp dist/pacman-contribution-graph.svg public/snake.svg
+          elif [ -f "pacman-contribution-graph.svg" ]; then
+            cp pacman-contribution-graph.svg public/snake.svg
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/snake.svg public/snake-dark.svg
+          git add public/snake.svg
           
           if git diff --staged --quiet; then
             echo "No changes to commit."
@@ -37,6 +42,3 @@ jobs:
           
           git commit -m "chore(auto): update github contribution pacman animation"
           git push
-      - name: Trigger Vercel Redeploy
-        run: |
-          curl -X POST "YOUR_VERCEL_DEPLOY_HOOK_URL"
