@@ -1,11 +1,27 @@
 import { BlogPosts } from 'app/components/posts'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 import { HomeHero } from 'app/components/HomeHero'
+import { ProofOfWork } from 'app/components/ProofOfWork'
 import { getHomeIntro } from 'lib/site-content'
 import { getSiteSettings, type CustomHomeItem, type HomeSection } from 'lib/site-settings'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { ProjectList } from './components/project-list'
+
+// Loading pane
+function ContributionStatusBar() {
+  return (
+    <div className="surface-panel rounded-xl p-4 font-mono text-xs border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-500">
+      <div className="flex items-center space-x-2">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span className="text-[11px]">sync_status: operational (cron: 00:00 UTC)</span>
+      </div>
+      <div className="w-full sm:w-48 bg-neutral-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">
+        <div className="bg-emerald-500 h-full w-4/5 animate-pulse"></div>
+      </div>
+    </div>
+  )
+}
 
 function SectionHeading({ section }: { section: HomeSection }) {
   return (
@@ -135,17 +151,23 @@ export default async function Page() {
       {/* Terminal Hero */}
       <HomeHero settings={settings} intro={intro} />
 
+      {/* Khối Proof of Work */}
+      <ProofOfWork />
+
       {/* Github contribution */}
-      <div className="surface-panel rounded-2xl p-6 text-center">
-        <p className="font-mono text-xs text-neutral-500 mb-4"># github contribution matrix</p>
-        <img 
-          src="/snake.svg" 
-          alt="GitHub Contribution Snake" 
-          className="mx-auto max-w-full h-auto dark:invert opacity-90" 
-        />
+      <div className="space-y-3">
+        <div className="surface-panel rounded-2xl p-6 text-center">
+          <p className="font-mono text-xs text-neutral-500 mb-4"># github contribution matrix</p>
+          <img 
+            src="/snake.svg" 
+            alt="GitHub Contribution Matrix" 
+            className="mx-auto max-w-full h-auto dark:invert opacity-90" 
+          />
+        </div>
+        <ContributionStatusBar />
       </div>
 
-      {/* Dynamic sessions */}
+      {/* Dynamic section */}
       {home.sections.map((section) => (
         <HomepageSection key={section.id} section={section} />
       ))}

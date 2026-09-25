@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   generate:
-  
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,9 +20,8 @@ jobs:
         with:
           github_user_name: ${{ github.repository_owner }}
 
-      - name: Move and Commit Pacman SVG
+      - name: Move Pacman SVG
         run: |
-          # Action này thường xuất file ra thư mục dist hoặc root, ta đưa chuẩn về public/snake.svg để Next.js nhận diện
           mkdir -p public
           if [ -f "dist/pacman-contribution-graph.svg" ]; then
             cp dist/pacman-contribution-graph.svg public/snake.svg
@@ -31,14 +29,29 @@ jobs:
             cp pacman-contribution-graph.svg public/snake.svg
           fi
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate Proof of Work Stats
+        run: python3 scripts/fetch_proof_of_work.py
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+
+      - name: Commit and Push changes
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/snake.svg
+          git add public/snake.svg content/proof-of-work.json
           
           if git diff --staged --quiet; then
             echo "No changes to commit."
             exit 0
           fi
           
-          git commit -m "chore(auto): update github contribution pacman animation"
+          git commit -m "chore(auto): update github contribution pacman and proof-of-work metrics"
           git push
