@@ -37,3 +37,6 @@ jobs:
           
           git commit -m "chore(auto): update github contribution pacman animation"
           git push
+      - name: Trigger Vercel Redeploy
+        run: |
+          curl -X POST "YOUR_VERCEL_DEPLOY_HOOK_URL"
