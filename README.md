@@ -117,6 +117,12 @@ A [`flake.nix`](flake.nix) is provided for a fully reproducible native developme
 
 > **Note:** The first run downloads the Nix derivations (~1–2 min). Subsequent runs are instant.
 
+> **Note:**
+
+- If you are developing on NixOS and `pnpm install` throws a "dynamically linked executable" error, do **not** use `corepack` to manage pnpm in your shell hook.
+
+- NixOS will block the downloaded binaries. Instead, rely on the natively compiled `pkgs.pnpm` in your `flake.nix` and remove any manual `$PNPM_HOME` exports.
+
 #### 🚀 Quick Setup without Docker (UNIX users)
 
 You can run the interactive setup script to automatically check Node.js, install `pnpm`, set up `.env.local`, and install all dependencies:

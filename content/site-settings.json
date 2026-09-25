@@ -84,7 +84,7 @@
     "socialLabel": 14
   },
   "home": {
-    "eyebrow": "DevOps & Cybersecurity learner",
+    "eyebrow": "Systems & Network Enthusiast",
     "headline": "Welcome to my portfolio website. Thank you for taking the time to stop by!!!",
     "primaryCtaLabel": "View projects",
     "primaryCtaHref": "/projects",
@@ -94,7 +94,8 @@
       {
         "label": "Operating System",
         "items": [
-          "Linux"
+          "Linux Infrastructure",
+          "Customize Windows Manager"
         ]
       },
       {
@@ -102,7 +103,9 @@
         "items": [
           "OOP",
           "Docker Container",
-          "Nix Flakes"
+          "Nix Flakes",
+          "Github Action",
+          "Ci/CD"
         ]
       }
     ],
@@ -111,10 +114,10 @@
     "panelLayout": {
       "side": "right",
       "verticalAlign": "center",
-      "widthPercent": 28,
-      "minHeightPx": 445,
-      "offsetXPx": -23,
-      "offsetYPx": 15
+      "widthPercent": 38,
+      "minHeightPx": 453,
+      "offsetXPx": 1,
+      "offsetYPx": -18
     },
     "sections": [
       {

@@ -20,15 +20,13 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             nodejs
-            pkgs.corepack
+            pkgs.pnpm
             pkgs.git
             pkgs.docker
             pkgs.docker-compose
           ];
 
           shellHook = ''
-            export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH"
             echo "🚀 [Nix Flakes DevShell] Node $(node -v) | pnpm $(pnpm -v) loaded successfully!"
           '';
         };

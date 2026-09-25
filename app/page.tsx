@@ -131,9 +131,21 @@ export default async function Page() {
   const home = settings.home
 
   return (
-    <section className="space-y-10 md:space-y-16">
+    <section className="space-y-12 md:space-y-16">
+      {/* Terminal Hero */}
       <HomeHero settings={settings} intro={intro} />
 
+      {/* Github contribution */}
+      <div className="surface-panel rounded-2xl p-6 text-center">
+        <p className="font-mono text-xs text-neutral-500 mb-4"># github contribution matrix</p>
+        <img 
+          src="/snake.svg" 
+          alt="GitHub Contribution Snake" 
+          className="mx-auto max-w-full h-auto dark:invert opacity-90" 
+        />
+      </div>
+
+      {/* Dynamic sessions */}
       {home.sections.map((section) => (
         <HomepageSection key={section.id} section={section} />
       ))}

@@ -1,0 +1,39 @@
+name: Generate Pacman Matrix
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # auto sync data daily in 3 o'clock am UTC
+  workflow_dispatch: # run manually access in Github
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Contribution Grid Game (Pacman)
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          # Pacman game parameter
+          outputs: |
+            public/snake.svg?snake_type=pacman
+            public/snake-dark.svg?palette=github-dark&snake_type=pacman
+
+      - name: Commit and Push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/snake.svg public/snake-dark.svg
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          
+          git commit -m "chore(auto): update github contribution pacman animation"
+          git push
