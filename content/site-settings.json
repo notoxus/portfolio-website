@@ -84,7 +84,7 @@
     "socialLabel": 14
   },
   "home": {
-    "eyebrow": "DevOps & Cybersecurity learner",
+    "eyebrow": "System & Network enthusiast",
     "headline": "Welcome to my portfolio website. Thank you for taking the time to stop by!!!",
     "primaryCtaLabel": "View projects",
     "primaryCtaHref": "/projects",
@@ -102,7 +102,9 @@
         "items": [
           "OOP",
           "Docker Container",
-          "Nix Flakes"
+          "Nix Flakes",
+          "Github Action",
+          "Ci/CD"
         ]
       }
     ],
@@ -111,10 +113,10 @@
     "panelLayout": {
       "side": "right",
       "verticalAlign": "center",
-      "widthPercent": 28,
-      "minHeightPx": 445,
-      "offsetXPx": -23,
-      "offsetYPx": 15
+      "widthPercent": 35,
+      "minHeightPx": 419,
+      "offsetXPx": -36,
+      "offsetYPx": -9
     },
     "sections": [
       {
