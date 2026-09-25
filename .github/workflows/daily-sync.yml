@@ -3,6 +3,9 @@ name: Generate Pacman Matrix
 on:
   schedule:
     - cron: "0 3 * * *" # auto sync data daily in 3 o'clock am UTC
+  push:
+    branches:
+      - main
   workflow_dispatch: # run manually access in Github
 
 permissions:
