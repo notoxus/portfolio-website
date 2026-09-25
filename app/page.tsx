@@ -8,21 +8,6 @@ import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { ProjectList } from './components/project-list'
 
-// Loading pane
-function ContributionStatusBar() {
-  return (
-    <div className="surface-panel rounded-xl p-4 font-mono text-xs border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-500">
-      <div className="flex items-center space-x-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span className="text-[11px]">sync_status: operational (cron: 00:00 UTC)</span>
-      </div>
-      <div className="w-full sm:w-48 bg-neutral-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-        <div className="bg-emerald-500 h-full w-4/5 animate-pulse"></div>
-      </div>
-    </div>
-  )
-}
-
 function SectionHeading({ section }: { section: HomeSection }) {
   return (
     <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -147,24 +132,27 @@ export default async function Page() {
   const home = settings.home
 
   return (
-    <section className="space-y-12 md:space-y-16">
+    <section className="space-y-8 sm:space-y-12 md:space-y-16">
       {/* Terminal Hero */}
       <HomeHero settings={settings} intro={intro} />
 
-      {/* Khối Proof of Work */}
+      {/* Proof of Work */}
       <ProofOfWork />
 
       {/* Github contribution */}
-      <div className="space-y-3">
-        <div className="surface-panel rounded-2xl p-6 text-center">
-          <p className="font-mono text-xs text-neutral-500 mb-4"># github contribution matrix</p>
-          <img 
-            src="/snake.svg" 
-            alt="GitHub Contribution Matrix" 
-            className="mx-auto max-w-full h-auto dark:invert opacity-90" 
-          />
+      <div className="surface-panel rounded-2xl p-6 text-center space-y-4">
+        <p className="font-mono text-xs text-neutral-500"># github contribution matrix</p>
+      
+        <img 
+          src="/snake.svg" 
+          alt="GitHub Contribution Matrix" 
+          className="mx-auto max-w-full h-auto dark:invert opacity-90" 
+        />
+
+        {/* Loading pane */}
+        <div className="w-full bg-neutral-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden my-3 relative">
+          <div className="absolute top-0 bottom-0 bg-emerald-500 w-1/3 rounded-full animate-[loading_2s_ease-in-out_infinite]"></div>
         </div>
-        <ContributionStatusBar />
       </div>
 
       {/* Dynamic section */}

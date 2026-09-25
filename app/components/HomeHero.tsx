@@ -26,17 +26,17 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
       <FadeIn className="hero-copy">
         <div
           style={fontSizeStyle(settings.fontSizes.homeEyebrow)}
-          className="mb-5 flex items-center gap-2.5 font-mono text-neutral-600 dark:text-neutral-400"
+          className="mb-4 sm:mb-5 flex items-center gap-2.5 font-mono text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 overflow-x-auto"
         >
-          <span className="font-bold text-green-600 dark:text-green-500">root@notoxus:~$</span>
-          <span className="border-r-2 border-neutral-400 pr-1 animate-pulse">
+          <span className="font-bold text-green-600 dark:text-green-500 shrink-0">root@notoxus:~$</span>
+          <span className="border-r-2 border-neutral-400 pr-1 animate-pulse truncate">
             whoami --role="{home.eyebrow}"
           </span>
         </div>
         
         <h1
           style={responsiveFontSizeStyle(settings.fontSizes.homeHeadline)}
-          className="max-w-3xl font-semibold leading-[1.05] tracking-tight text-neutral-950 dark:text-neutral-50"
+          className="max-w-3xl font-semibold leading-[1.1] sm:leading-[1.05] tracking-tight text-neutral-950 dark:text-neutral-50 text-2xl sm:text-4xl"
         >
           <span className="font-mono text-blue-600 dark:text-blue-500 font-bold mr-2">{'>'}</span>
           {home.headline}
@@ -45,24 +45,24 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
         <div className="mt-4 sm:mt-6 lg:pr-6">
           <p
             style={responsiveFontSizeStyle(settings.fontSizes.homeIntro)}
-            className="max-w-xl whitespace-pre-line text-justify leading-7 text-neutral-700 [text-wrap:pretty] dark:text-neutral-300 sm:leading-8"
+            className="max-w-xl whitespace-pre-line text-justify leading-6 sm:leading-8 text-neutral-700 dark:text-neutral-300 text-sm sm:text-base"
           >
             {intro}
           </p>
         </div>
         
-        <div className="mt-8 flex flex-wrap items-center gap-4 font-mono">
+        <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-4 font-mono">
           <a
             href={home.primaryCtaHref}
             style={fontSizeStyle(settings.fontSizes.homeCta)}
-            className="rounded bg-green-600/10 border border-green-600/30 px-4 py-2 font-semibold text-green-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-green-600/20 dark:text-green-400"
+            className="rounded bg-green-600/10 border border-green-600/30 px-3.5 sm:px-4 py-2 font-semibold text-green-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-green-600/20 dark:text-green-400 text-xs sm:text-sm"
           >
             [ {home.primaryCtaLabel} ]
           </a>
           <a
             href={home.secondaryCtaHref}
             style={fontSizeStyle(settings.fontSizes.homeCta)}
-            className="surface-panel rounded px-4 py-2 font-semibold text-neutral-900 transition hover:-translate-y-0.5 dark:text-neutral-100"
+            className="surface-panel rounded px-3.5 sm:px-4 py-2 font-semibold text-neutral-900 transition hover:-translate-y-0.5 dark:text-neutral-100 text-xs sm:text-sm"
           >
             ./{home.secondaryCtaLabel.toLowerCase().replace(/\s+/g, '-')}
           </a>
@@ -73,6 +73,7 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
         <div className="hero-panel-shell">
           <aside className="surface-panel hero-panel relative overflow-hidden rounded-xl border border-neutral-300 bg-white/50 font-mono shadow-xl dark:border-neutral-700 dark:bg-black/40">
             
+            {/* Header htop chuẩn nguyên bản */}
             <div className="flex items-center gap-2 border-b border-neutral-200/80 bg-neutral-100/50 px-4 py-2.5 dark:border-neutral-800/80 dark:bg-neutral-900/50 sm:px-5">
               <div className="h-3 w-3 rounded-full bg-red-500 opacity-80" />
               <div className="h-3 w-3 rounded-full bg-yellow-500 opacity-80" />

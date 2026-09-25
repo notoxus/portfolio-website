@@ -162,6 +162,17 @@ html {
 .animate-dropdown {
   animation: dropdown-in 180ms ease-out;
 }
+@keyframes loading {
+  0% {
+    left: -35%;
+  }
+  50% {
+    left: 65%;
+  }
+  100% {
+    left: 100%;
+  }
+}
 
 body {
   background:
