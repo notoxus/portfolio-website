@@ -113,10 +113,10 @@
     "panelLayout": {
       "side": "right",
       "verticalAlign": "center",
-      "widthPercent": 35,
-      "minHeightPx": 419,
-      "offsetXPx": -36,
-      "offsetYPx": -9
+      "widthPercent": 38,
+      "minHeightPx": 453,
+      "offsetXPx": 1,
+      "offsetYPx": -18
     },
     "sections": [
       {
