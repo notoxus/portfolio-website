@@ -1,0 +1,1 @@
+export const baseUrl = 'https://phuocthinh.is-a.dev'

@@ -1,6 +1,5 @@
 import { getBlogPosts } from 'app/blog/utils'
-
-export const baseUrl = 'https://phuocthinh.is-a.dev'
+import { baseUrl } from 'lib/constants'
 
 export default async function sitemap() {
   let blogs = (await getBlogPosts()).map((post) => ({
