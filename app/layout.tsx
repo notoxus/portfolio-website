@@ -14,11 +14,11 @@ import SessionProviderWrapper from './components/SessionProviderWrapper'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Phuoc Thinh — DevOps / CyberSec fields',
+    default: 'Phuoc Thinh — Aspiring Software & Systems Engineer',
     template: '%s | Phuoc Thinh',
   },
   description:
-    'Phuoc Thinh is a DevOps and Cyber Security learner who shares practical projects, labs, and technical blog posts.',
+    'Phuoc Thinh is an aspiring Software & Systems Engineer who shares practical projects, labs, and technical blog posts.',
   keywords: ['cybersecurity', 'ethical hacking', 'sysadmin', 'devops', 'devsecops', 'phuoc thinh','portfolio', 'phuoc thinh portfolio', 'blog', 'automation', 'it'],
   authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
   creator: 'Phuoc Thinh',
