@@ -7,7 +7,7 @@ import { FadeIn } from './FadeIn'
 import { SocialLinks } from './social-links'
 import type { ProofOfWorkData } from 'lib/proof-of-work'
 
-export function HomeHero({ settings, intro, stats}: { settings: SiteSettings; intro: string; stats: ProofOfWorkData }) {
+export function HomeHero({ settings, intro, stats}: { settings: SiteSettings; intro: string; stats?: ProofOfWorkData }) {
   const home = settings.home
   const panel = home.panelLayout
   const heroStyle = {
@@ -16,7 +16,13 @@ export function HomeHero({ settings, intro, stats}: { settings: SiteSettings; in
     '--hero-panel-offset-x': `${panel.offsetXPx}px`,
     '--hero-panel-offset-y': `${panel.offsetYPx}px`,
   } as CSSProperties
-
+  const safeStats: ProofOfWorkData = stats ?? {
+    upstream_merges: 0,
+    tool_stars: 0,
+    public_contributions: null,
+    public_repos: 0,
+    followers: 0,
+  }
   return (
     <section
       className="hero-grid"
@@ -135,8 +141,8 @@ export function HomeHero({ settings, intro, stats}: { settings: SiteSettings; in
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-neutral-200/80 bg-neutral-100/40 px-4 py-2 font-mono text-[10px] text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-900/40 dark:text-neutral-400 sm:px-5">
-              <span>{stats.public_repos} public repos</span>
-              <span>{stats.followers} followers</span>
+              <span>{safeStats.public_repos} public repos</span>
+              <span>{safeStats.followers} followers</span>
             </div>
           </aside>
         </div>
