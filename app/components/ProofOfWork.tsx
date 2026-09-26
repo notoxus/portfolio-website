@@ -60,7 +60,7 @@ export function ProofOfWork() {
 
         <div>
           <p className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-1">
-            {stats.public_contributions}
+            {stats.public_contributions ?? '—'}
           </p>
           <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">
             PUBLIC CONTRIBUTIONS

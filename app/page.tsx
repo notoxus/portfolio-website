@@ -7,6 +7,7 @@ import { getSiteSettings, type CustomHomeItem, type HomeSection } from 'lib/site
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import { PROJECT_ACCENT_STYLES } from 'lib/project-accents'
 import { ProjectList } from './components/project-list'
+import { getProofOfWorkStats } from 'lib/proof-of-work'
 
 function SectionHeading({ section }: { section: HomeSection }) {
   return (
@@ -134,7 +135,7 @@ export default async function Page() {
   return (
     <section className="space-y-8 sm:space-y-12 md:space-y-16">
       {/* Terminal Hero */}
-      <HomeHero settings={settings} intro={intro} />
+      <HomeHero settings={settings} intro={intro} stats={getProofOfWorkStats()} />
 
       {/* Proof of Work */}
       <ProofOfWork />

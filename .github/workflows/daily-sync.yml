@@ -44,6 +44,7 @@ jobs:
         run: python3 scripts/fetch_proof_of_work.py
         env:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and Push changes
         run: |

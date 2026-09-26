@@ -5,8 +5,9 @@ import type { SiteSettings } from 'lib/site-settings'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import { FadeIn } from './FadeIn'
 import { SocialLinks } from './social-links'
+import type { ProofOfWorkData } from 'lib/proof-of-work'
 
-export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: string }) {
+export function HomeHero({ settings, intro, stats}: { settings: SiteSettings; intro: string; stats: ProofOfWorkData }) {
   const home = settings.home
   const panel = home.panelLayout
   const heroStyle = {
@@ -73,7 +74,7 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
         <div className="hero-panel-shell">
           <aside className="surface-panel hero-panel relative overflow-hidden rounded-xl border border-neutral-300 bg-white/50 font-mono shadow-xl dark:border-neutral-700 dark:bg-black/40">
             
-            {/* Header htop chuẩn nguyên bản */}
+            {/* Htop header */}
             <div className="flex items-center gap-2 border-b border-neutral-200/80 bg-neutral-100/50 px-4 py-2.5 dark:border-neutral-800/80 dark:bg-neutral-900/50 sm:px-5">
               <div className="h-3 w-3 rounded-full bg-red-500 opacity-80" />
               <div className="h-3 w-3 rounded-full bg-yellow-500 opacity-80" />
@@ -132,6 +133,10 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
               <div className="flex justify-start">
                 <SocialLinks links={settings.socialLinks} compact />
               </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-neutral-200/80 bg-neutral-100/40 px-4 py-2 font-mono text-[10px] text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-900/40 dark:text-neutral-400 sm:px-5">
+              <span>{stats.public_repos} public repos</span>
+              <span>{stats.followers} followers</span>
             </div>
           </aside>
         </div>
