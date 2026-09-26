@@ -1,6 +1,7 @@
 import { ProjectList } from 'app/components/project-list'
 import { getSiteSettings } from 'lib/site-settings'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
+import SearchInput from 'app/components/SearchInput'
 
 export const metadata = {
   title: 'Projects',
@@ -18,8 +19,6 @@ export const metadata = {
       'Tools and applications by Phuoc Thinh, built to practice systems thinking, automation, and software design.',
   },
 }
-
-import SearchInput from 'app/components/SearchInput'
 
 export default async function ProjectsPage({
   searchParams,

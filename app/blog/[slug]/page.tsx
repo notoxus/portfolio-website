@@ -3,6 +3,9 @@ import { CustomMDX } from 'app/components/mdx'
 import { formatDate, getBlogPosts } from 'app/blog/utils'
 import { baseUrl } from 'lib/constants'
 import Comments from 'app/components/Comments'
+import { ViewTracker } from 'app/components/ViewTracker'
+import TableOfContents from 'app/components/TableOfContents'
+import { BlogMenuBuilder, extractHeadings } from 'lib/composite/menu-node'
 
 export async function generateStaticParams() {
   let posts = await getBlogPosts()
@@ -39,10 +42,6 @@ export async function generateMetadata({ params }) {
     },
   }
 }
-
-import { ViewTracker } from 'app/components/ViewTracker'
-import TableOfContents from 'app/components/TableOfContents'
-import { BlogMenuBuilder, extractHeadings } from 'lib/composite/menu-node'
 
 export default async function Blog({ params }) {
   const resolvedParams = await params

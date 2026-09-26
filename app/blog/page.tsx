@@ -3,6 +3,7 @@ import { BlogPosts } from 'app/components/posts'
 import { getSiteSettings } from 'lib/site-settings'
 import type { BlogLanguage } from 'app/blog/utils'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
+import SearchInput from 'app/components/SearchInput'
 
 export const metadata = {
   title: 'Blog',
@@ -30,8 +31,6 @@ const languageFilters: Array<{
   { label: 'Vietnamese', language: 'vi', href: '/blog?language=vi' },
   { label: 'English', language: 'en', href: '/blog?language=en' },
 ]
-
-import SearchInput from 'app/components/SearchInput'
 
 export default async function Page({
   searchParams,
