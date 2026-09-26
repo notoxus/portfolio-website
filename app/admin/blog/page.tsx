@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { formatDate, getBlogPosts } from 'app/blog/utils'
+import { formatDate, getBlogPosts } from 'lib/blog-utils'
 import { getSiteSettings } from 'lib/site-settings'
 import BlogSettingsForm from './blog-settings-form'
 
