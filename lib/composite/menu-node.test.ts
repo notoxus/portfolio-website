@@ -49,7 +49,7 @@ describe('BlogMenuBuilder.headingsTOC', () => {
     expect(tree).toHaveLength(2)
     expect(tree[0].children).toHaveLength(1)
     expect(tree[0].children![0].id).toBe('b')
-    expect(tree[1].children).toBeUndefined()
+    expect(tree[1].children).toEqual([])
   })
 
   it('handles a level jump from 2 straight to 4', () => {
