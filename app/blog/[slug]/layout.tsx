@@ -1,4 +1,4 @@
-import { getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'lib/blog-utils'
 import { BlogMenuBuilder } from 'lib/composite/menu-node'
 import CompositeMenu from 'app/components/CompositeMenu'
 

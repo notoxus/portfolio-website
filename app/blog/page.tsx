@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { BlogPosts } from 'app/components/posts'
 import { getSiteSettings } from 'lib/site-settings'
-import type { BlogLanguage } from 'app/blog/utils'
+import type { BlogLanguage } from 'lib/blog-utils'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'
 import SearchInput from 'app/components/SearchInput'
 

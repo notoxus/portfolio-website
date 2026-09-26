@@ -4,7 +4,7 @@ import {
   getBlogPosts,
   type BlogLanguage,
   type BlogPost,
-} from 'app/blog/utils'
+} from 'lib/blog-utils'
 import { StaggerContainer, StaggerItem } from 'app/components/FadeIn'
 import { getSiteSettings } from 'lib/site-settings'
 import { fontSizeStyle, responsiveFontSizeStyle } from 'lib/font-sizes'

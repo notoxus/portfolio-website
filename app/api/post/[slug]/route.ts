@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
-import { getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'lib/blog-utils'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const session = await auth()

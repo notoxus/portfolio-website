@@ -1,4 +1,4 @@
-import { getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'lib/blog-utils'
 import Link from 'next/link'
 import { neon } from '@neondatabase/serverless'
 

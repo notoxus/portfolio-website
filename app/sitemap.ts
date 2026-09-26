@@ -1,4 +1,4 @@
-import { getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'lib/blog-utils'
 import { baseUrl } from 'lib/constants'
 
 export default async function sitemap() {
