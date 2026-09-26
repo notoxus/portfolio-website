@@ -148,10 +148,9 @@ export default async function Page() {
           alt="GitHub Contribution Matrix" 
           className="mx-auto max-w-full h-auto dark:invert opacity-90" 
         />
-
         {/* Loading pane */}
         <div className="w-full bg-neutral-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden my-3 relative">
-          <div className="absolute top-0 bottom-0 bg-emerald-500 w-1/3 rounded-full animate-[loading_2s_ease-in-out_infinite]"></div>
+          <div className="absolute left-0 top-0 bottom-0 bg-emerald-500 rounded-full animate-[pacman-progress_6s_ease-in-out_infinite]"></div>
         </div>
       </div>
 

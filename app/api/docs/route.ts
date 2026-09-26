@@ -11,24 +11,24 @@ export async function GET(req: NextRequest) {
 
   try {
     const settings = await getSiteSettings()
-    const notebook = settings.notebookPage
+    const docs = settings.docsPage
     const token = process.env.GITHUB_TOKEN
     const octokit = new Octokit(token ? { auth: token } : {})
 
     const { data } = await octokit.repos.getContent({
-      owner: notebook.owner,
-      repo: notebook.repo,
+      owner: docs.owner,
+      repo: docs.repo,
       path: cleanPath,
-      ref: notebook.branch,
+      ref: docs.branch,
     })
 
     return NextResponse.json(cleanPath ? data : {
       items: data,
-      notebook,
+      docs,
       fontSizes: {
-        title: settings.fontSizes.notebookTitle,
-        description: settings.fontSizes.notebookDescription,
-        file: settings.fontSizes.notebookFile,
+        title: settings.fontSizes.docsTitle,
+        description: settings.fontSizes.docsDescription,
+        file: settings.fontSizes.docsFile,
       },
     }, {
       headers: {
@@ -36,9 +36,9 @@ export async function GET(req: NextRequest) {
       },
     })
   } catch (error: any) {
-    console.error('[notebook proxy error]', error)
+    console.error('[docs proxy error]', error)
     return NextResponse.json(
-      { error: error?.message || 'Failed to fetch notebook directory' },
+      { error: error?.message || 'Failed to fetch docs directory' },
       { status: error?.status || 500 },
     )
   }

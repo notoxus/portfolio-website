@@ -19,7 +19,7 @@ function FileNode({ item, fileSize }: { item: any; fileSize: number }) {
       setIsLoading(true)
       setError(false)
       try {
-        const res = await fetch(`/api/notebook?path=${encodeURIComponent(item.path)}`)
+        const res = await fetch(`/api/docs?path=${encodeURIComponent(item.path)}`)
 
         if (!res.ok) throw new Error('API Error')
 
@@ -95,23 +95,23 @@ function FileNode({ item, fileSize }: { item: any; fileSize: number }) {
   )
 }
 
-export default function NotebookPage() {
+export default function DocsPage() {
   const [rootFiles, setRootFiles] = useState<any[]>([])
   const [hasMounted, setHasMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [notebook, setNotebook] = useState({
-    title: 'My Notebook',
+  const [docs, setDocs] = useState({
+    title: 'Docs Library',
     description: 'Interactive explorer with direct raw access to my GitHub assets.',
     owner: 'notoxus',
-    repo: 'my-note-book',
+    repo: 'docs',
     branch: 'main',
   })
   const [fontSizes, setFontSizes] = useState({ title: 24, description: 16, file: 14 })
 
   useEffect(() => {
     setHasMounted(true)
-    fetch('/api/notebook')
+    fetch('/api/docs')
       .then(res => {
         if (!res.ok) throw new Error(`GitHub API returned ${res.status}`)
         return res.json()
@@ -119,7 +119,7 @@ export default function NotebookPage() {
       .then(data => {
         if (Array.isArray(data.items)) {
           setRootFiles(data.items.sort((a: any, b: any) => (a.type === 'dir' ? -1 : 1)))
-          setNotebook(data.notebook)
+          setDocs(data.docs)
           setFontSizes(data.fontSizes)
         }
       })
@@ -135,9 +135,9 @@ export default function NotebookPage() {
 
   return (
     <section>
-      <h1 style={{ fontSize: `${fontSizes.title}px` }} className="font-semibold mb-8 tracking-tighter">{notebook.title}</h1>
+      <h1 style={{ fontSize: `${fontSizes.title}px` }} className="font-semibold mb-8 tracking-tighter">{docs.title}</h1>
       <p style={{ fontSize: `${fontSizes.description}px` }} className="mb-6 text-neutral-600 dark:text-neutral-400">
-        {notebook.description}
+        {docs.description}
       </p>
 
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
@@ -147,9 +147,9 @@ export default function NotebookPage() {
           </div>
         ) : loadError ? (
           <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
-            The notebook could not be loaded from GitHub right now. You can still browse the source directly on{' '}
+            The docs could not be loaded from GitHub right now. You can still browse the source directly on{' '}
             <a
-              href={`https://github.com/${notebook.owner}/${notebook.repo}/tree/${notebook.branch}`}
+              href={`https://github.com/${docs.owner}/${docs.repo}/tree/${docs.branch}`}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
@@ -160,7 +160,7 @@ export default function NotebookPage() {
           </div>
         ) : rootFiles.length === 0 ? (
           <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
-            No public notebook files are available yet.
+            No public docs files are available yet.
           </div>
         ) : (
           rootFiles.map((file: any) => (

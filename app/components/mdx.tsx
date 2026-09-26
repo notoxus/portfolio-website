@@ -86,22 +86,28 @@ function Pre({ children, ...props }) {
   return <pre {...props}>{children}</pre>
 }
 
-/** Creates stable anchor IDs for blog headings. */
 function slugify(str) {
   return str
     .toString()
     .toLowerCase()
-    .trim() // Remove whitespace from both ends of a string
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/&/g, '-and-') // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '') // Remove all non-word characters except for -
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/&/g, '-and-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
 }
 
-/** Creates a heading component with a clickable anchor. */
+function getNodeText(node: React.ReactNode): string {
+  if (node == null) return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(getNodeText).join('')
+  if (React.isValidElement(node)) return getNodeText((node.props as { children?: React.ReactNode }).children)
+  return ''
+}
+
 function createHeading(level) {
   const Heading = ({ children }) => {
-    let slug = slugify(children)
+    let slug = slugify(getNodeText(children))
     return React.createElement(
       `h${level}`,
       { id: slug },
@@ -115,9 +121,7 @@ function createHeading(level) {
       children
     )
   }
-
   Heading.displayName = `Heading${level}`
-
   return Heading
 }
 

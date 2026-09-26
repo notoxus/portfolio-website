@@ -23,7 +23,7 @@ export default function NavLinks({ items, fontSize }: { items: NavigationItem[];
           href={item.href}
           onClick={playClick}
           style={fontSizeStyle(fontSize)}
-          className={`rounded-lg px-2.5 py-1.5 font-medium transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
+          className={`rounded-lg px-2.5 py-2 sm:py-1.5 font-medium transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-neutral-100 ${
             isActive(item.href) ? 'nav-link-active' : ''
           }`}
         >

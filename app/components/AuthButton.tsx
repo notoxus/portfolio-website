@@ -70,7 +70,7 @@ const ADMIN_LINKS = [
   { href: '/admin/homepage', label: 'Homepage' },
   { href: '/admin/projects', label: 'Projects' },
   { href: '/admin/blog', label: 'Blog' },
-  { href: '/admin/notebook', label: 'Notebook' },
+  { href: '/admin/docs', label: 'Docs Library' },
   { href: '/admin/custom-menu', label: 'Custom Menu' },
 ]
 

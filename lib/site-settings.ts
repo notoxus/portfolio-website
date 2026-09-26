@@ -106,7 +106,7 @@ export type SiteSettings = {
     title: string
     description: string
   }
-  notebookPage: {
+  docsPage: {
     title: string
     description: string
     owner: string
@@ -159,7 +159,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     { id: 'home', label: 'home', href: '/', visible: true },
     { id: 'blog', label: 'blog', href: '/blog', visible: true },
     { id: 'projects', label: 'projects', href: '/projects', visible: true },
-    { id: 'notebook', label: 'notebook', href: '/notebook', visible: true },
+    { id: 'docs', label: 'docs library', href: '/docs', visible: true },
   ],
   fontSizes: DEFAULT_FONT_SIZES,
   home: {
@@ -231,11 +231,11 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     description:
       'Vietnamese and English write-ups on networking, Linux, security fundamentals, and software design.',
   },
-  notebookPage: {
-    title: 'My Notebook',
+  docsPage: {
+    title: 'Docs Library',
     description: 'Interactive explorer with direct raw access to my GitHub assets.',
     owner: 'notoxus',
-    repo: 'my-note-book',
+    repo: 'docs',
     branch: 'main',
   },
   footer: {
@@ -452,13 +452,13 @@ export function normalizeSiteSettings(value: any): SiteSettings {
       title: asString(value?.blogPage?.title, defaults.blogPage.title),
       description: asString(value?.blogPage?.description, defaults.blogPage.description),
     },
-    notebookPage: {
-      title: asString(value?.notebookPage?.title, defaults.notebookPage.title),
-      description: asString(value?.notebookPage?.description, defaults.notebookPage.description),
-      owner: asString(value?.notebookPage?.owner, defaults.notebookPage.owner),
-      repo: asString(value?.notebookPage?.repo, defaults.notebookPage.repo),
-      branch: asString(value?.notebookPage?.branch, defaults.notebookPage.branch),
-    },
+    docsPage: {
+    title: asString(value?.docsPage?.title, defaults.docsPage.title),
+    description: asString(value?.docsPage?.description, defaults.docsPage.description),
+    owner: asString(value?.docsPage?.owner, defaults.docsPage.owner),
+    repo: asString(value?.docsPage?.repo, defaults.docsPage.repo),
+    branch: asString(value?.docsPage?.branch, defaults.docsPage.branch),
+  },
     footer: {
       title: asString(value?.footer?.title, defaults.footer.title),
       description: asString(value?.footer?.description, defaults.footer.description),

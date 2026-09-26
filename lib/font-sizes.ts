@@ -39,9 +39,9 @@ export type FontSizeSettings = {
   postSummary: FontSize
   postMeta: FontSize
   postBadge: FontSize
-  notebookTitle: FontSize
-  notebookDescription: FontSize
-  notebookFile: FontSize
+  docsTitle: FontSize
+  docsDescription: FontSize
+  docsFile: FontSize
   navigationLabel: FontSize
   footerTitle: FontSize
   footerDescription: FontSize
@@ -71,9 +71,9 @@ export const DEFAULT_FONT_SIZES: FontSizeSettings = {
   postSummary: 14,
   postMeta: 12,
   postBadge: 12,
-  notebookTitle: 24,
-  notebookDescription: 16,
-  notebookFile: 14,
+  docsTitle: 24,
+  docsDescription: 16,
+  docsFile: 14,
   navigationLabel: 14,
   footerTitle: 14,
   footerDescription: 14,

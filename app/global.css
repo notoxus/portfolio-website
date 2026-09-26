@@ -162,19 +162,20 @@ html {
 .animate-dropdown {
   animation: dropdown-in 180ms ease-out;
 }
-@keyframes loading {
+@keyframes pacman-progress {
   0% {
-    left: -35%;
+    width: 0%;
   }
-  50% {
-    left: 65%;
+  90% {
+    width: 100%;
   }
   100% {
-    left: 100%;
+    width: 100%;
   }
 }
 
 body {
+  overflow-x: hidden;
   background:
     linear-gradient(var(--portfolio-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--portfolio-line) 1px, transparent 1px),
@@ -275,6 +276,7 @@ html:not(.dark) .preview-canvas {
 .hero-grid {
   display: grid;
   gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .hero-panel {

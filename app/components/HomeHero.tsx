@@ -29,7 +29,7 @@ export function HomeHero({ settings, intro }: { settings: SiteSettings; intro: s
           className="mb-4 sm:mb-5 flex items-center gap-2.5 font-mono text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 overflow-x-auto"
         >
           <span className="font-bold text-green-600 dark:text-green-500 shrink-0">root@notoxus:~$</span>
-          <span className="border-r-2 border-neutral-400 pr-1 animate-pulse truncate">
+          <span className="border-r-2 border-neutral-400 pr-1 animate-pulse truncate min-w-0">
             whoami --role="{home.eyebrow}"
           </span>
         </div>

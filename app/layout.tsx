@@ -1,6 +1,7 @@
 import './global.css'
 import 'katex/dist/katex.min.css'
 import type { Metadata } from 'next'
+import type { Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Navbar } from './components/nav'
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Phuoc Thinh', url: baseUrl }],
   creator: 'Phuoc Thinh',
   openGraph: {
-    title: 'Phuoc Thinh — DevOps/CyberSec learner',
+    title: 'Phuoc Thinh — Aspiring Software & Systems Engineer',
     description:
       'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
     url: baseUrl,
@@ -33,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Phuoc Thinh — DevOps & Cybersecurity Learner',
+    title: 'Phuoc Thinh — Aspiring Software & Systems Engineer',
     description:
-      'Phuoc Thinh is a cybersecurity, Linux, and DevSecOps learner who shares practical projects, labs, and technical blog posts.',
+      'Portfolio and engineering notes by Phuoc Thinh, an aspiring Software & Systems Engineer focused on infrastructure, software design, and automation.',
     images: [`${baseUrl}/og?title=Phuoc+Thinh+%E2%80%94+Cybersecurity+%26+DevOps`],
   },
   alternates: {
@@ -53,7 +54,14 @@ export const metadata: Metadata = {
     },
   },
 }
-
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f7f7f4' },
+    { media: '(prefers-color-scheme: dark)', color: '#080908' },
+  ],
+}
 /** Joins optional CSS class names into one string. */
 const cx = (...classes) => classes.filter(Boolean).join(' ')
 

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 
 export function GET(request: Request) {
   let url = new URL(request.url)
-  let title = url.searchParams.get('title') || 'Phuoc Thinh — Cybersecurity Learner'
+  let title = url.searchParams.get('title') || 'Phuoc Thinh — Aspiring Software & Systems Engineer'
 
   return new ImageResponse(
     (
@@ -16,7 +16,7 @@ export function GET(request: Request) {
         <h2 tw="text-6xl font-bold tracking-tight text-neutral-900 leading-tight max-w-3xl">
           {title}
         </h2>
-        <p tw="text-xl text-neutral-500">Cybersecurity learner · SysAdmin / DevSecOps</p>
+        <p tw="text-xl text-neutral-500">Aspiring Software & Systems Engineer</p>
       </div>
     ),
     {

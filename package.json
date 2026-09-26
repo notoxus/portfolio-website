@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -53,5 +54,8 @@
     "tailwindcss": "^4.3.2",
     "tiptap-markdown": "^0.9.0",
     "typescript": "^5"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.2"
   }
 }

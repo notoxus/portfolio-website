@@ -46,9 +46,9 @@
       "visible": true
     },
     {
-      "id": "notebook",
-      "label": "notebook",
-      "href": "/notebook",
+      "id": "docs",
+      "label": "docs",
+      "href": "/docs",
       "visible": true
     }
   ],
@@ -75,16 +75,16 @@
     "postSummary": 14,
     "postMeta": 12,
     "postBadge": 12,
-    "notebookTitle": 24,
-    "notebookDescription": 16,
-    "notebookFile": 14,
+    "docsTitle": 24,
+    "docsDescription": 16,
+    "docsFile": 14,
     "navigationLabel": 14,
     "footerTitle": 14,
     "footerDescription": 14,
     "socialLabel": 14
   },
   "home": {
-    "eyebrow": "Systems & Network Enthusiast",
+    "eyebrow": "Aspiring Software & Systems Engineer",
     "headline": "Welcome to my portfolio website. Thank you for taking the time to stop by!!!",
     "primaryCtaLabel": "View projects",
     "primaryCtaHref": "/projects",
@@ -92,20 +92,21 @@
     "secondaryCtaHref": "/blog",
     "skillGroups": [
       {
-        "label": "Operating System",
+        "label": "Systems & Infrastructure",
         "items": [
           "Linux Infrastructure",
-          "Customize Windows Manager"
+          "System Permission",
+          "Window Manager Customization"
         ]
       },
       {
         "label": "Development & Operation",
         "items": [
-          "OOP",
-          "Docker Container",
+          "OOP Design",
+          "Docker Containers",
           "Nix Flakes",
-          "Github Action",
-          "Ci/CD"
+          "Github Actions",
+          "CI/CD Pipelines"
         ]
       }
     ],
@@ -154,11 +155,11 @@
     "title": "Blog",
     "description": "These posts are an experiential process and the things I have deeply absorbed."
   },
-  "notebookPage": {
-    "title": "My Notebook",
+  "docsPage": {
+    "title": "Docs Library",
     "description": "Interactive explorer with direct raw access to my GitHub assets.",
     "owner": "notoxus",
-    "repo": "my-note-book",
+    "repo": "docs-library",
     "branch": "main"
   },
   "footer": {

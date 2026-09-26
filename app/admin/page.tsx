@@ -52,12 +52,12 @@ export default async function AdminDashboard() {
           </p>
         </Link>
         <Link
-          href="/admin/notebook"
+          href="/admin/docs"
           className="surface-panel rounded-2xl p-4 transition hover:border-blue-500"
         >
-          <span className="text-sm font-semibold">Notebook</span>
+          <span className="text-sm font-semibold">Docs Library</span>
           <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-            Configure the notebook repository, labels, and typography.
+            Configure the docs repository, labels, and typography.
           </p>
         </Link>
         <Link

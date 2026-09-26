@@ -7,9 +7,7 @@ import { useRouter, useParams } from 'next/navigation'
 const RichTextEditor = dynamic(() => import('app/components/editor/RichTextEditor'), {
   ssr: false,
   loading: () => (
-    <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg h-[480px] flex items-center justify-center text-sm text-neutral-400">
-      Loading editor...
-    </div>
+    <div className="h-[480px] animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-900" />
   ),
 })
 

@@ -29,7 +29,7 @@ export function ProofOfWork() {
         Public evidence of maintainer-grade execution
       </h3>
       <p className="text-neutral-500 dark:text-neutral-400 mb-6 text-xs">
-        systems engineering / coding agents / production reliability
+        infrastructure / software / automated workflows
       </p>
 
       {/* GitHub Stats */}

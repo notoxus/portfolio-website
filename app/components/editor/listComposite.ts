@@ -3,7 +3,19 @@ import { BulletList, ListItem } from '@tiptap/extension-list'
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import type MarkdownIt from 'markdown-it'
 import type { MarkdownSerializerState } from 'prosemirror-markdown'
+import { describe, it, expect } from 'vitest'
 
+describe('normalizeBulletListMarker', () => {
+  it.each(['-', '+', '*'] as const)('passes through valid marker %s', (marker) => {
+    expect(normalizeBulletListMarker(marker)).toBe(marker)
+  })
+
+  it('falls back to the default for anything else', () => {
+    expect(normalizeBulletListMarker('x')).toBe(DEFAULT_BULLET_LIST_MARKER)
+    expect(normalizeBulletListMarker(undefined)).toBe(DEFAULT_BULLET_LIST_MARKER)
+    expect(normalizeBulletListMarker(42)).toBe(DEFAULT_BULLET_LIST_MARKER)
+  })
+})
 export const BULLET_LIST_MARKERS = [
   { marker: '-', label: 'Dash' },
   { marker: '+', label: 'Plus' },
